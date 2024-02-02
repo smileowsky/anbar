@@ -1,0 +1,230 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Clients</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" class="forms-sample" action="{% url 'client_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit client name</label>
+            <input type="text" name="name" value="{{edit.name}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client surname</label>
+            <input type="text" name="surname" value="{{edit.surname}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client e-mail</label>
+            <input type="text" name="email" value="{{edit.email}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client phone number</label>
+            <input type="text" name="phone" value="{{edit.phone}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client company name</label>
+            <input type="text" name="company" value="{{edit.company}}" class="form-control"><br>
+          </div>
+          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+          <a href="{% url 'client' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add clients</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Client name</label>
+            <input class="form-control" placeholder="Client name" name="name">
+          </div>
+          <div class="form-group">
+            <label>Client surname</label>
+            <input class="form-control" placeholder="Client surname" name="surname">
+          </div>
+          <div class="form-group">
+            <label>Client e-mail</label>
+            <input class="form-control" placeholder="Client e-mail" name="email">
+          </div>
+          <div class="form-group">
+            <label>Client number</label>
+            <input class="form-control" placeholder="+9941234567" name="phone">
+          </div>
+          <div class="form-group">
+            <label>Client company name</label>
+            <input class="form-control" placeholder="Client company name" name="company">
+          </div>
+          <button type="submit" name="save" class="btn btn-primary me-2 text-white">Save</button>
+        </form>
+      </div>
+    </div>
+  </div> 
+</div>
+
+{% if client %}
+<div class="alert alert-danger" role="alert">
+  Do you want to delete? <br><b>{{client.name}} {{client.surname}}</b><br><br>
+  <a class="btn btn-success text-white" href="{% url 'client_delete_config' client.id %}">Yes</a>
+  <a class="btn btn-danger text-white" href="{% url 'client' %}">No</a>
+</div>
+{% endif %}
+
+{% if del_all %}
+<div class="alert alert-danger" role="alert">
+  Do you want to delete all selected items?<br>
+  <form method="post">
+    {% csrf_token %}
+    {% for id in del_all %}
+    <input type="hidden" name="x[]" value="{{id}}">
+    {% endfor %}
+    <button class="btn btn-success" name="confirm_delete_all text-white">Yes</button>
+    <button class="btn btn-danger text-white">No</button><br>
+  </form>
+</div>
+{% endif %}
+
+{% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Clients: </b> {{client_num}} |
+  </center>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Clients Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Name
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Surname
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Email
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Phone
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="k"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Company
+                  {% if request.POST.order == 'l' %}
+                  <button class="btn btn-link btn-sm" name="order" value="m"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="l"><i class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'n' %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="n"><i class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %} name="x[]"
+                          value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                      </div>
+                  </td>
+                  <td>{{info.name}}</td>
+                  <td>{{info.surname}}</td>
+                  <td>{{info.email}}</td>
+                  <td>{{info.phone}}</td>
+                  <td>{{info.company}}</td>
+                  <td>{{info.add_date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md" href="{% url 'client_delete' info.id %}"><i class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'client_edit' info.id %}"><i class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

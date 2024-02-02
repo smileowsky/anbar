@@ -1,0 +1,87 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if request.user.is_authenticated %}
+
+<meta http-equiv="refresh" content="0; URL={%url 'user_profile'%}">
+
+{% else %}
+
+<div class="row">
+  {% if messages %}
+  <div class="alert alert-dismissible fade show" role="alert">
+    {% for message in messages %}
+    {% if 'success' in message.tags %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      {{message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif 'error' in message.tags %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      {{message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif 'warning' in message.tags %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      {{message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Registration</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" action="{%url 'user_register'%}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Name</label>
+            <input class="form-control" placeholder="Name" name="name">
+          </div>
+          <div class="form-group">
+            <label>Surname</label>
+            <input class="form-control" placeholder="Surname" name="surname">
+          </div>
+          <div class="form-group">
+            <label>Username</label>
+            <input class="form-control" placeholder="Username" name="username">
+          </div>
+          <div class="form-group">
+            <label>Date of birth</label>
+            <input class="form-control" type="date" name="u_birth">
+          </div>
+          <div class="form-group">
+            <label>E-mail</label>
+            <input class="form-control" placeholder="E-mail" name="email">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input class="form-control" placeholder="+9941234567" type="tel" name="phone">
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input class="form-control" placeholder="Password" type="password" name="password">
+          </div>
+          <div class="form-group">
+            <label>Re-enter password</label>
+            <input class="form-control" placeholder="Re-enter password" type="password" name="r_password">
+          </div>
+          <button type="submit" name="signup" class="btn btn-success btn-rounded btn-fw text-white">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endif %}
+
+{% endblock %}

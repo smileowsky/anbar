@@ -1,0 +1,104 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+    {% for message in messages %}
+    {% if 'success' in message.tags %}
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif 'error' in message.tags %}
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% elif 'warning' in message.tags %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        {{message}}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{{request.POST.name}}
+<div class="row">
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Profile</h4>
+                <p class="card-description">
+                    Edit the information in the cells
+                </p>
+                <form method="post" enctype="multipart/form-data" action="{% url 'user_profile_update' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>File upload</label>
+                        <input type="file" name="p_photo" class="file-upload-default">
+                        <div class="input-group col-xs-12">
+                            <img class="img-md rounded-circle" style="width: 70px; height: 60;" src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png{% else %} {{ request.user.profile_photo }} {% endif %}">
+                            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+                                name="photo">
+                            <span class="input-group-append">
+                                <button class="file-upload-browse btn btn-primary text-white"
+                                    type="button">Upload</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" name="name" value="{{request.user.first_name}}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Surname</label>
+                        <input type="text" name="surname" value="{{request.user.last_name}}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="user_name" value="{{request.user.username}}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Birthdate</label>
+                        <input type="date" name="u_birth" value="{{request.user.birth_date | date:'Y-m-d'}}"
+                            class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input type="email" name="email" value="{{request.user.email}}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" name="tel_n" value="{{request.user.phone}}" placeholder="Add phone number"
+                            class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Comapany name</label>
+                        <input type="text" name="company_n" value="{{request.user.comp_name}}"
+                            placeholder="Add company name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="To save enter your password"
+                            class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>New password</label>
+                        <input type="password" name="n_password" placeholder="Enter new password, if you want to change it"
+                            class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Re-enter new password</label>
+                        <input type="password" name="c_password" placeholder="Re enter new password"
+                            class="form-control"><br>
+                    </div>
+                    <button type="submit" name="update" class="btn btn-primary me-2 text-white">Update</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
