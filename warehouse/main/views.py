@@ -3,7 +3,7 @@ from django.shortcuts import render
 # Create your views here.
 
 from . models import Brand, Clients, Expenses, Products, Orders, Departments, Positions, Staff, Documents, myUser, Assignments, Supplier
-from django.db.models import F, ExpressionWrapper, fields
+from django.db.models import F, ExpressionWrapper, FloatField
 from django.contrib.auth import update_session_auth_hash
 from django.core.files.storage import FileSystemStorage
 from django.contrib.auth.hashers import check_password
@@ -507,9 +507,19 @@ def products(request):
             elif request.POST['order'] == 'n':
                 data = Products.objects.all().order_by('-brand_id')
             elif request.POST['order'] == 'o':
-                data = Products.objects.all().order_by('orders__profit')
+                data = Products.objects.annotate(
+                    calculated_profit=ExpressionWrapper(
+                        F('sell') - F('buy') * F('quantity'),
+                        output_field=FloatField()
+                    )
+                ).order_by('calculated_profit')
             elif request.POST['order'] == 'p':
-                data = Products.objects.all().order_by('-orders__profit')
+                data = Products.objects.annotate(
+                    calculated_profit=ExpressionWrapper(
+                        F('sell') - F('buy') * F('quantity'),
+                        output_field=FloatField()
+                    )
+                ).order_by('-calculated_profit')
         else:
             data = Products.objects.all().order_by('-id')
     brands = Brand.objects.all().order_by('brand_name')
@@ -637,9 +647,19 @@ def orders(request):
             elif request.POST['order'] == 'n':
                 data = Orders.objects.all().order_by('-product__quantity')
             elif request.POST['order'] == 'o':
-                data = Orders.objects.all().order_by('profit')
+                data = Orders.objects.annotate(
+                    calculated_profit=ExpressionWrapper(
+                        F('product__sell') - F('product__buy') * F('amount'),
+                        output_field=FloatField()
+                        )
+                    ).order_by('calculated_profit')
             elif request.POST['order'] == 'p':
-                data = Orders.objects.all().order_by('-profit')
+                data = Orders.objects.annotate(
+                    calculated_profit=ExpressionWrapper(
+                        F('product__sell') - F('product__buy') * F('amount'),
+                        output_field=FloatField()
+                        )
+                    ).order_by('-calculated_profit')
             elif request.POST['order'] == 'q':
                 data = Orders.objects.all().order_by('add_date')
             elif request.POST['order'] == 'r':
@@ -1058,6 +1078,14 @@ def staff(request):
                 data = Staff.objects.all().order_by('j_start_d')
             elif request.POST['order'] == 'n':
                 data = Staff.objects.all().order_by('-j_start_d')
+            elif request.POST['order'] == 'o':
+                data = Staff.objects.all().order_by('pos_id__dep_id__department_name')
+            elif request.POST['order'] == 'p':
+                data = Staff.objects.all().order_by('-pos_id__dep_id__department_name')
+            elif request.POST['order'] == 'q':
+                data = Staff.objects.all().order_by('pos_id__positions')
+            elif request.POST['order'] == 'r':
+                data = Staff.objects.all().order_by('-pos_id__positions')
         else:
             data = Staff.objects.all().order_by('-id')
     departments = Departments.objects.all().order_by('department_name')
@@ -1604,7 +1632,7 @@ def supplier(request):
                 data = Supplier.objects.all().order_by('supplier_add_d')
         else:
             data = Supplier.objects.all().order_by('-id')
-    return render(request, 'suppliers.html', {'del_all': del_all, 'data': data, 'supplier_num' : supplier_num, 'product_num' : product_num, 'orders_num' : orders_num})
+    return render(request, 'suppliers.html', {'del_all': del_all, 'data': data, 'supplier_num': supplier_num, 'product_num': product_num, 'orders_num': orders_num})
 
 
 def supplier_delete(request, supp_id):

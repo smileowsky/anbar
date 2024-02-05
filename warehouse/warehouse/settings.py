@@ -137,3 +137,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media', 'uploads')
 AUTH_USER_MODEL = 'main.myUser'
 
 DEFAULT_PROFILE_PICTURE = 'path_to_default_profile_picture.jpg'
+
+LOGO_PICTURE = 'path_to_logo_warehouse_as_a_service_logo.jpg'

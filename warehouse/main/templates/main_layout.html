@@ -38,10 +38,10 @@
         </div>
         <div>
           <a class="navbar-brand brand-logo" href="index.html">
-            <img src="{% static '/logo.svg' %}" alt="logo" />
+            <img src="/uploads/warehouse_as_a_service_logo.png" alt="logo">
           </a>
           <a class="navbar-brand brand-logo-mini" href="index.html">
-            <img src="{% static '/logo-mini.svg' %}" alt="logo" />
+            <img src="/uploads/warehouse_as_a_service_logo.png" alt="logo">
           </a>
         </div>
       </div>
@@ -68,7 +68,7 @@
             <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
               {% if request.user.is_authenticated %}
               <img class="img-xs rounded-circle"
-                src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png{% else %} {{ request.user.profile_photo }} {% endif %}"
+                src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png {% else %} {{ request.user.profile_photo }} {% endif %}"
                 alt="Profile image" style="width: 40px; height: 40px;"> </a>
             {% else %}
             <img class="img-xs rounded-circle" src="/uploads/default_profile_pic.png" alt="Profile image"
@@ -355,9 +355,10 @@
             <div class="collapse" id="auth">
               <ul class="nav flex-column sub-menu">
                 {% if request.user.is_authenticated %}
-                <li class="nav-item"> <a class="nav-link" href="{% url 'logout_user' %}"> Logout </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'user_profile' %}">User Profile</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'logout_user' %}">Logout</a></li>
                 {% else %}
-                <li class="nav-item"> <a class="nav-link" href="{% url 'login_user' %}"> Login </a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'login_user' %}">Login</a></li>
                 {% endif %}
               </ul>
             </div>

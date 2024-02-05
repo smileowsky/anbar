@@ -238,9 +238,23 @@
                 </th>
                 <th>
                   Departments
+                  {% if request.POST.order == 'o' %}
+                  <button class="btn btn-link btn-sm" name="order" value="p"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
                 </th>
                 <th>
                   Positions
+                  {% if request.POST.order == 'q' %}
+                  <button class="btn btn-link btn-sm" name="order" value="r"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="q"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
                 </th>
                 <th>
                   Email
