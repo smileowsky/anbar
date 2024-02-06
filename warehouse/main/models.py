@@ -132,10 +132,10 @@ class Assignments(models.Model):
 
         if remaining_time <= timedelta():
             completed = "Finished"
-            if self.task_done == 0:
-                self.task_done = 2
+            if self.deadline == 0:
+                self.deadline = 2
                 self.save()
-        elif self.task_done == 1:
+        elif self.deadline == 1:
             completed = "Completed"
         else:
             days = remaining_time.days

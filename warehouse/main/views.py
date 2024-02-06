@@ -651,15 +651,15 @@ def orders(request):
                     calculated_profit=ExpressionWrapper(
                         F('product__sell') - F('product__buy') * F('amount'),
                         output_field=FloatField()
-                        )
-                    ).order_by('calculated_profit')
+                    )
+                ).order_by('calculated_profit')
             elif request.POST['order'] == 'p':
                 data = Orders.objects.annotate(
                     calculated_profit=ExpressionWrapper(
                         F('product__sell') - F('product__buy') * F('amount'),
                         output_field=FloatField()
-                        )
-                    ).order_by('-calculated_profit')
+                    )
+                ).order_by('-calculated_profit')
             elif request.POST['order'] == 'q':
                 data = Orders.objects.all().order_by('add_date')
             elif request.POST['order'] == 'r':
@@ -1088,6 +1088,7 @@ def staff(request):
                 data = Staff.objects.all().order_by('-pos_id__positions')
         else:
             data = Staff.objects.all().order_by('-id')
+
     departments = Departments.objects.all().order_by('department_name')
     positions = Positions.objects.all().order_by('positions')
     return render(request, 'staff.html', {'del_all': del_all, 'data': data, 'sraff_num': sraff_num, 'departments': departments, 'positions': positions})
@@ -1185,7 +1186,7 @@ def documents(request, staf_id):
         doc_num = request.POST['doc_num']
         about = request.POST['about']
 
-        if title and doc_num and about and 'doc_photo' in request.FILES:
+        if title and doc_num and 'doc_photo' in request.FILES:
 
             name = Staff.objects.get(id=staf_id)
 
@@ -1216,7 +1217,25 @@ def documents(request, staf_id):
         data = Documents.objects.filter(Q(documents__contains=request.POST['question'])).filter(
             staff_id=staf_id).order_by('-id')
     else:
-        data = Documents.objects.all().filter(staff_id=staf_id).order_by('-id')
+        if 'order' in request.POST:
+            if request.POST['order'] == 'a':
+                data = Documents.objects.order_by('staff_id__name')
+            elif request.POST['order'] == 'b':
+                data = Documents.objects.order_by('-staff_id__name')
+            elif request.POST['order'] == 'c':
+                data = Documents.objects.order_by('title')
+            elif request.POST['order'] == 'd':
+                data = Documents.objects.order_by('-title')
+            elif request.POST['order'] == 'e':
+                data = Documents.objects.order_by('doc_num')
+            elif request.POST['order'] == 'f':
+                data = Documents.objects.order_by('-doc_num')
+            elif request.POST['order'] == 'g':
+                data = Documents.objects.order_by('about')
+            elif request.POST['order'] == 'e':
+                data = Documents.objects.order_by('-about')
+        else:
+            data = Documents.objects.all().filter(staff_id=staf_id).order_by('-id')
 
     staff = Staff.objects.get(id=staf_id)
     return render(request, 'documents.html', {'del_all': del_all, 'data': data, 'staff': staff})
