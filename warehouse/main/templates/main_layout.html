@@ -59,9 +59,10 @@
         </ul>
         <ul class="navbar-nav ms-auto">
           <li class="nav-item">
-            <form class="search-form" action="#">
+            <form method="post" class="search-form" action="#table">
+              {% csrf_token %}
               <i class="icon-search"></i>
-              <input type="search" class="form-control" placeholder="Search Here" title="Search here">
+              <input type="search" name="question" class="form-control" placeholder="Search Here" title="Search here">
             </form>
           </li>
           <li class="nav-item dropdown d-none d-lg-block user-dropdown">
