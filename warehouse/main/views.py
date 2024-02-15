@@ -101,7 +101,7 @@ def brand(request):
         else:
             messages.info(request, "Brand name is required.",
                           extra_tags='warning')
-    if 'search' in request.POST:
+    if 'question' in request.POST:
         data = Brand.objects.filter(
             Q(brand_name__contains=request.POST['question'])).order_by('-id')
     else:
