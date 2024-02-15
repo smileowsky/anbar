@@ -43,6 +43,32 @@ def main(request):
 def basic(request):
     return render(request, 'basic.html')
 
+def loader(request):
+    storage = messages.get_messages(request)
+    storage.used = True
+    
+    message1 = ''
+    message2 = ''
+    data = ''
+    f1 = ''
+    f2 = ''
+
+    brand = Brand.objects.get(id=id)
+    data = Brand.objects.all().order_by('-id')
+    return render(request, 'brand.html', {'brand': brand, 'data': data, })
+
+
+    brand = Brand.objects.get(id=id)
+    number = Products.objects.filter(brand_id=id).count()
+
+    if number > 0:
+        messages.info(
+            request, f"Brand '{brand.brand_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
+    else:
+        brand.delete()
+        messages.info(
+            request, "The brand has been successfully deleted.", extra_tags='success')
+    return redirect('brand')
 
 def brand(request):
     data = ''
@@ -120,7 +146,7 @@ def brand(request):
     return render(request, 'brand.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
 
 
-def delete(request, id):
+"""def delete(request, id):
     brand = Brand.objects.get(id=id)
     data = Brand.objects.all().order_by('-id')
     return render(request, 'brand.html', {'brand': brand, 'data': data, })
@@ -137,7 +163,7 @@ def delete_config(request, id):
         brand.delete()
         messages.info(
             request, "The brand has been successfully deleted.", extra_tags='success')
-    return redirect('brand')
+    return redirect('brand')"""
 
 
 def edit(request, id):
