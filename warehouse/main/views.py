@@ -46,34 +46,6 @@ def basic(request):
 
 def loader(request):
     data = ''
-    del_all = []
-
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
-        if not del_all:
-            messages.info(request, "Please select to delete.",
-                          extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
-        if choosen:
-            delete_successful = True
-            for selected in choosen:
-                picked = Brand.objects.filter(id=selected)
-                active_products = Products.objects.filter(brand=selected)
-                if picked.exists() and active_products.exists():
-                    delete_successful = True
-                    m = "Some brands could not be deleted due to active orders."
-                elif picked.exists():
-                    delete_successful = False
-                    picked.delete()
-                    m = ""
-
-        if delete_successful:
-            messages.info(
-                request, m, extra_tags='error')
-        else:
-            messages.info(
-                request, "Brand(s) data has been deleted successfully.", extra_tags='success')
 
     if 'save1' in request.POST:
         brand_name = request.POST['brand_name']
@@ -130,20 +102,10 @@ def loader(request):
             brand.delete()
             messages.info(
                 request, "The brand has been successfully deleted.", extra_tags='success')
+    
+    brand = Brand.objects.all().order_by('-id')
 
-    elif 'delete_all' in request.POST:
-        brand = Brand.objects.get(id=id)
-        number = Products.objects.filter(brand_id=id).count()
-
-        if number > 0:
-            messages.info(
-                request, f"Brand '{brand.brand_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
-        else:
-            brand.delete()
-            messages.info(
-                request, "The brand has been successfully deleted.", extra_tags='success')
-
-    return render(request, 'loader.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
+    return render(request, 'loader.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'data': data, 'brand': brand, 'data': data,  })
 
 
 def brand(request):
