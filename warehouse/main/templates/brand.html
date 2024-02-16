@@ -71,15 +71,20 @@
   </div>
 </div>
 
-{% endif %}
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Brands: </b> {{brand_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Orders: </b> {{orders_num}} |
+  </center>
+</div>
 
 <div id="data"></div>
-
 <script>
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
 
-    if (confirm('Do you want to delete brand?')) {
+    if (confirm("Delete??")) {
       $.ajax({
         method: 'POST',
         url: '{% url "loader" %}',
@@ -93,7 +98,6 @@
 
   $(document).ready(function () {
     $.ajax({
-
       type: 'GET',
       url: '{% url "loader" %}',
       dataType: 'html',
@@ -101,14 +105,8 @@
         $('#data').html(response)
       }
     })
-  });
+  })
 </script>
+{% endif %}
 
-<div class="alert alert-primary" role="alert">
-  <center>
-    <b>Brands: </b> {{brand_num}} |
-    <b>Products: </b> {{product_num}} |
-    <b>Orders: </b> {{orders_num}} |
-  </center>
-</div>
 {% endblock %}
