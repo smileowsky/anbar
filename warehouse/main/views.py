@@ -47,53 +47,10 @@ def basic(request):
 def loader(request):
     data = ''
 
-    if 'save1' in request.POST:
-        brand_name = request.POST['brand_name']
-
-        if brand_name:
-            if Brand.objects.filter(brand_name=request.POST['brand_name']).exists():
-                messages.info(request, "Brand already exists.",
-                              extra_tags='warning')
-            elif 'brand_photo' in request.FILES:
-
-                upload = request.FILES['brand_photo']
-                fs = FileSystemStorage()
-                file = fs.save(upload.name, upload)
-                file_url = fs.url(file)
-
-                save_data = Brand(
-                    brand_name=request.POST['brand_name'],
-                    brand_pic=file_url
-                )
-                save_data.save()
-                messages.info(request, "Brand saved.", extra_tags='success')
-            else:
-                messages.info(request, "Photo is required.",
-                              extra_tags='error')
-        else:
-            messages.info(request, "Brand name is required.",
-                          extra_tags='warning')
-    if 'question' in request.POST:
-        data = Brand.objects.filter(
-            Q(brand_name__contains=request.POST['question'])).order_by('-id')
-    else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
-                data = Brand.objects.all().order_by('brand_name')
-            elif request.POST['order'] == 'z':
-                data = Brand.objects.all().order_by('-brand_name')
-            elif request.POST['order'] == 'd':
-                data = Brand.objects.all().order_by('add_date')
-            elif request.POST['order'] == 'e':
-                data = Brand.objects.all().order_by('-add_date')
-        else:
-            data = Brand.objects.all().order_by('-id')
-
-    if 'delete' in request.POST:
-        brand = Brand.objects.get(id=id)
+    if 'del_brand' in request.POST:
+        brand = Brand.objects.get(id=request.POST['del_brand'])
         data = Brand.objects.all().order_by('-id')
-        brand = Brand.objects.get(id=id)
-        number = Products.objects.filter(brand_id=id).count()
+        number = Products.objects.filter(id=request.POST['del_brand']).count()
 
         if number > 0:
             messages.info(
@@ -102,10 +59,140 @@ def loader(request):
             brand.delete()
             messages.info(
                 request, "The brand has been successfully deleted.", extra_tags='success')
-    
-    brand = Brand.objects.all().order_by('-id')
 
-    return render(request, 'loader.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'data': data, 'brand': brand, 'data': data,  })
+    if 'del_client' in request.POST:
+        client = Clients.objects.get(id=request.POST['del_client'])
+        data = Clients.objects.all().order_by('-id')
+        active_orders = Orders.objects.filter(
+            client_id=request.POST['del_client']).count()
+
+        if active_orders > 0:
+            messages.info(
+                request, f"Client '{client.name} {client.surname}' cannot be deleted. There are {active_orders} active products in it.", extra_tags='error')
+        else:
+            client.delete()
+            messages.info(
+                request, "Customer's data has been deleted successfully.", extra_tags='success')
+
+    if 'del_expense' in request.POST:
+        Expenses.objects.get(id=request.POST['del_expense']).delete()
+        data = Expenses.objects.all().order_by('-id')
+        messages.info(
+            request, "Expens data has been deleted successfully.", extra_tags='success')
+
+    if 'del_product' in request.POST:
+        products = Products.objects.get(id=request.POST['del_product'])
+        data = Products.objects.all().order_by('-id')
+        active_order = Orders.objects.filter(
+            product_id=request.POST['del_product']).count()
+
+        if active_order > 0:
+            messages.info(
+                request, f"Product '{products.product}' cannot be deleted. There are {active_order} active products in it.", extra_tags='error')
+        else:
+            products.delete()
+            messages.info(
+                request, "Products data has been deleted successfully.", extra_tags='success')
+
+    if 'del_order' in request.POST:
+        Orders.objects.get(id=request.POST['del_order']).delete()
+        data = Orders.objects.all().order_by('-id')
+        messages.info(
+            request, "Order data has been deleted successfully.", extra_tags='success')
+
+    if 'del_departments' in request.POST:
+        departments = Departments.objects.get(
+            id=request.POST['del_departments'])
+        data = Departments.objects.all().order_by('-id')
+        position = Positions.objects.filter(
+            dep_id_id=request.POST['del_departments']).count()
+
+        if position > 0:
+            messages.info(
+                request, f"Department '{departments.department_name}' cannot be deleted. There are {position} active position in it.", extra_tags='error')
+        else:
+            departments.delete()
+            messages.info(
+                request, "Department  has been deleted successfully.", extra_tags='success')
+
+    if 'del_positions' in request.POST:
+        positions = Positions.objects.get(id=request.POST['del_positions'])
+        data = Positions.objects.all().order_by('-id')
+        staffs = Staff.objects.filter(
+            pos_id=request.POST['del_positions']).count()
+        if staffs > 0:
+            messages.info(
+                request, f"Position '{positions.positions}' cannot be deleted. There are {staffs} active staff in it.", extra_tags='error')
+        else:
+            positions.delete()
+            messages.info(
+                request, "Positions has been deleted successfully.", extra_tags='success')
+
+    if 'del_staff' in request.POST:
+        staff = Staff.objects.get(id=request.POST['del_staff'])
+        data = Staff.objects.all().order_by('-id')
+        documents = Documents.objects.filter(
+            staff_id_id=request.POST['del_staff']).count()
+        if documents > 0:
+            messages.info(
+                request, f"Staff '{staff.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
+        else:
+            messages.info(
+                request, "Employee has been deleted successfully.", extra_tags='success')
+
+    if 'del_documents' in request.POST:
+        doc = Documents.objects.get(id=request.POST['del_documents']).delete()
+        staff = Staff.objects.get(id=doc.staff_id.id)
+        data = Documents.objects.filter(staff_id=staff.id).order_by('-id')
+        doc = Documents.objects.get(id=request.POST['del_documents'])
+        staff = Staff.objects.get(id=doc.staff_id.id)
+        messages.info(
+            request, "Document has been deleted successfully.", extra_tags='success')
+
+    if 'del_assignment' in request.POST:
+        Assignments.objects.get(id=request.POST['del_assignment']).delete()
+        data = Assignments.objects.all().order_by('-id')
+        messages.info(
+            request, "Assignment has been deleted successfully.", extra_tags='success')
+
+    if 'del_supplier' in request.POST:
+        supplier = Supplier.objects.get(id=request.POST['del_supplier'])
+        data = Supplier.objects.all().order_by('-id')
+        number = Products.objects.filter(
+            supplier_id_id=request.POST['del_supplier']).count()
+
+        if number > 0:
+            messages.info(
+                request, f"Supplier '{supplier.supplier_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
+        else:
+            supplier.delete()
+            messages.info(
+                request, "Supplier has been deleted successfully.", extra_tags='success')
+
+    if request.POST.get('section') == 'brands':
+        data = Clients.objects.all().order_by('-id')
+    if request.POST.get('section') == 'clients':
+        data = Clients.objects.all().order_by('-id')
+    if request.POST.get('section') == 'expenses':
+        data = Expenses.objects.all().order_by('-id')
+    if request.POST.get('section') == 'products':
+        data = Products.objects.all().order_by('-id')
+    if request.POST.get('section') == 'orders':
+        data = Orders.objects.all().order_by('-id')
+    if request.POST.get('section') == 'suppliers':
+        data = Supplier.objects.all().order_by('-id')
+    if request.POST.get('section') == 'departments':
+        data = Departments.objects.all().order_by('-id')
+    if request.POST.get('section') == 'positions':
+        data = Positions.objects.all().order_by('-id')
+    if request.POST.get('section') == 'staff':
+        data = Staff.objects.all().order_by('-id')
+    if request.POST.get('section') == 'documents':
+        data = Documents.objects.all().order_by('-id')
+    if request.POST.get('section') == 'assignments':
+        data = Assignments.objects.all().order_by('-id')
+
+    return render(request, 'loader.html', {'data': data, })
 
 
 def brand(request):

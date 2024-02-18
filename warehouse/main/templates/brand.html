@@ -83,12 +83,13 @@
 <script>
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
+    let section = 'brands'
 
-    if (confirm("Delete??")) {
+    if (confirm("Do you want to delete?")) {
       $.ajax({
         method: 'POST',
         url: '{% url "loader" %}',
-        data: { del_id: id, csrfmiddlewaretoken: '{{csrf_token}}' },
+        data: { del_brand: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -107,6 +108,7 @@
     })
   })
 </script>
+
 {% endif %}
 
 {% endblock %}
