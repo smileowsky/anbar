@@ -117,7 +117,7 @@
 <!--Brand AJAX End-->
 
 <!--Client AJAX-->
-{% if request.POST.section == 'clients' or request.GET.section == 'clients' %}
+{% elif request.POST.section == 'clients' or request.GET.section == 'clients' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -276,7 +276,7 @@
 <!--Client AJAX End-->
 
 <!--Expens AJAX-->
-{% request.POST.section == 'expenses' or request.GET.section == 'expenses' %}
+{% elif request.POST.section == 'expenses' or request.GET.section == 'expenses' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -402,7 +402,7 @@
 
 <!--Product AJAX-->
 
-{% request.POST.section == 'products' or request.POST.section == 'products' %}
+{% elif request.POST.section == 'products' or request.POST.section == 'products' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -587,7 +587,7 @@
 
 
 <!--Orders AJAX-->
-{% request.POST.section == 'products' or request.POST.section == 'products' %}
+{% elif request.POST.section == 'products' or request.POST.section == 'products' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -792,7 +792,7 @@
 <!--Orders AJAX End-->
 
 <!--Departments AJAX-->
-{% request.POST.section == 'products' or request.POST.section == 'products' %}
+{% elif request.POST.section == 'products' or request.POST.section == 'products' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">

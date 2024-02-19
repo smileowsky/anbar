@@ -79,35 +79,56 @@
   </center>
 </div>
 
+<!-- This div will be used to display the data returned from the AJAX requests -->
 <div id="data"></div>
+
+<!-- JavaScript code -->
 <script>
+  // When a delete button with the class 'delete' is clicked
   $(document).on('click', '.delete', function () {
-    let id = $(this).attr('id')
-    let section = 'brands'
+    // Get the id attribute of the clicked delete button
+    let id = $(this).attr('id');
+    // Set the default section to 'brands'
+    let section = 'brands';
 
+    // If the user confirms the delete action
     if (confirm("Do you want to delete?")) {
+      // Send an AJAX request
       $.ajax({
+        // Specify the HTTP method as POST
         method: 'POST',
+        // URL to which the request is sent (using Django's url template tag)
         url: '{% url "loader" %}',
+        // Data to be sent in the request (including the id, section, and CSRF token)
         data: { del_brand: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        // Function to be executed if the request succeeds
         success: function (response) {
-          $('#data').html(response)
+          // Replace the content of the 'data' div with the response from the server
+          $('#data').html(response);
         }
-      })
+      });
     }
-  })
+  });
 
+  // When the document is ready
   $(document).ready(function () {
+    // Send an AJAX request to fetch initial data
     $.ajax({
+      // Specify the HTTP method as GET
       type: 'GET',
+      // URL to which the request is sent (using Django's url template tag)
       url: '{% url "loader" %}',
+      // Expected data type of the response
       dataType: 'html',
+      // Function to be executed if the request succeeds
       success: function (response) {
-        $('#data').html(response)
+        // Replace the content of the 'data' div with the response from the server
+        $('#data').html(response);
       }
-    })
-  })
+    });
+  });
 </script>
+
 
 {% endif %}
 
