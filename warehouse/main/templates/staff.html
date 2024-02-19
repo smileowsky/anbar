@@ -2,29 +2,6 @@
 
 {% block 'content' %}
 
-{% if messages %}
-<div class="alert alert-dismissible fade show" role="alert">
-  {% for message in messages %}
-  {% if 'success' in message.tags %}
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{message}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% elif 'error' in message.tags %}
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {{message}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% elif 'warning' in message.tags %}
-  <div class="alert alert-warning alert-dismissible fade show" role="alert">
-    {{message}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% endif %}
-  {% endfor %}
-</div>
-{% endif %}
-
 {% if edit %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
@@ -165,177 +142,36 @@
   </div>
 </div>
 
-{%if staff%}
-<div class="alert alert-danger" role="alert">
-  Do you want to delete? <b>{{staff.name}} {{staff.surname}} - {{staff.pos_id.dep_id.department_name}} -
-    {{staff.pos_id.positions}} [{{staff.sallary}}]</b><br>
-  <a class="btn btn-success text-white" href="{% url 'staff_del_conf' staff.id %}">Yes</a>
-  <a class="btn btn-danger text-white" href="{% url 'staff' %}">No</a><br>
-</div>
-{%endif%}
+<div id="data"></div>
+<script>
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = 'staffs'
 
-{% if del_all %}
-<div class="alert alert-danger" role="alert">
-  Do you want delete all selected items?<br>
-  <form method="post">
-    {% csrf_token %}
-    {% for id in del_all %}
-    <input type="hidden" name="x[]" value="{{id}}">
-    {% endfor %}
-    <button class="btn btn-success text-white" name="confirm_delete_all">Yes</button>
-    <button class="btn btn-danger text-white">No</button>
-  </form>
-</div>
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'POST',
+        url: '{% url "loader" %}',
+        data: { del_staff: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
+  $(document).ready(function () {
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader" %}',
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+</script>
+
 {% endif %}
 
-{% endif %}
-
-<div class="row">
-  <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Staff Table</h4>
-
-        <div class="table-responsive">
-          <form method="post" action="#table">
-            {% csrf_token %}
-            <table class="table table-striped" id="table">
-
-              <thead>
-                <th>#</th>
-                <th>
-                  Photo
-                </th>
-                <th>
-                  Name
-                  {% if request.POST.order == 'a' %}
-                  <button class="btn btn-link btn-sm" name="order" value="b"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="a"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Surname
-                  {% if request.POST.order == 'c' %}
-                  <button class="btn btn-link btn-sm" name="order" value="d"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="c"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Birthdate
-                  {% if request.POST.order == 'e' %}
-                  <button class="btn btn-link btn-sm" name="order" value="f"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="e"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Departments
-                  {% if request.POST.order == 'o' %}
-                  <button class="btn btn-link btn-sm" name="order" value="p"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="o"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Positions
-                  {% if request.POST.order == 'q' %}
-                  <button class="btn btn-link btn-sm" name="order" value="r"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="q"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Email
-                  {% if request.POST.order == 'g' %}
-                  <button class="btn btn-link btn-sm" name="order" value="h"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="g"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Phone
-                  {% if request.POST.order == 'j' %}
-                  <button class="btn btn-link btn-sm" name="order" value="i"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="j"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Sallary
-                  {% if request.POST.order == 'k' %}
-                  <button class="btn btn-link btn-sm" name="order" value="l"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="k"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Start Date
-                  {% if request.POST.order == 'm' %}
-                  <button class="btn btn-link btn-sm" name="order" value="n"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="m"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% endif %}
-                </th>
-                <th><button class="btn btn-danger btn-sm text-white" name="delete_all">Delete selected</button> </th>
-              </thead>
-
-              <tbody>
-                {%for info in data %}
-                <tr>
-                  <td>
-                    <div class="form-check form-check-info">
-                      <label class="form-check-label">
-                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
-                          name="x[]" value="{{info.id}}">{{forloop.counter}}
-                      </label>
-                    </div>
-                  </td>
-                  <td><img style="width: 50px; height: 60px;" src="{{info.photo}}"></td>
-                  <td>{{info.name}}</td>
-                  <td>{{info.surname}}</td>
-                  <td>{{info.birth_date | date:'d.m.Y'}}</td>
-                  <td>{{info.pos_id.dep_id.department_name}}</td>
-                  <td>{{info.pos_id.positions}}</td>
-                  <td>{{info.email}}</td>
-                  <td>{{info.phone}}</td>
-                  <td>{{info.sallary}}</td>
-                  <td>{{info.j_start_d | date:'d.m.Y'}}</td>
-                  <td>
-                    <a class="btn btn-danger btn-sm" href="{%url 'staff_delete' info.id%}" title="Delete"><i
-                        class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-sm" href="{%url 'staff_edit' info.id%}" title="Edit"><i
-                        class="mdi mdi-grease-pencil"></i></a>
-                    <a class="btn btn-primary btn-sm" href="{%url 'documents' info.id%}" title="documents"><i
-                        class="mdi mdi-account-card-details"></i></a>
-                  </td>
-                </tr>
-                {%endfor%}
-              </tbody>
-            </table>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 {% endblock %}
