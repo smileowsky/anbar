@@ -52,32 +52,35 @@
 
 <div id="data"></div>
 <script>
-    $(document).on('click', '.delete', function () {
-        let id = $(this).attr('id')
-        let section = 'brands'
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = 'departments'
 
-        if (confirm("Do you want to delete?")) {
-            $.ajax({
-                method: 'POST',
-                url: '{% url "loader" %}',
-                data: { del_departments: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
-                success: function (response) {
-                    $('#data').html(response)
-                }
-            })
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'GET',
+        url: '{% url "loader" %}',
+        data: { del_positions: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
         }
-    })
+      })
+    }
+  })
 
-    $(document).ready(function () {
-        $.ajax({
-            type: 'GET',
-            url: '{% url "loader" %}',
-            dataType: 'html',
-            success: function (response) {
-                $('#data').html(response)
-            }
-        })
+  $(document).ready(function () {
+    let section = 'departments'
+    
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader" %}',
+      data: { section : section },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
     })
+  })
 </script>
 
 {% endif %}

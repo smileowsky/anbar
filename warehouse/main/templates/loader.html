@@ -1,5 +1,5 @@
 <!--Brand AJAX-->
-{% if request.POST.section == 'brands' or request.GET.section == 'brands' %}
+{% if request.GET.section == 'brands' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -114,10 +114,10 @@
     </div>
   </div>
 </div>
-<!--Brand AJAX End-->
+<!--Brand AJAX end-->
 
 <!--Client AJAX-->
-{% elif request.POST.section == 'clients' or request.GET.section == 'clients' %}
+{% elif request.GET.section == 'clients' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -273,10 +273,10 @@
     </div>
   </div>
 </div>
-<!--Client AJAX End-->
+<!--Client AJAX end-->
 
 <!--Expens AJAX-->
-{% elif request.POST.section == 'expenses' or request.GET.section == 'expenses' %}
+{% elif request.GET.section == 'expenses' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -402,7 +402,7 @@
 
 <!--Product AJAX-->
 
-{% elif request.POST.section == 'products' or request.POST.section == 'products' %}
+{% elif request.GET.section == 'products' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -587,7 +587,7 @@
 
 
 <!--Orders AJAX-->
-{% elif request.POST.section == 'products' or request.POST.section == 'products' %}
+{% elif request.GET.section == 'orders' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -789,10 +789,10 @@
     </div>
   </div>
 </div>
-<!--Orders AJAX End-->
+<!--Orders AJAX end-->
 
 <!--Departments AJAX-->
-{% elif request.POST.section == 'products' or request.POST.section == 'products' %}
+{% elif request.GET.section == 'departments' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -911,7 +911,7 @@
 
 <!--Positions AJAX-->
 
-{% elif request.POST.section == 'positions' or request.GET.section == 'positions'}
+{% elif request.GET.section == 'positions' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1039,7 +1039,7 @@
 <!--Positions AJAX end-->
 
 <!--Staff AJAX-->
-{% elif request.POST.section == 'staffs' or request.GET.section == 'staffs'}
+{% elif request.GET.section == 'staffs' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1240,7 +1240,7 @@
 <!--Staff AJAX end-->
 
 <!--Documents AJAX-->
-{% elif request.POST.section == 'documents' or request.GET.section == 'documents'}
+{% elif request.GET.section == 'documents' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1381,7 +1381,7 @@
 <!--Documents AJAX end-->
 
 <!--Assignments AJAX-->
-{% elif request.POST.section == 'assignments' or request.GET.section == 'assignments'}
+{% elif request.GET.section == 'assignments' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1477,7 +1477,7 @@
                   <td>{{info.time_remaining}}</td>
                   <td>
                     {% if info.approve == 0 %}
-                    <a class="btn btn-danger btn-md delete" id="{{info.delete}}" href="#table" title="Delete"><i
+                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
                     <a class="btn btn-warning btn-sm" href="{% url 'assignment_edit' info.id %}" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
@@ -1506,7 +1506,7 @@
 <!--Assignments AJAX end-->
 
 <!--Supplier AJAX-->
-{% elif request.POST.section == 'suppliers' or request.GET.section == 'suppliers'}
+{% elif request.GET.section == 'suppliers' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">

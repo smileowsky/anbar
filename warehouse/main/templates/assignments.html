@@ -86,34 +86,36 @@
 
 <div id="data"></div>
 <script>
-  $(document).on('click', '.delete', function () {
-    let id = $(this).attr('id')
-    let section = 'assignments'
+    $(document).on('click', '.delete', function () {
+        let id = $(this).attr('id')
+        let section = 'assignments'
 
-    if (confirm("Do you want to delete?")) {
-      $.ajax({
-        method: 'POST',
-        url: '{% url "loader" %}',
-        data: { del_assignment: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
-        success: function (response) {
-          $('#data').html(response)
+        if (confirm("Do you want to delete?")) {
+            $.ajax({
+                method: 'GET',
+                url: '{% url "loader" %}',
+                data: { del_assignment: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+                success: function (response) {
+                    $('#data').html(response)
+                }
+            })
         }
-      })
-    }
-  })
-
-  $(document).ready(function () {
-    $.ajax({
-      type: 'GET',
-      url: '{% url "loader" %}',
-      dataType: 'html',
-      success: function (response) {
-        $('#data').html(response)
-      }
     })
-  })
-</script>
 
+    $(document).ready(function () {
+        let section = 'assignments'
+
+        $.ajax({
+            type: 'GET',
+            url: '{% url "loader" %}',
+            data: { section: section },
+            dataType: 'html',
+            success: function (response) {
+                $('#data').html(response)
+            }
+        })
+    })
+</script>
 {% endif %}
 
 {% endblock %}

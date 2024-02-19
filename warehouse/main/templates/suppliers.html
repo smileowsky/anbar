@@ -135,7 +135,7 @@
 
     if (confirm("Do you want to delete?")) {
       $.ajax({
-        method: 'POST',
+        method: 'GET',
         url: '{% url "loader" %}',
         data: { del_supplier: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
@@ -146,9 +146,12 @@
   })
 
   $(document).ready(function () {
+    let section = 'suppliers'
+
     $.ajax({
       type: 'GET',
       url: '{% url "loader" %}',
+      data: {section : section},
       dataType: 'html',
       success: function (response) {
         $('#data').html(response)

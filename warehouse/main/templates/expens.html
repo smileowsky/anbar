@@ -69,7 +69,7 @@
 
     if (confirm("DO you want to delete?")) {
       $.ajax({
-        method: 'POST',
+        method: 'GET',
         url: '{% url "loader" %}',
         data: { del_expense: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
@@ -80,9 +80,12 @@
   })
 
   $(document).ready(function () {
+    let section = 'expenses'
+
     $.ajax({
       type: 'GET',
       url: '{% url "loader" %}',
+      data: { section : section },
       dataType: 'html',
       success: function (response) {
         $('#data').html(response)
@@ -90,5 +93,7 @@
     })
   })
 </script>
+
 {% endif %}
+
 {% endblock %}

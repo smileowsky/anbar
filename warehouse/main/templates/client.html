@@ -91,11 +91,11 @@
     let id = $(this).attr('id')
     let section = 'clients'
 
-    if (confirm("Do you want to delete>")) {
+    if (confirm("Do you want to delete?")) {
       $.ajax({
-        method: 'POST',
+        method: 'GET',
         url: '{% url "loader" %}',
-        data: { del_client: id, section:section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        data: { del_client: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -104,14 +104,20 @@
   })
 
   $(document).ready(function () {
+    let section = 'clients'
+    
     $.ajax({
       type: 'GET',
       url: '{% url "loader" %}',
-      dataType: function (response) {
-        $('#data').html(respnse)
+      data: { section : section },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
       }
     })
   })
 </script>
+
 {% endif %}
+
 {% endblock %}

@@ -47,10 +47,10 @@ def basic(request):
 def loader(request):
     data = ''
 
-    if 'del_brand' in request.POST:
-        brand = Brand.objects.get(id=request.POST['del_brand'])
+    if 'del_brand' in request.GET:
+        brand = Brand.objects.get(id=request.GET['del_brand'])
         data = Brand.objects.all().order_by('-id')
-        number = Products.objects.filter(id=request.POST['del_brand']).count()
+        number = Products.objects.filter(id=request.GET['del_brand']).count()
 
         if number > 0:
             messages.info(
@@ -60,11 +60,11 @@ def loader(request):
             messages.info(
                 request, "The brand has been successfully deleted.", extra_tags='success')
 
-    if 'del_client' in request.POST:
-        client = Clients.objects.get(id=request.POST['del_client'])
+    if 'del_client' in request.GET:
+        client = Clients.objects.get(id=request.GET['del_client'])
         data = Clients.objects.all().order_by('-id')
         active_orders = Orders.objects.filter(
-            client_id=request.POST['del_client']).count()
+            client_id=request.GET['del_client']).count()
 
         if active_orders > 0:
             messages.info(
@@ -74,17 +74,17 @@ def loader(request):
             messages.info(
                 request, "Customer's data has been deleted successfully.", extra_tags='success')
 
-    if 'del_expense' in request.POST:
-        Expenses.objects.get(id=request.POST['del_expense']).delete()
+    if 'del_expense' in request.GET:
+        Expenses.objects.get(id=request.GET['del_expense']).delete()
         data = Expenses.objects.all().order_by('-id')
         messages.info(
             request, "Expens data has been deleted successfully.", extra_tags='success')
 
-    if 'del_product' in request.POST:
-        products = Products.objects.get(id=request.POST['del_product'])
+    if 'del_product' in request.GET:
+        products = Products.objects.get(id=request.GET['del_product'])
         data = Products.objects.all().order_by('-id')
         active_order = Orders.objects.filter(
-            product_id=request.POST['del_product']).count()
+            product_id=request.GET['del_product']).count()
 
         if active_order > 0:
             messages.info(
@@ -94,18 +94,18 @@ def loader(request):
             messages.info(
                 request, "Products data has been deleted successfully.", extra_tags='success')
 
-    if 'del_order' in request.POST:
-        Orders.objects.get(id=request.POST['del_order']).delete()
+    if 'del_order' in request.GET:
+        Orders.objects.get(id=request.GET['del_order']).delete()
         data = Orders.objects.all().order_by('-id')
         messages.info(
             request, "Order data has been deleted successfully.", extra_tags='success')
 
-    if 'del_departments' in request.POST:
+    if 'del_departments' in request.GET:
         departments = Departments.objects.get(
-            id=request.POST['del_departments'])
+            id=request.GET['del_departments'])
         data = Departments.objects.all().order_by('-id')
         position = Positions.objects.filter(
-            dep_id_id=request.POST['del_departments']).count()
+            dep_id_id=request.GET['del_departments']).count()
 
         if position > 0:
             messages.info(
@@ -115,11 +115,11 @@ def loader(request):
             messages.info(
                 request, "Department  has been deleted successfully.", extra_tags='success')
 
-    if 'del_positions' in request.POST:
-        positions = Positions.objects.get(id=request.POST['del_positions'])
+    if 'del_positions' in request.GET:
+        positions = Positions.objects.get(id=request.GET['del_positions'])
         data = Positions.objects.all().order_by('-id')
         staffs = Staff.objects.filter(
-            pos_id=request.POST['del_positions']).count()
+            pos_id=request.GET['del_positions']).count()
         if staffs > 0:
             messages.info(
                 request, f"Position '{positions.positions}' cannot be deleted. There are {staffs} active staff in it.", extra_tags='error')
@@ -128,38 +128,36 @@ def loader(request):
             messages.info(
                 request, "Positions has been deleted successfully.", extra_tags='success')
 
-    if 'del_staff' in request.POST:
-        staff = Staff.objects.get(id=request.POST['del_staff'])
-        data = Staff.objects.all().order_by('-id')
-        documents = Documents.objects.filter(
-            staff_id_id=request.POST['del_staff']).count()
+    if 'del_staff' in request.GET:
+        staff = Staff.objects.get(id=request.GET['del_staff'])
+        documents = Documents.objects.filter(staff_id_id=request.GET['del_staff']).count()
         if documents > 0:
             messages.info(
                 request, f"Staff '{staff.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
         else:
+            Staff.objects.get(id=request.GET['del_staff']).delete()
             messages.info(
                 request, "Employee has been deleted successfully.", extra_tags='success')
 
-    if 'del_documents' in request.POST:
-        doc = Documents.objects.get(id=request.POST['del_documents']).delete()
-        staff = Staff.objects.get(id=doc.staff_id.id)
-        data = Documents.objects.filter(staff_id=staff.id).order_by('-id')
-        doc = Documents.objects.get(id=request.POST['del_documents'])
-        staff = Staff.objects.get(id=doc.staff_id.id)
+    if 'del_documents' in request.GET:
+        doc = Documents.objects.get(id=request.GET['del_documents'])
+        staff = Staff.objects.get(id=doc.request.GET['del_staff'])
+        data = Documents.objects.filter(staff_id=doc.request.GET['del_staff']).order_by('-id')
+        doc.delete()
         messages.info(
             request, "Document has been deleted successfully.", extra_tags='success')
 
-    if 'del_assignment' in request.POST:
-        Assignments.objects.get(id=request.POST['del_assignment']).delete()
+    if 'del_assignment' in request.GET:
+        Assignments.objects.get(id=request.GET['del_assignment']).delete()
         data = Assignments.objects.all().order_by('-id')
         messages.info(
             request, "Assignment has been deleted successfully.", extra_tags='success')
 
-    if 'del_supplier' in request.POST:
-        supplier = Supplier.objects.get(id=request.POST['del_supplier'])
+    if 'del_supplier' in request.GET:
+        supplier = Supplier.objects.get(id=request.GET['del_supplier'])
         data = Supplier.objects.all().order_by('-id')
         number = Products.objects.filter(
-            supplier_id_id=request.POST['del_supplier']).count()
+            supplier_id_id=request.GET['del_supplier']).count()
 
         if number > 0:
             messages.info(
@@ -169,27 +167,27 @@ def loader(request):
             messages.info(
                 request, "Supplier has been deleted successfully.", extra_tags='success')
 
-    if request.POST.get('section') == 'brands':
+    if request.GET['section'] == 'brands':
+        data = Brand.objects.all().order_by('-id')
+    elif request.GET['section'] == 'clients':
         data = Clients.objects.all().order_by('-id')
-    if request.POST.get('section') == 'clients':
-        data = Clients.objects.all().order_by('-id')
-    if request.POST.get('section') == 'expenses':
+    elif request.GET['section'] == 'expenses':
         data = Expenses.objects.all().order_by('-id')
-    if request.POST.get('section') == 'products':
+    elif request.GET['section'] == 'products':
         data = Products.objects.all().order_by('-id')
-    if request.POST.get('section') == 'orders':
+    elif request.GET['section'] == 'orders':
         data = Orders.objects.all().order_by('-id')
-    if request.POST.get('section') == 'suppliers':
+    elif request.GET['section'] == 'suppliers':
         data = Supplier.objects.all().order_by('-id')
-    if request.POST.get('section') == 'departments':
+    elif request.GET['section'] == 'departments':
         data = Departments.objects.all().order_by('-id')
-    if request.POST.get('section') == 'positions':
+    elif request.GET['section'] == 'positions':
         data = Positions.objects.all().order_by('-id')
-    if request.POST.get('section') == 'staff':
+    elif request.GET['section'] == 'staffs':
         data = Staff.objects.all().order_by('-id')
-    if request.POST.get('section') == 'documents':
+    elif request.GET['section'] == 'documents':
         data = Documents.objects.all().order_by('-id')
-    if request.POST.get('section') == 'assignments':
+    elif request.GET['section'] == 'assignments':
         data = Assignments.objects.all().order_by('-id')
 
     return render(request, 'loader.html', {'data': data, })
