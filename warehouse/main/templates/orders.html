@@ -18,7 +18,7 @@
             <select name="client_id" class="form-control">
               <option value="">Choose the client</option>
               {% for client_obj in client %}
-              <option {% if edit.client.id==client_obj.id %} selected {% endif %} value="{{client_obj.id}}">
+              <option {% if edit.client.id == client_obj.id %} selected {% endif %} value="{{client_obj.id}}">
                 {{client_obj.name}}
                 {{client_obj.surname}}</option>
               {% endfor %}
@@ -29,7 +29,7 @@
             <select name="product_id" class="form-control">
               <option value="">Choose the product</option>
               {% for product_obj in product %}
-              <option {% if edit.product.id==product_obj.id %} selected {% endif %} value="{{product_obj.id}}">
+              <option {% if edit.product.id == product_obj.id %} selected {% endif %} value="{{product_obj.id}}">
                 {{product_obj.brand.brand_name}} - {{product_obj.product}} [{{product_obj.quantity}}]</option>
               {% endfor %}
             </select>
