@@ -1,5 +1,5 @@
 <!--Brand AJAX-->
-{% if request.GET.section == 'brands' %}
+{% if request.GET.section == 'brands' or request.POST.section == 'brands' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -23,6 +23,46 @@
   {% endfor %}
 </div>
 {% endif %}
+
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add brands</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" id="insert_brand" action="{% url 'loader'%}" class="forms-sample" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Brand name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="brand_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+                name="brand_photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <button type="button" name="save1" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Brands: </b> {{brand_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Orders: </b> {{orders_num}} |
+  </center>
+</div>
 
 <!--
 {% if brand %}
@@ -1358,7 +1398,7 @@
                     </div>
                   </td>
                   <td><img style="width: 50px; height: 60;" src="{{info.scan_photo}}"></td>
-                  <td>{{info.staff_id.name}}</td>
+                  <td>{{info.staff_id.name}} {{info.staff_id.surname}}</td>
                   <td>{{info.title}}</td>
                   <td>{{info.doc_num}}</td>
                   <td>{{info.about}}</td>

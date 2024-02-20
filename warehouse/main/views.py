@@ -15,6 +15,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
 from datetime import datetime
+from .views import brand
 
 User = get_user_model()
 
@@ -140,10 +141,8 @@ def loader(request):
                 request, "Employee has been deleted successfully.", extra_tags='success')
 
     if 'del_documents' in request.GET:
-        doc = Documents.objects.get(id=request.GET['del_documents'])
-        staff = Staff.objects.get(id=doc.request.GET['del_staff'])
-        data = Documents.objects.filter(staff_id=doc.request.GET['del_staff']).order_by('-id')
-        doc.delete()
+        Documents.objects.get(id=request.GET['del_documents']).delete()
+        data = Documents.objects.all().order_by('-id')
         messages.info(
             request, "Document has been deleted successfully.", extra_tags='success')
 
@@ -169,6 +168,7 @@ def loader(request):
 
     if request.GET['section'] == 'brands':
         data = Brand.objects.all().order_by('-id')
+        return brand(request)
     elif request.GET['section'] == 'clients':
         data = Clients.objects.all().order_by('-id')
     elif request.GET['section'] == 'expenses':
