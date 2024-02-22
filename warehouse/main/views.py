@@ -166,7 +166,7 @@ def loader(request):
             messages.info(
                 request, "Supplier has been deleted successfully.", extra_tags='success')
 
-    if request.GET['section'] == 'brands':
+    if request.GET['section'] or request.POST['section'] == 'brands':
         data = Brand.objects.all().order_by('-id')
         return brand(request)
     elif request.GET['section'] == 'clients':
