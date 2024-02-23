@@ -45,13 +45,11 @@
   $(document).on('click', '.insert', function(){
     let form = $('#insert_brand')[0]
     let data = new FormData(form)
-    let section = 'brands'
 
     $.ajax({
-      type: 'POST',
+      type: 'GET',
       url: '{% url "loader" %}',
       data: data,
-      data: data.append('section', section),
       processData: false,
       contentType: false,
       cache: false,
@@ -61,7 +59,6 @@
       }
     })
   })
-
 
 
   $(document).on('click', '.delete', function () {
@@ -86,7 +83,7 @@
     $.ajax({
       type: 'GET',
       url: '{% url "loader"%}',
-      data: { section : section },
+      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
       dataType: 'html',
       success: function (response) {
         $('#data').html(response)

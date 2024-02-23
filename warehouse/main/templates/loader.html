@@ -34,19 +34,18 @@
         </p>
         <form method="post" id="insert_brand" action="{% url 'loader'%}" class="forms-sample" enctype="multipart/form-data">
           {% csrf_token %}
+          <input type="hidden" name="section" value="brands">
           <div class="form-group">
             <label>Brand name</label>
             <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
           </div>
           <div class="form-group">
             <label>File upload</label>
-            <input type="file" name="brand_photo" class="file-upload-default">
+            
             <div class="input-group col-xs-12">
-              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image"
                 name="brand_photo">
-              <span class="input-group-append">
-                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
-              </span>
+             
             </div>
           </div>
           <button type="button" name="save1" class="btn btn-primary me-2 text-white insert">Add</button>
@@ -1718,4 +1717,6 @@
   </div>
 </div>
 <!--Supplier Ajax end-->
+
 {% endif %}
+
