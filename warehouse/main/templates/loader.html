@@ -5,7 +5,7 @@
 <!--Brand AJAX-->
 {% if request.GET.section == 'brands' or section == 'brands' %}
 
-{% block 'to' %}brands{% endblock %}
+{% block 'brands' %}{% endblock %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -203,7 +203,9 @@
 <!--Brand AJAX end-->
 
 <!--Client AJAX-->
-{% elif request.GET.section == 'clients' %}
+{% elif request.GET.section == 'clients' or section == 'clients' %}
+
+{% block 'clients' %}{% endblock %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -364,7 +366,9 @@
 <!--Client AJAX end-->
 
 <!--Expens AJAX-->
-{% elif request.GET.section == 'expenses' %}
+{% elif request.GET.section == 'expenses' or section == 'expenses' %}
+
+{% block 'expenses' %}{% endblock %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -383,6 +387,66 @@
   {% endfor %}
 </div>
 {% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Expenses</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" action="{% url 'expens_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit expens title</label>
+            <input type="text" name="assignment" value="{{edit.assignment}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit amount</label>
+            <input type="text" name="amount" value="{{edit.amount}}" class="form-control"><br>
+          </div>
+          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+          <a href="{% url 'expens' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add expenses</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Expense title</label>
+            <input type="text" class="form-control" placeholder="Expense title" name="assignment">
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="text" class="form-control" placeholder="Amount" name="amount">
+          </div>
+          <button name="save" class="btn btn-primary text-white">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Expenses: </b> {{expens_num}} |
+  </center>
+</div>
 
 <!--
 {% if expens %}
@@ -470,9 +534,9 @@
                   <td>{{info.amount}}</td>
                   <td>{{info.add_date | date:'d-m-Y'}}</td>
                   <td>
-                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table"><i
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-md" href="{% url 'expens_edit' info.id %}"><i
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'expens_edit' info.id %}" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                   <td>

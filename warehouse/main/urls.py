@@ -5,8 +5,7 @@ urlpatterns = [
 
 
     path('loader', views.loader, name='loader'),
-    
-    path('test', views.test, name='test'),    
+     
     path('', views.home, name='home'),
     path('main', views.main, name='main'),
 
