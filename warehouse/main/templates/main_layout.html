@@ -436,7 +436,6 @@
 </html>
 
 
-
 <script>
   /*
   $(document).on('click', '.insert', function () {
@@ -465,7 +464,7 @@
   */
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-    let section = "{% if request.GET.section == 'brands' or section == 'brands' %}brands{% elif request.GET.section == 'clients' or section == 'clients' %}clients{% elif request.GET.section == 'expenses' or section == 'expenses' %}expenses{%endif%}"
+    let section = "{% if request.GET.section == 'brands' or section == 'brands' %}brands{% elif request.GET.section == 'clients' or section == 'clients' %}clients{% elif request.GET.section == 'expenses' or section == 'expenses' %}expenses{% elif request.GET.section == 'products' or section == 'products' %}products{% elif request.GET.section == 'orders' or section == 'orders' %}orders{% elif request.GET.section == 'suppliers' or section == 'suppliers' %}suppliers{% elif request.GET.section == 'departments' or section == 'departments' %}departments{% elif request.GET.section == 'positions' or section == 'positions' %}positions{% elif request.GET.section == 'staffs' or section == 'staffs' %}staffs{% elif request.GET.section == 'documents' or section == 'documents' %}documents{% elif request.GET.section == 'assignmnets' or section == 'assignmnets' %}assignmnets{%endif%}"
 
     if (confirm("Do you want to delete?")) {
       $.ajax({

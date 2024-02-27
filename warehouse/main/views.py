@@ -13,6 +13,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
 from datetime import datetime
+from django.http import JsonResponse
 
 User = get_user_model()
 
@@ -377,10 +378,23 @@ def expens(request):
 
 
 def expens_delete(request, id):
-    expens = Expenses.objects.get(id=id)
+    section = 'expenses'
+    expens = Expenses.objects.get(id=request.GET['del_id']).delete()
     data = Expenses.objects.all().order_by('-id')
-    return render(request, 'expens.html', {'expens': expens, 'data': data})
+    return render(request, 'loader.html', {'section' : section, 'expens': expens, 'data': data})
 
+def expens_delete(request):
+    if request.method == 'GET':
+        expens_id = request.GET.get('del_id')
+ 
+        if expens_id:
+            try:
+                expens = Expenses.objects.get(id=expens_id)
+                expens.delete()
+                return JsonResponse({'status': "deleted"})
+            except Expenses.DoesNotExist:
+                return JsonResponse({'status': "error", 'message': 'Expense does not exist'})
+    return JsonResponse({'status': "error", 'message': 'Invalid request method'})
 
 def expens_delete_config(request, id):
     Expenses.objects.get(id=id).delete()
@@ -1721,26 +1735,15 @@ def supplier_update(request, supp_id):
 
 def loader(request):
     data = ''
-    if request.GET['section'] == 'brands':
+    section = request.GET.get('section', '')
+
+    if section == 'brands':
         brand(request)
-    if 'del_brand' in request.GET:
-        delete(request,request.GET['del_brand'])
-            
-    if request.GET['section'] == 'clients':
-        data = Clients.objects.all().order_by('-id')
-    
-    if  request.GET['section'] == 'expenses':
+        if 'del_id' in request.GET:
+            delete(request, request.GET['del_id'])
+    elif section == 'expenses':
         expens(request)
-    if 'del_expense' in request.GET:
-        expens_delete(request,request.GET['del_expense'])
-    
-    if request.GET['section'] == 'products':
-        data = Products.objects.all().order_by('-id')
-
-    if request.GET['section'] == 'orders':
-        data = Orders.objects.all().order_by('-id')
-
-    if request.GET['section'] == 'suppliers':
-        data = Supplier.objects.all().order_by('-id')
+        if 'del_id' in request.GET:
+            expens_delete(request)
 
     return render(request, 'loader.html', {'data' : data})
