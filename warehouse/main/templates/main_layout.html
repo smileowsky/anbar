@@ -433,3 +433,62 @@
 </body>
 
 </html>
+
+
+
+<script>
+  /*
+  $(document).on('click', '.insert', function () {
+      let form = $('#insert_brand')[0];
+      let data = new FormData(form);
+  
+      $.ajax({
+        type: 'POST',
+        url: '{% url "loader" %}',
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (response) {
+          $('#data').html(response);
+        }
+      });
+    });
+  
+    $(document).ready(function () {
+      $('#upload_button').click(function () {
+          $('#file_upload_input').click();
+      });
+    })
+  */
+    $(document).on('click', '.delete', function () {
+      let id = $(this).attr('id')
+      let section = 'brands'
+  
+      if (confirm("Do you want to delete?")) {
+        $.ajax({
+          method: 'GET',
+          url: '{% url "loader" %}',
+          data: { del_brand: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+          success: function (response) {
+            $('#data').html(response)
+          }
+        })
+      }
+    })
+  
+    $(document).ready(function () {
+      let section = "{% block 'to' %}{% endblock %}"
+  
+      $.ajax({
+        type: 'GET',
+        url: '{% url "loader"%}',
+        data: { section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        dataType: 'html',
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    })
+  </script>

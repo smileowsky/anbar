@@ -13,7 +13,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
 from datetime import datetime
-from django.http import HttpRequest
+from django.http import HttpRequest, JsonResponse
 
 User = get_user_model()
 
@@ -46,6 +46,7 @@ def basic(request):
 def brand(request):
     data = ''
     del_all = []
+    section = 'brands'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -116,13 +117,14 @@ def brand(request):
         else:
             data = Brand.objects.all().order_by('-id')
 
-    return render(request, 'brand.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
+    return render(request, 'loader.html', {'section':section,'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
 
 
 def delete(request, id):
-    brand = Brand.objects.get(id=id)
+    section = 'brands'
+    brand = Brand.objects.get(id=id).delete()
     data = Brand.objects.all().order_by('-id')
-    return render(request, 'brand.html', {'brand': brand, 'data': data, })
+    return redirect('brand')
 
 
 def delete_config(request, id):
@@ -1710,14 +1712,19 @@ def supplier_update(request, supp_id):
     return redirect('supplier')
 
 
+def test(request):
+    data = {'message: Hello World'}
+    return JsonResponse(data)
+
+
 def loader(request):
     data = ''
-    brand_result = ''
     if request.GET['section'] == 'brands':
-        brand_result = brand(request)
-        brand_result = delete(request)   
-    if request.GET['section'] == 'brands':
-        data = brand(request)
+        brand(request)
+
+    if 'del_brand' in request.GET:
+        delete(request,request.GET['del_brand'])
+        
     elif request.GET['section'] == 'clients':
         data = Clients.objects.all().order_by('-id')
     elif request.GET['section'] == 'expenses':
@@ -1739,4 +1746,4 @@ def loader(request):
     elif request.GET['section'] == 'assignments':
         data = Assignments.objects.all().order_by('-id')
 
-    return render(request, 'loader.html', {'data': data, 'brand_result' : brand_result})
+    return render(request, 'loader.html', {'data': data})
