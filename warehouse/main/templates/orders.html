@@ -1,0 +1,143 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Orders</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" action="{% url 'orders_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit client</label>
+            <select name="client_id" class="form-control">
+              <option value="">Choose the client</option>
+              {% for client_obj in client %}
+              <option {% if edit.client.id == client_obj.id %} selected {% endif %} value="{{client_obj.id}}">
+                {{client_obj.name}}
+                {{client_obj.surname}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit product</label>
+            <select name="product_id" class="form-control">
+              <option value="">Choose the product</option>
+              {% for product_obj in product %}
+              <option {% if edit.product.id == product_obj.id %} selected {% endif %} value="{{product_obj.id}}">
+                {{product_obj.brand.brand_name}} - {{product_obj.product}} [{{product_obj.quantity}}]</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit "amount" of product</label>
+            <input type="text" class="form-control" placeholder="Edit amount of product" name="amount"
+              value="{{edit.amount}}"><br>
+            <button name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'orders' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add order</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" class="forms-sample">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Client</label>
+            <select name="client_id" class="form-control">
+              <option value="">Choose the client...</option>
+              {% for client_obj in client %}
+              <option value="{{client_obj.id}}">{{client_obj.name}} {{client_obj.surname}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Product</label>
+            <select name="product_id" class="form-control">
+              <option value="">Choose the product...</option>
+              {% for product_obj in product %}
+              <option value="{{product_obj.id}}">{{product_obj.brand.brand_name}} - {{product_obj.product}}
+                [{{product_obj.quantity}}]</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Product "amount"</label>
+            <input type="text" class="form-control" placeholder="Product amount" name="amount"><br>
+            <button name="enter" class="btn btn-primary text-white">Enter</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div id="data"></div>
+<script>
+  $(document).on('click', '.insert', function(){
+    let form = $('#insert_brand')[0]
+    let data = new FormData(form)
+
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function(response){
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = 'orders'
+
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'GET',
+        url: '{% url "loader"%}',
+        data: { del_order: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
+  $(document).ready(function () {
+    let section = 'orders'
+    
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader"%}',
+      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+</script>
+
+{% endblock %}
