@@ -1713,6 +1713,34 @@ def supplier_update(request, supp_id):
 def loader(request):
     data = ''
 
+    if 'del_brand' in request.GET:
+        brand = Brand.objects.get(id=request.GET['del_brand'])
+        data = Brand.objects.all().order_by('-id')
+        number = Products.objects.filter(
+            brand_id=request.GET['del_brand']).count()
+
+        if number > 0:
+            messages.info(
+                request, f"Brand '{brand.brand_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
+        else:
+            brand.delete()
+            messages.info(
+            request, "The brand has been successfully deleted.", extra_tags='success')
+    
+    if 'del_client' in request.GET:
+        clients = Clients.objects.get(id=request.GET['del_client'])
+        data = Clients.objects.all().order_by('-id')
+        active_orders = Orders.objects.filter(
+            client_id=request.GET['del_client']).count()
+        
+        if active_orders > 0:
+            messages.info(
+            request, f"Client '{clients.name} {clients.surname}' cannot be deleted. There are {active_orders} active products in it.", extra_tags='error')
+        else:
+            clients.delete()
+            messages.info(
+            request, "Customer's data has been deleted successfully.", extra_tags='success')
+
     if 'del_expense' in request.GET:
         Expenses.objects.get(id=request.GET['del_expense']).delete()
         data = Expenses.objects.all().order_by('-id')
@@ -1804,7 +1832,7 @@ def loader(request):
             supplier.delete()
             messages.info(
                 request, "Supplier has been deleted successfully.", extra_tags='success')
-
+            
     if request.GET['section'] == 'brands':
         data = Brand.objects.all().order_by('-id')
     elif request.GET['section'] == 'clients':

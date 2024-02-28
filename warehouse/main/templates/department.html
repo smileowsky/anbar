@@ -60,7 +60,7 @@
       $.ajax({
         method: 'GET',
         url: '{% url "loader" %}',
-        data: { del_positions: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        data: { del_departments: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }

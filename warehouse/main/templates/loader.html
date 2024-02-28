@@ -24,45 +24,6 @@
 </div>
 {% endif %}
 
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Add brands</h4>
-        <p class="card-description">
-          Fill in the blanks
-        </p>
-        <form method="post" id="insert_brand" action="{% url 'loader'%}" class="forms-sample" enctype="multipart/form-data">
-          {% csrf_token %}
-          <input type="hidden" name="section" value="brands">
-          <div class="form-group">
-            <label>Brand name</label>
-            <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
-          </div>
-          <div class="form-group">
-            <label>File upload</label>
-            
-            <div class="input-group col-xs-12">
-              <input type="file" class="form-control file-upload-info" placeholder="Upload Image"
-                name="brand_photo">
-             
-            </div>
-          </div>
-          <button type="button" name="save1" class="btn btn-primary me-2 text-white insert">Add</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="alert alert-primary" role="alert">
-  <center>
-    <b>Brands: </b> {{brand_num}} |
-    <b>Products: </b> {{product_num}} |
-    <b>Orders: </b> {{orders_num}} |
-  </center>
-</div>
-
 <!--
 {% if brand %}
 <div class="alert alert-danger" role="alert">
@@ -1719,4 +1680,3 @@
 <!--Supplier Ajax end-->
 
 {% endif %}
-
