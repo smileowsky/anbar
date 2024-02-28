@@ -1,0 +1,135 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Brands</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit brand name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="brand_name"
+              value="{{edit.brand_name}}">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="brand_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.brand_pic}}">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+                name="brand_photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <button type="submit" name="save1" class="btn btn-primary me-2 text-white">Update</button>
+          <a href="{% url 'brand' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add brands</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" id="insert_brand" action="{% url 'loader'%}" class="forms-sample" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="section" value="brands">
+          <div class="form-group">
+            <label>Brand name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            
+            <div class="input-group col-xs-12">
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image"
+                name="brand_photo">
+             
+            </div>
+          </div>
+          <button type="button" name="save1" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Brands: </b> {{brand_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Orders: </b> {{orders_num}} |
+  </center>
+</div>
+
+<div id="data"></div>
+<script>
+  $(document).on('click', '.insert', function(){
+    let form = $('#insert_brand')[0]
+    let data = new FormData(form)
+
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function(response){
+        $('#data').html(response)
+      }
+    })
+  })
+
+
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = 'brands'
+
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'GET',
+        url: '{% url "loader"%}',
+        data: { del_brand: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
+  $(document).ready(function () {
+    let section = 'brands'
+    
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader"%}',
+      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+</script>
+
+{% endif %}
+
+{% endblock %}
