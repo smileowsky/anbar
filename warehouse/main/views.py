@@ -45,6 +45,7 @@ def basic(request):
 def brand(request):
     data = ''
     del_all = []
+    section = 'brands'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -115,7 +116,7 @@ def brand(request):
         else:
             data = Brand.objects.all().order_by('-id')
 
-    return render(request, 'brand.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
+    return render(request, 'brand.html', {'section' : section, 'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
 
 
 def delete(request, id):
@@ -171,6 +172,7 @@ def update(request, id):
 def client(request):
     data = ''
     del_all = []
+    section = 'clients'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -259,7 +261,7 @@ def client(request):
         else:
             data = Clients.objects.all().order_by('-id')
 
-    return render(request, 'client.html', {'del_all': del_all, 'data': data, 'client_num': client_num})
+    return render(request, 'client.html', {'section' : section, 'del_all': del_all, 'data': data, 'client_num': client_num})
 
 
 def client_delete(request, id):
@@ -319,6 +321,7 @@ def client_update(request, id):
 def expens(request):
     data = ''
     del_all = []
+    section = 'orders'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -370,7 +373,7 @@ def expens(request):
         else:
             data = Expenses.objects.all().order_by('-id')
 
-    return render(request, 'expens.html', {'del_all': del_all, 'data': data, 'expens_num': expens_num})
+    return render(request, 'expens.html', {'section' : section, 'del_all': del_all, 'data': data, 'expens_num': expens_num})
 
 
 def expens_delete(request, id):
@@ -412,6 +415,7 @@ def expens_update(request, id):
 def products(request):
     data = ''
     del_all = []
+    section = 'products'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -523,7 +527,7 @@ def products(request):
     brands = Brand.objects.all().order_by('brand_name')
     suppliers = Supplier.objects.all().order_by('supplier_name')
 
-    return render(request, 'products.html', {'del_all': del_all, 'data': data, 'brands': brands, 'suppliers': suppliers, 'brand_num': brand_num, 'orders_num': orders_num, 'product_num': product_num})
+    return render(request, 'products.html', {'section' : section, 'del_all': del_all, 'data': data, 'brands': brands, 'suppliers': suppliers, 'brand_num': brand_num, 'orders_num': orders_num, 'product_num': product_num})
 
 
 def products_delete(request, id):

@@ -1,6 +1,29 @@
 <!--Brand AJAX-->
 {% if request.GET.section == 'brands' or request.POST.section == 'brands' %}
 
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
 <!--
 {% if brand %}
 <div class="alert alert-danger" role="alert">
@@ -24,10 +47,107 @@
   </form>
 </div>
 {% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Brands: </b> {{brand_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Orders: </b> {{orders_num}} |
+  </center>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Brands Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+              <thead>
+                <th>#</th>
+                <th>Brand Picture</th>
+                <th>
+                  Brand
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="z"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'd' %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" class="form-check-info" {% if info.id|floatformat:'0' in del_all %}
+                          checked {% endif %} name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td><img style="width: 50px; height: 40px;" src="{{info.brand_pic}}"></td>
+                  <td>{{info.brand_name}}</td>
+                  <td>{{info.add_date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="#"><i class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Brand AJAX end-->
 
 <!--Client AJAX-->
 {% elif request.GET.section == 'clients' or request.POST.section == 'clients' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if client %}
@@ -52,10 +172,144 @@
   </form>
 </div>
 {% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Clients: </b> {{client_num}} |
+  </center>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Clients Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Name
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Surname
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Email
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Phone
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="k"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Company
+                  {% if request.POST.order == 'l' %}
+                  <button class="btn btn-link btn-sm" name="order" value="m"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="l"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'n' %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="n"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td>{{info.name}}</td>
+                  <td>{{info.surname}}</td>
+                  <td>{{info.email}}</td>
+                  <td>{{info.phone}}</td>
+                  <td>{{info.company}}</td>
+                  <td>{{info.add_date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'client_edit' info.id %}"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Client AJAX end-->
 
 <!--Expens AJAX-->
 {% elif request.GET.section == 'expenses' or request.POST.section == 'expenses' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if client %}
@@ -80,10 +334,113 @@
   </form>
 </div>
 {% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Expenses Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Assignments
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Amount
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>Actions</th>
+                <th><button class="btn btn-danger btn-sm text-white" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}"> {{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td>{{info.assignment}}</td>
+                  <td>{{info.amount}}</td>
+                  <td>{{info.add_date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'expens_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                  <td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--Expens AJAX End-->
 
 <!--Product AJAX-->
 {% elif request.GET.section == 'products' or request.POST.section == 'products' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if products %}
@@ -108,10 +465,175 @@
   </form>
 </div>
 {% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Brands: </b> {{brand_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Orders: </b> {{orders_num}} |
+  </center>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Products Table</h4>
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>Products Photo</th>
+                <th>
+                  Supplier
+                  {% if request.POST.order == 'k' %}
+                  <button class="btn btn-link btn-sm" name="order" value="l"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="k"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Brand
+                  {% if request.POST.order == 'm' %}
+                  <button class="btn btn-link btn-sm" name="order" value="n"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="m"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Products
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Buy
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Sell
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Quantity
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="h"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Profit
+                  {% if request.POST.order == 'o' %}
+                  <button class="btn btn-link btn-sm" name="order" value="p"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'i' %}
+                  <button class="btn btn-link btn-sm" name="order" value="j"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="i"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td><img style="width: 50px; height: 60px;" src="{{info.product_photo}}"></td>
+                  <td>{{info.supplier_id.supplier_name}} {{info.supplier_id.supplier_surname}}</td>
+                  <td>{{info.brand.brand_name}}</td>
+                  <td>{{info.product}}</td>
+                  <td>{{info.buy}}</td>
+                  <td>{{info.sell}}</td>
+                  <td>{{info.quantity}}</td>
+                  <td>{{info.profit}}</td>
+                  <td>{{info.add_date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-md" href="{% url 'products_edit' info.id %}"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--Products AJAX End-->
 
 <!--Orders AJAX-->
 {% elif request.GET.section == 'orders' or request.POST.section == 'orders' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if orders %}
@@ -137,6 +659,172 @@
   </form>
 </div>
 {% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Clients: </b> {{client_num}} |
+    <b>Brands: </b> {{brand_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Buy: </b> |
+    <b>Sell: </b> |
+    <b>Expenses: </b> | {{expens_num}}
+    <b>Profit: </b> | {{profit_total}}
+    <b>Real profit: </b> |
+  </center>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Orders Table</h4>
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Client
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Brand
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Products
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Stock
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="h"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Buy
+                  {% if request.POST.order == 'i' %}
+                  <button class="btn btn-link btn-sm" name="order" value="j"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="i"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Sell
+                  {% if request.POST.order == 'k' %}
+                  <button class="btn btn-link btn-sm" name="order" value="l"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="k"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Order
+                  {% if request.POST.order == 'n' %}
+                  <button class="btn btn-link btn-sm" name="order" value="m"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="n"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Profit
+                  {% if request.POST.order == 'o' %}
+                  <button class="btn btn-link btn-sm" name="order" value="p"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'q' %}
+                  <button class="btn btn-link btn-sm" name="order" value="r"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="q"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    {% if info.tesdiq == 0 %}
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                    {% else %}
+                    {{forloop.counter}}
+                    {% endif %}
+                  </td>
+                  <td>{{info.client.name}} {{info.client.surname}}</td>
+                  <td>{{info.product.brand.brand_name}}</td>
+                  <td>{{info.product.product}}</td>
+                  <td>{{info.product.quantity}}</td>
+                  <td>{{info.product.buy}}</td>
+                  <td>{{info.product.sell}}</td>
+                  <td>{{info.amount}}</td>
+                  <td>{{info.profit}}</td>
+                  <td>{{info.add_date | date:'d-m-Y'}}</td>
+                  <td>
+                    {% if info.tesdiq == 0 %}
+                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-md" href="{% url 'orders_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                    <a class="btn btn-primary btn-md" href="{% url 'orders_tesdiq' info.id %}" title="Confirm"><i
+                        class="mdi mdi-check"></i></a>
+                    {% else %}
+                    <a class="btn btn-danger btn-md" href="{% url 'orders_cancel' info.id %}" title="Cancel"><i
+                        class="mdi mdi-delete"></i></a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Orders AJAX end-->
 
 <!--Supplier AJAX-->
@@ -170,6 +858,29 @@
 <!--Departments AJAX-->
 {% elif request.GET.section == 'departments' or request.POST.section == 'departments' %}
 
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
 <!--
 {% if departments %}
 <div class="alert alert-danger" role="alert">
@@ -193,10 +904,100 @@
   </form>
 </div>
 {% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Departments Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Department
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete
+                    selected</button> </th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td>{{info.department_name}}</td>
+                  <td>{{info.date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'department_edit' info.id %}"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Departments AJAX end-->
 
 <!--Positions AJAX-->
 {% elif request.GET.section == 'positions' or request.POST.section == 'positions' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if positions %}
@@ -221,10 +1022,110 @@
   </form>
 </div>
 {% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Clients Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Departments
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Position
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button> </th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td>{{info.dep_id.department_name}}</td>
+                  <td>{{info.positions}}</td>
+                  <td>{{info.date | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'position_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Positions AJAX end-->
 
 <!--Staff AJAX-->
 {% elif request.GET.section == 'staffs' or request.POST.section == 'staffs' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {%if staff%}
@@ -250,10 +1151,182 @@
   </form>
 </div>
 {% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Staff Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>
+                  Photo
+                </th>
+                <th>
+                  Name
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Surname
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Birthdate
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Departments
+                  {% if request.POST.order == 'o' %}
+                  <button class="btn btn-link btn-sm" name="order" value="p"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Positions
+                  {% if request.POST.order == 'q' %}
+                  <button class="btn btn-link btn-sm" name="order" value="r"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="q"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Email
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="h"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Phone
+                  {% if request.POST.order == 'j' %}
+                  <button class="btn btn-link btn-sm" name="order" value="i"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="j"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Sallary
+                  {% if request.POST.order == 'k' %}
+                  <button class="btn btn-link btn-sm" name="order" value="l"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="k"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Start Date
+                  {% if request.POST.order == 'm' %}
+                  <button class="btn btn-link btn-sm" name="order" value="n"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="m"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-danger btn-sm text-white" name="delete_all">Delete selected</button> </th>
+              </thead>
+
+              <tbody>
+                {%for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td><img style="width: 50px; height: 60px;" src="{{info.photo}}"></td>
+                  <td>{{info.name}}</td>
+                  <td>{{info.surname}}</td>
+                  <td>{{info.birth_date | date:'d.m.Y'}}</td>
+                  <td>{{info.pos_id.dep_id.department_name}}</td>
+                  <td>{{info.pos_id.positions}}</td>
+                  <td>{{info.email}}</td>
+                  <td>{{info.phone}}</td>
+                  <td>{{info.sallary}}</td>
+                  <td>{{info.j_start_d | date:'d.m.Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-sm delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-sm" href="{%url 'staff_edit' info.id%}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                    <a class="btn btn-primary btn-sm" href="{%url 'documents' info.id%}" title="documents"><i
+                        class="mdi mdi-account-card-details"></i></a>
+                  </td>
+                </tr>
+                {%endfor%}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 <!--Staff AJAX end-->
 
 <!--Documents AJAX-->
 {% elif request.GET.section == 'documents' or request.POST.section == 'documents' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if doc and staff %}
@@ -279,9 +1352,123 @@
 </div>
 {% endif %}
 
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Document Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>Document photo</th>
+                <th>
+                  Employee
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Document name
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical>"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Document number
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Note
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="h"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-danger btn-sm text-white" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td><img style="width: 50px; height: 60;" src="{{info.scan_photo}}"></td>
+                  <td>{{info.staff_id.name}} {{info.staff_id.surname}}</td>
+                  <td>{{info.title}}</td>
+                  <td>{{info.doc_num}}</td>
+                  <td>{{info.about}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-sm delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-sm" href="{% url 'doc_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-account-card-details"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!--Documents AJAX end-->
 
 <!--Assignments AJAX-->
+{% elif request.GET.section == 'assignments' or request.POST.section == 'assignments' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
 
 <!--
 {% if assignment %}
@@ -306,6 +1493,80 @@
   </form>
 </div>
 {% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Orders Table</h4>
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>Assignment name</th>
+                <th>Performer name</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Date of issue</th>
+                <th>Deadline</th>
+                <th>Until deadline</th>
+                <th><button class="btn btn-danger btn-sm" name="delete_all">Delete selected</button>
+                </th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    {% if info.approve == 0 %}
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                    {% else %}
+                    {{forloop.counter}}
+                    {% endif %}
+                  </td>
+                  <td>{{info.assignment_name}}</td>
+                  <td>{{info.staff_id.name}}</td>
+                  <td>{{info.staff_id.pos_id.dep_id.department_name}}</td>
+                  <td>{{info.staff_id.pos_id.positions}}</td>
+                  <td>{{info.issue_date | date:'d-m-Y H:m:s'}}</td>
+                  <td>{{info.deadline}}</td>
+                  <td>{{info.time_remaining}}</td>
+                  <td>
+                    {% if info.approve == 0 %}
+                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-sm" href="{% url 'assignment_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                    {% if info.time_remaining == 'Finished' %}
+                    <a class="btn btn-dark btn-sm" href="{% url 'assignment_approve' info.id %}" title="Approve"><i
+                        class="bi bi-check"></i></a>
+                    {% else %}
+                    <a class="btn btn-primary btn-sm" href="{% url 'assignment_approve' info.id %}" title="Approve"><i
+                        class="bi bi-check"></i></a>
+                    {% endif %}
+                    {% else %}
+                    <a class="btn btn-danger btn-md" href="{% url 'assignment_cancel' info.id %}" title="Cancel"><i
+                        class="mdi mdi-delete"></i></a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!--Assignments AJAX end-->
 {% endif %}

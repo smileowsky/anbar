@@ -2,24 +2,6 @@
 
 {% block 'content' %}
 
-{% if messages %}
-<div class="alert alert-dismissible fade show" role="alert">
-  {% for message in messages %}
-  {% if 'success' in message.tags %}
-  <div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{message}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% elif 'error' in message.tags %}
-  <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {{message}}
-    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-  </div>
-  {% endif %}
-  {% endfor %}
-</div>
-{% endif %}
-
 {% if edit %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
@@ -78,85 +60,6 @@
  <center>
    <b>Expenses: </b> {{expens_num}} |
  </center>
-</div>
-
-<div class="row">
-  <div class="col-lg-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Expenses Table</h4>
-
-        <div class="table-responsive">
-          <form method="post" action="#table">
-            {% csrf_token %}
-            <table class="table table-striped" id="table">
-
-              <thead>
-                <th>#</th>
-                <th>
-                  Assignments
-                  {% if request.POST.order == 'a' %}
-                  <button class="btn btn-link btn-sm" name="order" value="b"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="a"><i
-                      class="mdi mdi-sort-alphabetical"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Amount
-                  {% if request.POST.order == 'c' %}
-                  <button class="btn btn-link btn-sm" name="order" value="d"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="c"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% endif %}
-                </th>
-                <th>
-                  Date
-                  {% if request.POST.order == 'e' %}
-                  <button class="btn btn-link btn-sm" name="order" value="f"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% else %}
-                  <button class="btn btn-link btn-sm" name="order" value="e"><i
-                      class="mdi mdi-sort-numeric"></i></button>
-                  {% endif %}
-                </th>
-                <th>Actions</th>
-                <th><button class="btn btn-danger btn-sm text-white" name="delete_all">Delete selected</button></th>
-              </thead>
-
-              <tbody>
-                {% for info in data %}
-                <tr>
-                  <td>
-                    <div class="form-check form-check-info">
-                      <label class="form-check-label">
-                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
-                          name="x[]" value="{{info.id}}"> {{forloop.counter}}
-                      </label>
-                    </div>
-                  </td>
-                  <td>{{info.assignment}}</td>
-                  <td>{{info.amount}}</td>
-                  <td>{{info.add_date | date:'d-m-Y'}}</td>
-                  <td>
-                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
-                        class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="{% url 'expens_edit' info.id %}" title="Edit"><i
-                        class="mdi mdi-grease-pencil"></i></a>
-                  </td>
-                  <td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
 <div id="data"></div>
