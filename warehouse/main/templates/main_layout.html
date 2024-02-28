@@ -40,10 +40,10 @@
           </button>
         </div>
         <div>
-          <a class="navbar-brand brand-logo" href="index.html">
+          <a class="navbar-brand brand-logo" href="{% url 'home' %}">
             <img src="/uploads/warehouse_as_a_service_logo.png" alt="logo">
           </a>
-          <a class="navbar-brand brand-logo-mini" href="index.html">
+          <a class="navbar-brand brand-logo-mini" href="{% url 'home' %}">
             <img src="/uploads/warehouse_as_a_service_logo.png" alt="logo">
           </a>
         </div>
@@ -82,7 +82,7 @@
               <div class="dropdown-header text-center">
                 {% if request.user.is_authenticated %}
                 <img class="img-md rounded-circle"
-                src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png{% else %} {{ request.user.profile_photo }} {% endif %}"
+                  src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png{% else %} {{ request.user.profile_photo }} {% endif %}"
                   alt="Profile image" style="width: 40px; height: 40px;">
                 <p class="mb-1 mt-3 font-weight-semibold">{{request.user.first_name}} {{request.user.last_name}}</p>
                 <p class="fw-light text-muted mb-0">{{request.user.email}}</p>
@@ -90,23 +90,24 @@
               <form method="post">
                 {% csrf_token %}
                 <div class="form-group">
-                  <a class="dropdown-item" href="{% url 'user_profile' %}"><i class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i>
+                  <a class="dropdown-item" href="{% url 'user_profile' %}"><i
+                      class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i>
                     My Profile <span class="badge badge-pill badge-danger"></span></a>
                   <a class="dropdown-item" href="{% url 'logout_user' %}" type="button" class="btn btn-primary"><i
                       class="mdi mdi-power text-primary me-2"></i>Sign Out</a>
                 </div>
               </form>
-                {% else %}
-                <form method="post" action="{% url 'login_user' %}">
-                  {% csrf_token %}
-                  <div class="form-group">
-                    <label for="exampleInputName1">Username</label>
-                    <input class="form-control" placeholder="username" name="username">
-                    <label for="exampleInputName1">Password</label>
-                    <input class="form-control" placeholder="password" type="password" name="password">
-                  </div>
-                  <button type="submit" class="btn btn-primary btn-sm"><i class="mdi mdi-power text-white me-2"></i>Log
-                    In</button>
+              {% else %}
+              <form method="post" action="{% url 'login_user' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="exampleInputName1">Username</label>
+                  <input class="form-control" placeholder="username" name="username">
+                  <label for="exampleInputName1">Password</label>
+                  <input class="form-control" placeholder="password" type="password" name="password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="mdi mdi-power text-white me-2"></i>Log
+                  In</button>
                 {% endif %}
               </form>
             </div>
@@ -241,7 +242,7 @@
             </div>
             <ul class="chat-list">
               <li class="list active">
-                <div class="profile"><img src="{% static '/faces/face1.jpg' %}" alt="image"><span class="online"></span>
+                <div class="profile"><img src="#" alt="image"><span class="online"></span>
                 </div>
                 <div class="info">
                   <p>Thomas Douglas</p>
@@ -250,7 +251,7 @@
                 <small class="text-muted my-auto">19 min</small>
               </li>
               <li class="list">
-                <div class="profile"><img src="{% static '/faces/face2.jpg' %}" alt="image"><span
+                <div class="profile"><img src="#" alt="image"><span
                     class="offline"></span></div>
                 <div class="info">
                   <div class="wrapper d-flex">
@@ -262,7 +263,7 @@
                 <small class="text-muted my-auto">23 min</small>
               </li>
               <li class="list">
-                <div class="profile"><img src="{% static '/faces/face3.jpg' %}" alt="image"><span class="online"></span>
+                <div class="profile"><img src="#" alt="image"><span class="online"></span>
                 </div>
                 <div class="info">
                   <p>Daniel Russell</p>
@@ -271,7 +272,7 @@
                 <small class="text-muted my-auto">14 min</small>
               </li>
               <li class="list">
-                <div class="profile"><img src="{% static '/faces/face4.jpg' %}" alt="image"><span
+                <div class="profile"><img src="#" alt="image"><span
                     class="offline"></span></div>
                 <div class="info">
                   <p>James Richardson</p>
@@ -280,7 +281,7 @@
                 <small class="text-muted my-auto">2 min</small>
               </li>
               <li class="list">
-                <div class="profile"><img src="{% static '/faces/face5.jpg' %}" alt="image"><span class="online"></span>
+                <div class="profile"><img src="#" alt="image"><span class="online"></span>
                 </div>
                 <div class="info">
                   <p>Madeline Kennedy</p>
@@ -289,7 +290,7 @@
                 <small class="text-muted my-auto">5 min</small>
               </li>
               <li class="list">
-                <div class="profile"><img src="{% static '/faces/face6.jpg' %}" alt="image"><span class="online"></span>
+                <div class="profile"><img src="#" alt="image"><span class="online"></span>
                 </div>
                 <div class="info">
                   <p>Sarah Graves</p>
@@ -433,3 +434,61 @@
 </body>
 
 </html>
+
+
+<script>
+  /*
+  $(document).on('click', '.insert', function () {
+      let form = $('#insert_brand')[0];
+      let data = new FormData(form);
+  
+      $.ajax({
+        type: 'POST',
+        url: '{% url "loader" %}',
+        data: data,
+        processData: false,
+        contentType: false,
+        cache: false,
+        timeout: 600000,
+        success: function (response) {
+          $('#data').html(response);
+        }
+      });
+    });
+  
+    $(document).ready(function () {
+      $('#upload_button').click(function () {
+          $('#file_upload_input').click();
+      });
+    })
+  */
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = "{% if request.GET.section == 'brands' or section == 'brands' %}brands{% elif request.GET.section == 'clients' or section == 'clients' %}clients{% elif request.GET.section == 'expenses' or section == 'expenses' %}expenses{% elif request.GET.section == 'products' or section == 'products' %}products{% elif request.GET.section == 'orders' or section == 'orders' %}orders{% elif request.GET.section == 'suppliers' or section == 'suppliers' %}suppliers{% elif request.GET.section == 'departments' or section == 'departments' %}departments{% elif request.GET.section == 'positions' or section == 'positions' %}positions{% elif request.GET.section == 'staffs' or section == 'staffs' %}staffs{% elif request.GET.section == 'documents' or section == 'documents' %}documents{% elif request.GET.section == 'assignmnets' or section == 'assignmnets' %}assignmnets{%endif%}"
+
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'GET',
+        url: '{% url "loader" %}',
+        data: { del_id: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
+  $(document).ready(function () {
+    let section = "{% if request.GET.section == 'brands' or section == 'brands' %}brands{% elif request.GET.section == 'clients' or section == 'clients' %}clients{% elif request.GET.section == 'expenses' or section == 'expenses' %}expenses{% elif request.GET.section == 'products' or section == 'products' %}products{% elif request.GET.section == 'orders' or section == 'orders' %}orders{% elif request.GET.section == 'suppliers' or section == 'suppliers' %}suppliers{% elif request.GET.section == 'departments' or section == 'departments' %}departments{% elif request.GET.section == 'positions' or section == 'positions' %}positions{% elif request.GET.section == 'staffs' or section == 'staffs' %}staffs{% elif request.GET.section == 'documents' or section == 'documents' %}documents{% elif request.GET.section == 'assignmnets' or section == 'assignmnets' %}assignmnets{%endif%}"
+
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader"%}',
+      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+</script>

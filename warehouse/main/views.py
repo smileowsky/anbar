@@ -13,10 +13,9 @@ from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
 from datetime import datetime
-from django.http import HttpRequest
+from django.http import JsonResponse
 
 User = get_user_model()
-
 
 brand_num = Brand.objects.all().count()
 product_num = Products.objects.all().count()
@@ -46,6 +45,7 @@ def basic(request):
 def brand(request):
     data = ''
     del_all = []
+    section = 'brands'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -116,13 +116,14 @@ def brand(request):
         else:
             data = Brand.objects.all().order_by('-id')
 
-    return render(request, 'brand.html', {'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
+    return render(request, 'loader.html', {'section' : section, 'orders_num': orders_num, 'brand_num': brand_num, 'product_num': product_num, 'del_all': del_all, 'data': data, })
 
 
 def delete(request, id):
+    section = 'brands'
     brand = Brand.objects.get(id=id)
     data = Brand.objects.all().order_by('-id')
-    return render(request, 'brand.html', {'brand': brand, 'data': data, })
+    return redirect('brand')
 
 
 def delete_config(request, id):
@@ -172,6 +173,7 @@ def update(request, id):
 def client(request):
     data = ''
     del_all = []
+    section = 'clients'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -260,7 +262,7 @@ def client(request):
         else:
             data = Clients.objects.all().order_by('-id')
 
-    return render(request, 'client.html', {'del_all': del_all, 'data': data, 'client_num': client_num})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'client_num': client_num})
 
 
 def client_delete(request, id):
@@ -320,6 +322,7 @@ def client_update(request, id):
 def expens(request):
     data = ''
     del_all = []
+    section = 'expenses'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -371,14 +374,27 @@ def expens(request):
         else:
             data = Expenses.objects.all().order_by('-id')
 
-    return render(request, 'expens.html', {'del_all': del_all, 'data': data, 'expens_num': expens_num})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'expens_num': expens_num})
 
 
 def expens_delete(request, id):
-    expens = Expenses.objects.get(id=id)
+    section = 'expenses'
+    expens = Expenses.objects.get(id=request.GET['del_id']).delete()
     data = Expenses.objects.all().order_by('-id')
-    return render(request, 'expens.html', {'expens': expens, 'data': data})
+    return render(request, 'loader.html', {'section' : section, 'expens': expens, 'data': data})
 
+def expens_delete(request):
+    if request.method == 'GET':
+        expens_id = request.GET.get('del_id')
+ 
+        if expens_id:
+            try:
+                expens = Expenses.objects.get(id=expens_id)
+                expens.delete()
+                return JsonResponse({'status': "deleted"})
+            except Expenses.DoesNotExist:
+                return JsonResponse({'status': "error", 'message': 'Expense does not exist'})
+    return JsonResponse({'status': "error", 'message': 'Invalid request method'})
 
 def expens_delete_config(request, id):
     Expenses.objects.get(id=id).delete()
@@ -413,6 +429,7 @@ def expens_update(request, id):
 def products(request):
     data = ''
     del_all = []
+    section = 'products'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -524,7 +541,7 @@ def products(request):
     brands = Brand.objects.all().order_by('brand_name')
     suppliers = Supplier.objects.all().order_by('supplier_name')
 
-    return render(request, 'products.html', {'del_all': del_all, 'data': data, 'brands': brands, 'suppliers': suppliers, 'brand_num': brand_num, 'orders_num': orders_num, 'product_num': product_num})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'brands': brands, 'suppliers': suppliers, 'brand_num': brand_num, 'orders_num': orders_num, 'product_num': product_num})
 
 
 def products_delete(request, id):
@@ -579,6 +596,7 @@ def products_update(request, id):
 def orders(request):
     data = ''
     del_all = []
+    section = 'orders'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -669,7 +687,7 @@ def orders(request):
     client = Clients.objects.all().order_by('name')
     product = Products.objects.all().order_by('product')
 
-    return render(request, 'orders.html', {'del_all': del_all, 'client': client, 'product': product, 'data': data, 'expens_num': expens_num, 'brand_num': brand_num, 'client_num': client_num, 'product_num': product_num})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'client': client, 'product': product, 'data': data, 'expens_num': expens_num, 'brand_num': brand_num, 'client_num': client_num, 'product_num': product_num})
 
 
 def orders_delete(request, id):
@@ -755,8 +773,8 @@ def orders_cancel(request, id):
 
 def departments(request):
     data = ''
-    number = ''
     del_all = []
+    section = 'departments'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -818,7 +836,7 @@ def departments(request):
         else:
             data = Departments.objects.all().order_by('-id')
 
-    return render(request, 'department.html', {'del_all': del_all, 'data': data, 'department_num': department_num})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'department_num': department_num})
 
 
 def department_del(request, id):
@@ -865,6 +883,7 @@ def positions(request):
     data = ''
     number = ''
     del_all = []
+    section = 'positions'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -930,7 +949,7 @@ def positions(request):
     number = Positions.objects.count()
     departments = Departments.objects.all().order_by('department_name')
 
-    return render(request, 'positions.html', {'del_all': del_all, 'data': data, 'number': number, 'departments': departments})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'number': number, 'departments': departments})
 
 
 def position_del(request, id):
@@ -979,6 +998,7 @@ def staff(request):
     data = ''
     file_url = ''
     del_all = ''
+    section = 'staffs'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -1090,7 +1110,7 @@ def staff(request):
 
     departments = Departments.objects.all().order_by('department_name')
     positions = Positions.objects.all().order_by('positions')
-    return render(request, 'staff.html', {'del_all': del_all, 'data': data, 'sraff_num': sraff_num, 'departments': departments, 'positions': positions})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'sraff_num': sraff_num, 'departments': departments, 'positions': positions})
 
 
 def staff_delete(request, id):
@@ -1164,6 +1184,7 @@ def documents(request, staf_id):
     data = ''
     file_url = ''
     del_all = []
+    section = 'documents'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -1237,7 +1258,7 @@ def documents(request, staf_id):
             data = Documents.objects.all().filter(staff_id=staf_id).order_by('-id')
 
     staff = Staff.objects.get(id=staf_id)
-    return render(request, 'documents.html', {'del_all': del_all, 'data': data, 'staff': staff})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'staff': staff})
 
 
 def document_delete(request, doc_id):
@@ -1438,6 +1459,7 @@ def assignments(request):
     data = ''
     number = ''
     del_all = []
+    section = 'assignments'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -1479,7 +1501,7 @@ def assignments(request):
     staffs = Staff.objects.all().order_by('name')
     departments = Departments.objects.all().order_by('department_name')
     positions = Positions.objects.all().order_by('positions')
-    return render(request, 'assignments.html', {'del_all': del_all, 'data': data, 'departments': departments, 'positions': positions, 'number': number, 'staffs': staffs})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'departments': departments, 'positions': positions, 'number': number, 'staffs': staffs})
 
 
 def assignments_del(request, assign_id):
@@ -1553,6 +1575,7 @@ def supplier(request):
     file_url = ''
     data = ''
     del_all = []
+    section = 'suppliers'
 
     if 'delete_all' in request.POST:
         del_all = request.POST.getlist('x[]')
@@ -1650,7 +1673,7 @@ def supplier(request):
                 data = Supplier.objects.all().order_by('supplier_add_d')
         else:
             data = Supplier.objects.all().order_by('-id')
-    return render(request, 'suppliers.html', {'del_all': del_all, 'data': data, 'supplier_num': supplier_num, 'product_num': product_num, 'orders_num': orders_num})
+    return render(request, 'loader.html', {'section' : section, 'del_all': del_all, 'data': data, 'supplier_num': supplier_num, 'product_num': product_num, 'orders_num': orders_num})
 
 
 def supplier_delete(request, supp_id):
