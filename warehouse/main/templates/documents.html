@@ -1,0 +1,259 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Documents</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" class="forms-sample" enctype="multipart/form-data" action="{% url 'doc_update' edit.id %}">
+          {% csrf_token %}
+          Employee name:
+          <b>{{edit.staff_id.name}} {{edit.staff_id.surname}}</b><br>
+          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.staff_id.photo}}"><br>
+          <div class="form-group">
+            <label>Edit document name</label>
+            <input type="text" name="doc_name" value="{{edit.title}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit document number</label>
+            <input type="number" name="doc_num" value="{{edit.doc_num}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit note</label>
+            <textarea name="about" rows="4" cols="10" class="form-control">{{edit.about}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="doc_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.scan_photo}}">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+            <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'documents' staf_id=staff.id %}"><button type="button"
+                class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add Documents</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" enctype="multipart/form-data">
+          {% csrf_token %}
+          Employee name:
+          <b>{{staff.name}} {{staff.surname}}</b><br>
+          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{staff.photo}}"><br>
+          <div class="form-group">
+            <label>Document name</label>
+            <input type="text" class="form-control" placeholder="Document name" name="doc_name">
+          </div>
+          <div class="form-group">
+            <label>Document Number</label>
+            <input type="number" class="form-control" placeholder="Document number" name="doc_num">
+          </div>
+          <div class="form-group">
+            <label>Note</label>
+            <textarea name="about" rows="4" cols="10" class="form-control"
+              placeholder="If there is information that can be added, check it, otherwise leave it blank."></textarea>
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="doc_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <button type="submit" name="upload" class="btn btn-primary me-2 text-white">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Document Table</h4>
+
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>Document photo</th>
+                <th>
+                  Employee
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Document name
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical>"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Document number
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Note
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="h"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-danger btn-sm text-white" name="delete_all">Delete selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td><img style="width: 50px; height: 60;" src="{{info.scan_photo}}"></td>
+                  <td>{{info.staff_id.name}} {{info.staff_id.surname}}</td>
+                  <td>{{info.title}}</td>
+                  <td>{{info.doc_num}}</td>
+                  <td>{{info.about}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-sm delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-sm" href="{% url 'doc_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-account-card-details"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="data"></div>
+<script>
+  $(document).on('click', '.insert', function(){
+    let form = $('#insert_brand')[0]
+    let data = new FormData(form)
+
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function(response){
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = 'documents'
+
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'GET',
+        url: '{% url "loader"%}',
+        data: { del_documents: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
+  $(document).ready(function () {
+    let section = 'documents'
+    
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader"%}',
+      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+</script>
+
+{% endblock %}

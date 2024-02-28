@@ -1,0 +1,236 @@
+{% extends 'main_layout.html' %}
+
+{% block 'content' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Assignments</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" class="forms-sample" action="{% url 'assignment_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputName1">Edit performer</label>
+            <select name="staff_id" class="form-control">
+              <option value="">Choose staff member...</option>
+              {% for staff_obj in staffs %}
+              {% if staff_obj.id == edit.staff_id_id%}
+              <option selected value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
+                {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
+              {% else %}
+              <option value="{{staff_obj.id}}">{{staff_obj.staff_id.name}} /
+                {{staff_obj.staff_id.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}
+              </option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit assignment</label>
+            <textarea type="textarea" class="form-control" placeholder="Edit assignment"
+              name="assign_n">{{edit.assignment_name}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Edit deadline date</label>
+            <input type="datetime-local" class="form-control" name="deadline" value="{{edit.deadline}}"><br>
+            <button name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'assignments' %}"><button type="button"
+                class="btn btn-danger text-white">Cancel</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add order</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Performer name</label>
+            <select name="staff_id" class="form-control">
+              <option value="">Choose staff member...</option>
+              {% for staff_obj in staffs %}
+              <option value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
+                {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assignment</label>
+            <textarea type="textarea" name="assign_n" class="form-control"
+              placeholder="Enter assignment name"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Deadline date</label>
+            <input type="datetime-local" class="form-control" name="deadline"><br>
+            <button name="add" class="btn btn-primary text-white">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Orders Table</h4>
+        <div class="table-responsive">
+          <form method="post" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+
+              <thead>
+                <th>#</th>
+                <th>Assignment name</th>
+                <th>Performer name</th>
+                <th>Department</th>
+                <th>Position</th>
+                <th>Date of issue</th>
+                <th>Deadline</th>
+                <th>Until deadline</th>
+                <th><button class="btn btn-danger btn-sm" name="delete_all">Delete selected</button>
+                </th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    {% if info.approve == 0 %}
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                    {% else %}
+                    {{forloop.counter}}
+                    {% endif %}
+                  </td>
+                  <td>{{info.assignment_name}}</td>
+                  <td>{{info.staff_id.name}}</td>
+                  <td>{{info.staff_id.pos_id.dep_id.department_name}}</td>
+                  <td>{{info.staff_id.pos_id.positions}}</td>
+                  <td>{{info.issue_date | date:'d-m-Y H:m:s'}}</td>
+                  <td>{{info.deadline}}</td>
+                  <td>{{info.time_remaining}}</td>
+                  <td>
+                    {% if info.approve == 0 %}
+                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-sm" href="{% url 'assignment_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                    {% if info.time_remaining == 'Finished' %}
+                    <a class="btn btn-dark btn-sm" href="{% url 'assignment_approve' info.id %}" title="Approve"><i
+                        class="bi bi-check"></i></a>
+                    {% else %}
+                    <a class="btn btn-primary btn-sm" href="{% url 'assignment_approve' info.id %}" title="Approve"><i
+                        class="bi bi-check"></i></a>
+                    {% endif %}
+                    {% else %}
+                    <a class="btn btn-danger btn-md" href="{% url 'assignment_cancel' info.id %}" title="Cancel"><i
+                        class="mdi mdi-delete"></i></a>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="data"></div>
+<script>
+  $(document).on('click', '.insert', function(){
+    let form = $('#insert_brand')[0]
+    let data = new FormData(form)
+
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function(response){
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.delete', function () {
+    let id = $(this).attr('id')
+    let section = 'assignments'
+
+    if (confirm("Do you want to delete?")) {
+      $.ajax({
+        method: 'GET',
+        url: '{% url "loader"%}',
+        data: { del_assignment: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
+  $(document).ready(function () {
+    let section = 'assignments'
+    
+    $.ajax({
+      type: 'GET',
+      url: '{% url "loader"%}',
+      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      dataType: 'html',
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+</script>
+
+{% endblock %}
