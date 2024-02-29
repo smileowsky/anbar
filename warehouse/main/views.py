@@ -42,18 +42,47 @@ def basic(request):
     return render(request, 'basic.html')
 
 
+def loader(request):
+    data = ''
+    if 'x' in request.POST:
+        if request.POST['x']=='expenses':
+            data = Expenses.objects.all().order_by('-id')
+
+            if 'save' in request.POST:
+                if request.POST['assignment'] != '' and request.POST['amount'] != '':
+
+                    save_data = Expenses(
+                        assignment=request.POST['assignment'],
+                        amount=request.POST['amount']
+                    )
+                    save_data.save()
+                    messages.info(request, "Expens saved successfully.",
+                                extra_tags='success')
+                else:
+                    messages.info(request, "Empty field.", extra_tags='error')
+
+            if 'del_id' in request.POST:
+                Expenses.objects.get(id=request.POST['del_id']).delete()
+                messages.info(
+                    request, "Expens data has been deleted successfully.", extra_tags='success')
+
+
+
+    return render(request, 'loader.html', {'data': data, })
+
+
 def brand(request):
     data = ''
     del_all = []
     section = 'brands'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -74,11 +103,11 @@ def brand(request):
             messages.info(
                 request, "Brand(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'save1' in request.POST:
-        brand_name = request.POST['brand_name']
+    if 'save1' in request.GET:
+        brand_name = request.GET['brand_name']
 
         if brand_name:
-            if Brand.objects.filter(brand_name=request.POST['brand_name']).exists():
+            if Brand.objects.filter(brand_name=request.GET['brand_name']).exists():
                 messages.info(request, "Brand already exists.",
                               extra_tags='warning')
             elif 'brand_photo' in request.FILES:
@@ -89,7 +118,7 @@ def brand(request):
                 file_url = fs.url(file)
 
                 save_data = Brand(
-                    brand_name=request.POST['brand_name'],
+                    brand_name=request.GET['brand_name'],
                     brand_pic=file_url
                 )
                 save_data.save()
@@ -100,18 +129,18 @@ def brand(request):
         else:
             messages.info(request, "Brand name is required.",
                           extra_tags='warning')
-    if 'question' in request.POST:
+    if 'question' in request.GET:
         data = Brand.objects.filter(
-            Q(brand_name__contains=request.POST['question'])).order_by('-id')
+            Q(brand_name__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Brand.objects.all().order_by('brand_name')
-            elif request.POST['order'] == 'z':
+            elif request.GET['order'] == 'z':
                 data = Brand.objects.all().order_by('-brand_name')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Brand.objects.all().order_by('add_date')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Brand.objects.all().order_by('-add_date')
         else:
             data = Brand.objects.all().order_by('-id')
@@ -147,7 +176,7 @@ def edit(request, id):
 
 def update(request, id):
     update = Brand.objects.get(id=id)
-    brand_name = request.POST['brand_name']
+    brand_name = request.GET['brand_name']
 
     if brand_name:
         if Brand.objects.filter(brand_name=brand_name).exclude(id=id).exists():
@@ -160,7 +189,7 @@ def update(request, id):
                 file = fs.save(new_photo.name, new_photo)
                 file_url = fs.url(file)
                 update.brand_pic = file_url
-            update.brand_name = request.POST['brand_name']
+            update.brand_name = request.GET['brand_name']
             update.save()
             messages.info(request, "Brand update was successful.",
                           extra_tags='success')
@@ -174,13 +203,13 @@ def client(request):
     del_all = []
     section = 'clients'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -201,27 +230,27 @@ def client(request):
             messages.info(
                 request, "Client data has been deleted successfully.", extra_tags='success')
 
-    if 'save' in request.POST:
-        name = request.POST['name'],
-        surname = request.POST['surname'],
-        email = request.POST['email'],
-        phone = request.POST['phone'],
-        company = request.POST['company']
+    if 'save' in request.GET:
+        name = request.GET['name'],
+        surname = request.GET['surname'],
+        email = request.GET['email'],
+        phone = request.GET['phone'],
+        company = request.GET['company']
 
         if name and surname and email and phone and company:
-            if Clients.objects.filter(email=request.POST['email']).exists():
+            if Clients.objects.filter(email=request.GET['email']).exists():
                 messages.info(request, "E-mail already exists.",
                               extra_tags='warning')
-            elif Clients.objects.filter(phone=request.POST['phone']).exists():
+            elif Clients.objects.filter(phone=request.GET['phone']).exists():
                 messages.info(
                     request, "Phone number already exists.", extra_tags='warning')
             else:
                 save_data = Clients(
-                    name=request.POST['name'],
-                    surname=request.POST['surname'],
-                    email=request.POST['email'],
-                    phone=request.POST['phone'],
-                    company=request.POST['company'],
+                    name=request.GET['name'],
+                    surname=request.GET['surname'],
+                    email=request.GET['email'],
+                    phone=request.GET['phone'],
+                    company=request.GET['company'],
                 )
 
                 save_data.save()
@@ -229,34 +258,34 @@ def client(request):
                     request, "Customer information saved successfully.", extra_tags='success')
         else:
             messages.info(request, "Empty fields.", extra_tags='error')
-    if 'search' in request.POST:
-        data = Clients.objects.filter(Q(name__contains=request.POST['question']) | Q(surname__contains=request.POST['question']) | Q(phone__contains=request.POST['question']) | Q(
-            email__contains=request.POST['question']) | Q(phone__contains=request.POST['question']) | Q(company__contains=request.POST['question'])).order_by('-id')
+    if 'search' in request.GET:
+        data = Clients.objects.filter(Q(name__contains=request.GET['question']) | Q(surname__contains=request.GET['question']) | Q(phone__contains=request.GET['question']) | Q(
+            email__contains=request.GET['question']) | Q(phone__contains=request.GET['question']) | Q(company__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Clients.objects.all().order_by('name')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Clients.objects.all().order_by('-name')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Clients.objects.all().order_by('surname')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Clients.objects.all().order_by('-surname')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Clients.objects.all().order_by('email')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Clients.objects.all().order_by('-email')
-            elif request.POST['order'] == 'g':
+            elif request.GET['order'] == 'g':
                 data = Clients.objects.all().order_by('phone')
-            elif request.POST['order'] == 'k':
+            elif request.GET['order'] == 'k':
                 data = Clients.objects.all().order_by('-phone')
-            elif request.POST['order'] == 'l':
+            elif request.GET['order'] == 'l':
                 data = Clients.objects.all().order_by('company')
-            elif request.POST['order'] == 'm':
+            elif request.GET['order'] == 'm':
                 data = Clients.objects.all().order_by('-company')
-            elif request.POST['order'] == 'n':
+            elif request.GET['order'] == 'n':
                 data = Clients.objects.all().order_by('add_date')
-            elif request.POST['order'] == 'o':
+            elif request.GET['order'] == 'o':
                 data = Clients.objects.all().order_by('-add_date')
         else:
             data = Clients.objects.all().order_by('-id')
@@ -291,11 +320,11 @@ def client_edit(request, id):
 
 
 def client_update(request, id):
-    name = request.POST['name']
-    surname = request.POST['surname']
-    email = request.POST['email']
-    phone = request.POST['phone']
-    company = request.POST['company']
+    name = request.GET['name']
+    surname = request.GET['surname']
+    email = request.GET['email']
+    phone = request.GET['phone']
+    company = request.GET['company']
 
     if name and surname and email and phone and company:
         if Clients.objects.filter(email=email).exclude(id=id).exists():
@@ -304,11 +333,11 @@ def client_update(request, id):
             messages.info(request, "Phone number already exists.")
         else:
             client = Clients.objects.get(id=id)
-            client.name = request.POST['name']
-            client.surname = request.POST['surname']
-            client.email = request.POST['email']
-            client.phone = request.POST['phone']
-            client.company = request.POST['company']
+            client.name = request.GET['name']
+            client.surname = request.GET['surname']
+            client.email = request.GET['email']
+            client.phone = request.GET['phone']
+            client.company = request.GET['company']
 
             client.save()
             messages.info(request, "Client update was successful.",
@@ -321,15 +350,15 @@ def client_update(request, id):
 def expens(request):
     data = ''
     del_all = []
-    section = 'orders'
+    section = 'expenses'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             for selected in choosen:
                 picked = Expenses.objects.filter(id=selected)
@@ -338,37 +367,37 @@ def expens(request):
             messages.info(
                 request, "Expens data has been deleted successfully.", extra_tags='success')
 
-    if 'save' in request.POST:
-        if request.POST['assignment'] != '' and request.POST['amount'] != '':
+    if 'save' in request.GET:
+        if request.GET['assignment'] != '' and request.GET['amount'] != '':
 
             save_data = Expenses(
-                assignment=request.POST['assignment'],
-                amount=request.POST['amount']
+                assignment=request.GET['assignment'],
+                amount=request.GET['amount']
             )
             save_data.save()
             messages.info(request, "Expens saved successfully.",
                           extra_tags='success')
         else:
             messages.info(request, "Empty field.", extra_tags='error')
-    if 'search' in request.POST:
+    if 'search' in request.GET:
         data = Expenses.objects.filter(
-            Q(assignment__contains=request.POST['question'])).order_by('-id')
-    elif 'search' in request.POST:
+            Q(assignment__contains=request.GET['question'])).order_by('-id')
+    elif 'search' in request.GET:
         data = Expenses.objects.filter(
-            Q(amount__contains=request.POST['question'])).order_by('-id')
+            Q(amount__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Expenses.objects.all().order_by('assignment')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Expenses.objects.all().order_by('-assignment')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Expenses.objects.all().order_by('amount')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Expenses.objects.all().order_by('-amount')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Expenses.objects.all().order_by('add_date')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Expenses.objects.all().order_by('-add_date')
         else:
             data = Expenses.objects.all().order_by('-id')
@@ -396,13 +425,13 @@ def expens_edit(request, id):
 
 
 def expens_update(request, id):
-    assignment = request.POST['assignment']
-    amount = request.POST['amount']
+    assignment = request.GET['assignment']
+    amount = request.GET['amount']
 
     if assignment and amount:
         expens = Expenses.objects.get(id=id)
-        expens.assignment = request.POST['assignment']
-        expens.amount = request.POST['amount']
+        expens.assignment = request.GET['assignment']
+        expens.amount = request.GET['amount']
 
         expens.save()
         messages.info(request, "Update was successful.", extra_tags='success')
@@ -417,13 +446,13 @@ def products(request):
     del_all = []
     section = 'products'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -444,12 +473,12 @@ def products(request):
             messages.info(
                 request, "Product(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'save' in request.POST:
+    if 'save' in request.GET:
 
-        if request.POST['brand_id'] != '' and request.POST['product'] != '' and request.POST['buy'] != '' and request.POST['sell'] != '' and request.POST['quantity'] != '' and 'photo' in request.FILES:
+        if request.GET['brand_id'] != '' and request.GET['product'] != '' and request.GET['buy'] != '' and request.GET['sell'] != '' and request.GET['quantity'] != '' and 'photo' in request.FILES:
             # instance
-            brand = Brand.objects.get(id=request.POST['brand_id'])
-            supplier = Supplier.objects.get(id=request.POST['supp_id'])
+            brand = Brand.objects.get(id=request.GET['brand_id'])
+            supplier = Supplier.objects.get(id=request.GET['supp_id'])
 
             if 'photo' in request.FILES:
                 upload = request.FILES['photo']
@@ -460,10 +489,10 @@ def products(request):
                 save_date = Products(
                     brand=brand,
                     supplier_id=supplier,
-                    product=request.POST['product'],
-                    buy=request.POST['buy'],
-                    sell=request.POST['sell'],
-                    quantity=request.POST['quantity'],
+                    product=request.GET['product'],
+                    buy=request.GET['buy'],
+                    sell=request.GET['sell'],
+                    quantity=request.GET['quantity'],
                     product_photo=file_url
                 )
                 save_date.save()
@@ -475,47 +504,47 @@ def products(request):
         else:
             messages.info(request, "Empty field", extra_tags='error')
 
-    if 'search' in request.POST:
+    if 'search' in request.GET:
         data = Products.objects.filter(
-            Q(product=request.POST['question'])).order_by('-id')
+            Q(product=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Products.objects.all().order_by('product')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Products.objects.all().order_by('-product')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Products.objects.all().order_by('buy')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Products.objects.all().order_by('-buy')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Products.objects.all().order_by('sell')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Products.objects.all().order_by('-sell')
-            elif request.POST['order'] == 'g':
+            elif request.GET['order'] == 'g':
                 data = Products.objects.all().order_by('quantity')
-            elif request.POST['order'] == 'h':
+            elif request.GET['order'] == 'h':
                 data = Products.objects.all().order_by('-quantity')
-            elif request.POST['order'] == 'i':
+            elif request.GET['order'] == 'i':
                 data = Products.objects.all().order_by('add_date')
-            elif request.POST['order'] == 'j':
+            elif request.GET['order'] == 'j':
                 data = Products.objects.all().order_by('-add_date')
-            elif request.POST['order'] == 'k':
+            elif request.GET['order'] == 'k':
                 data = Products.objects.all().order_by('supplier_id_id')
-            elif request.POST['order'] == 'l':
+            elif request.GET['order'] == 'l':
                 data = Products.objects.all().order_by('-supplier_id_id')
-            elif request.POST['order'] == 'm':
+            elif request.GET['order'] == 'm':
                 data = Products.objects.all().order_by('brand_id')
-            elif request.POST['order'] == 'n':
+            elif request.GET['order'] == 'n':
                 data = Products.objects.all().order_by('-brand_id')
-            elif request.POST['order'] == 'o':
+            elif request.GET['order'] == 'o':
                 data = Products.objects.annotate(
                     calculated_profit=ExpressionWrapper(
                         F('sell') - F('buy') * F('quantity'),
                         output_field=FloatField()
                     )
                 ).order_by('calculated_profit')
-            elif request.POST['order'] == 'p':
+            elif request.GET['order'] == 'p':
                 data = Products.objects.annotate(
                     calculated_profit=ExpressionWrapper(
                         F('sell') - F('buy') * F('quantity'),
@@ -559,17 +588,17 @@ def products_edit(request, id):
 
 
 def products_update(request, id):
-    product = request.POST['product']
-    buy = request.POST['buy']
-    sell = request.POST['sell']
-    quantity = request.POST['quantity']
-    brand = Brand.objects.get(id=request.POST['brand_id'])
+    product = request.GET['product']
+    buy = request.GET['buy']
+    sell = request.GET['sell']
+    quantity = request.GET['quantity']
+    brand = Brand.objects.get(id=request.GET['brand_id'])
 
     if product and buy and sell and quantity and brand:
         product = Products.objects.get(id=id)
-        product.buy = request.POST['buy']
-        product.sell = request.POST['sell']
-        product.quantity = request.POST['quantity']
+        product.buy = request.GET['buy']
+        product.sell = request.GET['sell']
+        product.quantity = request.GET['quantity']
         product.brand = brand
 
         product.save()
@@ -584,13 +613,13 @@ def orders(request):
     del_all = []
     section = 'orders'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             for selected in choosen:
                 picked = Orders.objects.filter(id=selected)
@@ -599,73 +628,73 @@ def orders(request):
             messages.info(
                 request, "Orders data has been deleted successfully.", extra_tags='success')
 
-    if 'enter' in request.POST:
+    if 'enter' in request.GET:
 
-        if request.POST['client_id'] != '' and request.POST['product_id'] != '' and request.POST['amount'] != '':
+        if request.GET['client_id'] != '' and request.GET['product_id'] != '' and request.GET['amount'] != '':
 
-            client = Clients.objects.get(id=request.POST['client_id'])
-            product = Products.objects.get(id=request.POST['product_id'])
+            client = Clients.objects.get(id=request.GET['client_id'])
+            product = Products.objects.get(id=request.GET['product_id'])
 
             save_data = Orders(
                 client=client,
                 product=product,
-                amount=request.POST['amount']
+                amount=request.GET['amount']
             )
             save_data.save()
             messages.info(request, "Order saved successfully.",
                           extra_tags='success')
         else:
             messages.info(request, "Empty field", extra_tags='error')
-    if 'search' in request.POST:
+    if 'search' in request.GET:
         data = Orders.objects.filter(
-            Q(orders__contains=request.POST['question'])).order_by('-id')
+            Q(orders__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Orders.objects.all().order_by('client_id')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Orders.objects.all().order_by('-client_id')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Orders.objects.all().order_by('product__brand__brand_name')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Orders.objects.all().order_by('-product__brand__brand_name')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Orders.objects.all().order_by('product_id')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Orders.objects.all().order_by('-product_id')
-            elif request.POST['order'] == 'g':
+            elif request.GET['order'] == 'g':
                 data = Orders.objects.all().order_by('amount')
-            elif request.POST['order'] == 'h':
+            elif request.GET['order'] == 'h':
                 data = Orders.objects.all().order_by('-amount')
-            elif request.POST['order'] == 'i':
+            elif request.GET['order'] == 'i':
                 data = Orders.objects.all().order_by('product__buy')
-            elif request.POST['order'] == 'j':
+            elif request.GET['order'] == 'j':
                 data = Orders.objects.all().order_by('-product__buy')
-            elif request.POST['order'] == 'k':
+            elif request.GET['order'] == 'k':
                 data = Orders.objects.all().order_by('product__sell')
-            elif request.POST['order'] == 'l':
+            elif request.GET['order'] == 'l':
                 data = Orders.objects.all().order_by('-product__sell')
-            elif request.POST['order'] == 'm':
+            elif request.GET['order'] == 'm':
                 data = Orders.objects.all().order_by('product__quantity')
-            elif request.POST['order'] == 'n':
+            elif request.GET['order'] == 'n':
                 data = Orders.objects.all().order_by('-product__quantity')
-            elif request.POST['order'] == 'o':
+            elif request.GET['order'] == 'o':
                 data = Orders.objects.annotate(
                     calculated_profit=ExpressionWrapper(
                         F('product__sell') - F('product__buy') * F('amount'),
                         output_field=FloatField()
                     )
                 ).order_by('calculated_profit')
-            elif request.POST['order'] == 'p':
+            elif request.GET['order'] == 'p':
                 data = Orders.objects.annotate(
                     calculated_profit=ExpressionWrapper(
                         F('product__sell') - F('product__buy') * F('amount'),
                         output_field=FloatField()
                     )
                 ).order_by('-calculated_profit')
-            elif request.POST['order'] == 'q':
+            elif request.GET['order'] == 'q':
                 data = Orders.objects.all().order_by('add_date')
-            elif request.POST['order'] == 'r':
+            elif request.GET['order'] == 'r':
                 data = Orders.objects.all().order_by('-add_date')
         else:
             data = Orders.objects.all().order_by('-id')
@@ -700,15 +729,15 @@ def orders_edit(request, id):
 
 
 def orders_update(request, id):
-    client = Clients.objects.get(id=request.POST['client_id'])
-    product = Products.objects.get(id=request.POST['product_id'])
+    client = Clients.objects.get(id=request.GET['client_id'])
+    product = Products.objects.get(id=request.GET['product_id'])
     amount = Orders.objects.get(id=id)
 
     if client and product and amount:
         orders = Orders.objects.get(id=id)
         orders.client = client
         orders.product = product
-        orders.amount = request.POST['amount']
+        orders.amount = request.GET['amount']
 
         orders.save()
         messages.info(request, "Update was successful.", extra_tags='success')
@@ -762,13 +791,13 @@ def departments(request):
     del_all = []
     section = 'departments'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -789,16 +818,16 @@ def departments(request):
             messages.info(
                 request, "Department(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'add' in request.POST:
-        department_name = request.POST['department_name']
+    if 'add' in request.GET:
+        department_name = request.GET['department_name']
 
         if department_name:
-            if Departments.objects.filter(department_name=request.POST['department_name']).exists():
+            if Departments.objects.filter(department_name=request.GET['department_name']).exists():
                 messages.info(
                     request, "Departments already exists.", extra_tags='warning')
             else:
                 save_data = Departments(
-                    department_name=request.POST['department_name']
+                    department_name=request.GET['department_name']
                 )
                 save_data.save()
                 messages.info(
@@ -806,18 +835,18 @@ def departments(request):
         else:
             messages.info(request, "Departments name is required.",
                           extra_tags='error')
-    if 'search' in request.POST:
+    if 'search' in request.GET:
         data = Departments.objects.filter(
-            Q(department_name__contains=request.POST['question'])).order_by('-id')
+            Q(department_name__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Departments.objects.all().order_by('department_name')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Departments.objects.all().order_by('-department_name')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Departments.objects.all().order_by('date')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Departments.objects.all().order_by('-date')
         else:
             data = Departments.objects.all().order_by('-id')
@@ -852,11 +881,11 @@ def department_edit(request, id):
 
 
 def department_update(request, id):
-    department_name = request.POST['department_name']
+    department_name = request.GET['department_name']
 
     if department_name:
         departments = Departments.objects.get(id=id)
-        departments.department_name = request.POST['department_name']
+        departments.department_name = request.GET['department_name']
 
         departments.save()
         messages.info(request, "Update was successful.", extra_tags='success')
@@ -871,13 +900,13 @@ def positions(request):
     del_all = []
     section = 'positions'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -897,15 +926,15 @@ def positions(request):
             messages.info(
                 request, "Position(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'add' in request.POST:
-        if request.POST['department_id'] != '' and request.POST['position_name'] != '':
+    if 'add' in request.GET:
+        if request.GET['department_id'] != '' and request.GET['position_name'] != '':
 
             departments = Departments.objects.get(
-                id=request.POST['department_id'])
+                id=request.GET['department_id'])
 
             save_data = Positions(
                 dep_id=departments,
-                positions=request.POST['position_name']
+                positions=request.GET['position_name']
             )
             save_data.save()
             messages.info(request, "Position saved.", extra_tags='success')
@@ -913,22 +942,22 @@ def positions(request):
         else:
             messages.info(request, "Position name is required.",
                           extra_tags='error')
-    if 'search' in request.POST:
+    if 'search' in request.GET:
         data = Positions.objects.filter(
-            Q(position_name___contains=request.POST['question'])).order_by('-id')
+            Q(position_name___contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Positions.objects.all().order_by('dep_id__department_name')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Positions.objects.all().order_by('-dep_id__department_name')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Positions.objects.all().order_by('positions')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Positions.objects.all().order_by('-positions')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Positions.objects.all().order_by('date')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Positions.objects.all().order_by('-date')
         else:
             data = Positions.objects.all().order_by('-id')
@@ -965,12 +994,12 @@ def position_edit(request, id):
 
 
 def position_update(request, id):
-    position = request.POST['position_name']
-    departments = Departments.objects.get(id=request.POST['departments_id'])
+    position = request.GET['position_name']
+    departments = Departments.objects.get(id=request.GET['departments_id'])
 
     if position and departments:
         update = Positions.objects.get(id=id)
-        update.positions = request.POST['position_name']
+        update.positions = request.GET['position_name']
         update.dep_id = departments
 
         update.save()
@@ -986,13 +1015,13 @@ def staff(request):
     del_all = ''
     section = 'staffs'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -1012,15 +1041,15 @@ def staff(request):
             messages.info(
                 request, "Staff(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'add' in request.POST:
+    if 'add' in request.GET:
 
-        if request.POST['s_name'] != '' and request.POST['s_surname'] != '' and request.POST['s_birth_d'] != '' and request.POST['s_email'] != '' and request.POST['s_phone'] != '' and request.POST['s_sallary'] != '' and request.POST['s_start_d'] != '':
-            positions = Positions.objects.get(id=request.POST['position_id'])
+        if request.GET['s_name'] != '' and request.GET['s_surname'] != '' and request.GET['s_birth_d'] != '' and request.GET['s_email'] != '' and request.GET['s_phone'] != '' and request.GET['s_sallary'] != '' and request.GET['s_start_d'] != '':
+            positions = Positions.objects.get(id=request.GET['position_id'])
 
-            if Staff.objects.filter(email=request.POST['s_email']).exists():
+            if Staff.objects.filter(email=request.GET['s_email']).exists():
                 messages.info(request, 'Email already exists.',
                               extra_tags='warning')
-            elif Staff.objects.filter(phone=request.POST['s_phone']).exists():
+            elif Staff.objects.filter(phone=request.GET['s_phone']).exists():
                 messages.info(request, 'Phone already exists.',
                               extra_tags='warning')
             elif 'photo' in request.FILES:
@@ -1032,13 +1061,13 @@ def staff(request):
                 # FOTO END
 
                 save_info = Staff(
-                    name=request.POST['s_name'],
-                    surname=request.POST['s_surname'],
-                    birth_date=request.POST['s_birth_d'],
-                    email=request.POST['s_email'],
-                    phone=request.POST['s_phone'],
-                    sallary=request.POST['s_sallary'],
-                    j_start_d=request.POST['s_start_d'],
+                    name=request.GET['s_name'],
+                    surname=request.GET['s_surname'],
+                    birth_date=request.GET['s_birth_d'],
+                    email=request.GET['s_email'],
+                    phone=request.GET['s_phone'],
+                    sallary=request.GET['s_sallary'],
+                    j_start_d=request.GET['s_start_d'],
                     photo=file_url,
                     pos_id=positions,
                 )
@@ -1046,50 +1075,50 @@ def staff(request):
                 messages.info(
                     request, "Employee  saved successfully.", extra_tags='success')
 
-            if 'documents' in request.POST:
+            if 'documents' in request.GET:
                 return redirect('documents')
         else:
             messages.info(request, "Empty fields.", extra_tags='error')
-    if 'search' in request.POST:
+    if 'search' in request.GET:
         data = Staff.objects.filter(
-            Q(staff__contains=request.POST['question'])).order_by('-id')
+            Q(staff__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Staff.objects.all().order_by('name')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Staff.objects.all().order_by('-name')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Staff.objects.all().order_by('surname')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Staff.objects.all().order_by('-surname')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Staff.objects.all().order_by('birth_date')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Staff.objects.all().order_by('-birth_date')
-            elif request.POST['order'] == 'g':
+            elif request.GET['order'] == 'g':
                 data = Staff.objects.all().order_by('email')
-            elif request.POST['order'] == 'h':
+            elif request.GET['order'] == 'h':
                 data = Staff.objects.all().order_by('-email')
-            elif request.POST['order'] == 'i':
+            elif request.GET['order'] == 'i':
                 data = Staff.objects.all().order_by('phone')
-            elif request.POST['order'] == 'j':
+            elif request.GET['order'] == 'j':
                 data = Staff.objects.all().order_by('-phone')
-            elif request.POST['order'] == 'k':
+            elif request.GET['order'] == 'k':
                 data = Staff.objects.all().order_by('sallary')
-            elif request.POST['order'] == 'l':
+            elif request.GET['order'] == 'l':
                 data = Staff.objects.all().order_by('-sallary')
-            elif request.POST['order'] == 'm':
+            elif request.GET['order'] == 'm':
                 data = Staff.objects.all().order_by('j_start_d')
-            elif request.POST['order'] == 'n':
+            elif request.GET['order'] == 'n':
                 data = Staff.objects.all().order_by('-j_start_d')
-            elif request.POST['order'] == 'o':
+            elif request.GET['order'] == 'o':
                 data = Staff.objects.all().order_by('pos_id__dep_id__department_name')
-            elif request.POST['order'] == 'p':
+            elif request.GET['order'] == 'p':
                 data = Staff.objects.all().order_by('-pos_id__dep_id__department_name')
-            elif request.POST['order'] == 'q':
+            elif request.GET['order'] == 'q':
                 data = Staff.objects.all().order_by('pos_id__positions')
-            elif request.POST['order'] == 'r':
+            elif request.GET['order'] == 'r':
                 data = Staff.objects.all().order_by('-pos_id__positions')
         else:
             data = Staff.objects.all().order_by('-id')
@@ -1127,14 +1156,14 @@ def staff_edit(request, id):
 def staff_update(request, id):
     update = Staff.objects.get(id=id)
 
-    name = request.POST.get('s_name')
-    surname = request.POST.get('s_surname')
-    birth_date_str = request.POST.get('s_birth_d')
-    email = request.POST.get('s_email')
-    phone = request.POST.get('s_phone')
-    sallary = request.POST.get('s_sallary')
-    j_start_d_str = request.POST.get('s_start_d')
-    position_id = request.POST.get('position_id')
+    name = request.GET.get('s_name')
+    surname = request.GET.get('s_surname')
+    birth_date_str = request.GET.get('s_birth_d')
+    email = request.GET.get('s_email')
+    phone = request.GET.get('s_phone')
+    sallary = request.GET.get('s_sallary')
+    j_start_d_str = request.GET.get('s_start_d')
+    position_id = request.GET.get('position_id')
 
     position = Positions.objects.get(id=position_id)
 
@@ -1172,13 +1201,13 @@ def documents(request, staf_id):
     del_all = []
     section = 'documents'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             for selected in choosen:
                 picked = Documents.objects.filter(id=selected)
@@ -1187,16 +1216,16 @@ def documents(request, staf_id):
                 messages.info(
                     request, "Document(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'upload' in request.POST:
-        title = request.POST['doc_name']
-        doc_num = request.POST['doc_num']
-        about = request.POST['about']
+    if 'upload' in request.GET:
+        title = request.GET['doc_name']
+        doc_num = request.GET['doc_num']
+        about = request.GET['about']
 
         if title and doc_num and 'doc_photo' in request.FILES:
 
             name = Staff.objects.get(id=staf_id)
 
-            if Documents.objects.filter(doc_num=request.POST['doc_num']).exists():
+            if Documents.objects.filter(doc_num=request.GET['doc_num']).exists():
                 messages.info(request, "Document already exists.",
                               extra_tags='error')
             else:
@@ -1206,9 +1235,9 @@ def documents(request, staf_id):
                 file_url = fs.url(file)
 
                 save_info = Documents(
-                    title=request.POST['doc_name'],
-                    doc_num=request.POST['doc_num'],
-                    about=request.POST['about'],
+                    title=request.GET['doc_name'],
+                    doc_num=request.GET['doc_num'],
+                    about=request.GET['about'],
                     scan_photo=file_url,
                     staff_id=name,
                 )
@@ -1219,26 +1248,26 @@ def documents(request, staf_id):
         else:
             messages.info(request, "Empty fields", extra_tags='warning')
 
-    if 'search' in request.POST:
-        data = Documents.objects.filter(Q(documents__contains=request.POST['question'])).filter(
+    if 'search' in request.GET:
+        data = Documents.objects.filter(Q(documents__contains=request.GET['question'])).filter(
             staff_id=staf_id).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Documents.objects.order_by('staff_id__name')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Documents.objects.order_by('-staff_id__name')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Documents.objects.order_by('title')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Documents.objects.order_by('-title')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Documents.objects.order_by('doc_num')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Documents.objects.order_by('-doc_num')
-            elif request.POST['order'] == 'g':
+            elif request.GET['order'] == 'g':
                 data = Documents.objects.order_by('about')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Documents.objects.order_by('-about')
         else:
             data = Documents.objects.all().filter(staff_id=staf_id).order_by('-id')
@@ -1273,13 +1302,13 @@ def doc_edit(request, doc_id):
 def doc_update(request, doc_id):
     update = Documents.objects.get(id=doc_id)
 
-    title = request.POST['doc_name']
-    doc_num = request.POST['doc_num']
-    about = request.POST['about']
+    title = request.GET['doc_name']
+    doc_num = request.GET['doc_num']
+    about = request.GET['about']
 
     if title and doc_num and about:
 
-        if Documents.objects.filter(doc_num=request.POST['doc_num']).exclude(id=doc_id).exists():
+        if Documents.objects.filter(doc_num=request.GET['doc_num']).exclude(id=doc_id).exists():
             messages.info(request, 'Document already exists.',
                           extra_tags='error')
         else:
@@ -1392,13 +1421,13 @@ def user_profile_update(request):
 
     if 'update' in request.POST:
         if password:
-            if User.objects.filter(email=request.POST['email']).exclude(id=request.user.id).exclude(email=request.POST['email']):
+            if User.objects.filter(email=request.POST['email']).exclude(id=request.user.id).exclude(email=request.GET['email']):
                 messages.info(request, "Email already exists.",
                               extra_tags='warning')
-            elif User.objects.filter(phone=request.POST['tel_n']).exclude(id=request.user.id).exclude(phone=request.POST['tel_n']):
+            elif User.objects.filter(phone=request.POST['tel_n']).exclude(id=request.user.id).exclude(phone=request.GET['tel_n']):
                 messages.info(
                     request, "Phone number already exists.", extra_tags='warning')
-            elif User.objects.filter(username=request.POST['user_name']).exclude(id=request.user.id).exclude(username=request.POST['user_name']):
+            elif User.objects.filter(username=request.POST['user_name']).exclude(id=request.user.id).exclude(username=request.GET['user_name']):
                 messages.info(request, "Username already exists.",
                               extra_tags='warning')
             elif check_password(request.POST['password'], request.user.password):
@@ -1447,13 +1476,13 @@ def assignments(request):
     del_all = []
     section = 'assignments'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             for selected in choosen:
                 picked = Assignments.objects.filter(id=selected)
@@ -1462,16 +1491,16 @@ def assignments(request):
             messages.info(
                 request, "Assignments data has been deleted successfully.", extra_tags='success')
 
-    if 'add' in request.POST:
-        assignment_name = request.POST['assign_n']
-        sontarix = request.POST['deadline'].replace('T', ' ')
+    if 'add' in request.GET:
+        assignment_name = request.GET['assign_n']
+        sontarix = request.GET['deadline'].replace('T', ' ')
 
         if assignment_name and sontarix:
 
-            staffs = Staff.objects.get(id=request.POST['staff_id'])
+            staffs = Staff.objects.get(id=request.GET['staff_id'])
 
             assignment = Assignments(
-                assignment_name=request.POST['assign_n'],
+                assignment_name=request.GET['assign_n'],
                 deadline=sontarix,
                 staff_id=staffs
             )
@@ -1512,9 +1541,9 @@ def assignment_edit(request, assign_id):
 
 def assignment_update(request, assign_id):
     update = Assignments.objects.get(id=assign_id)
-    assignment_name = request.POST['assign_n']
-    deadline_d_str = request.POST['deadline']
-    staffs = Staff.objects.get(id=request.POST['staff_id'])
+    assignment_name = request.GET['assign_n']
+    deadline_d_str = request.GET['deadline']
+    staffs = Staff.objects.get(id=request.GET['staff_id'])
 
     if assignment_name and deadline:
 
@@ -1563,13 +1592,13 @@ def supplier(request):
     del_all = []
     section = 'suppliers'
 
-    if 'delete_all' in request.POST:
-        del_all = request.POST.getlist('x[]')
+    if 'delete_all' in request.GET:
+        del_all = request.GET.getlist('x[]')
         if not del_all:
             messages.info(request, "Please select to delete.",
                           extra_tags='error')
-    elif 'confirm_delete_all' in request.POST:
-        choosen = request.POST.getlist('x[]')
+    elif 'confirm_delete_all' in request.GET:
+        choosen = request.GET.getlist('x[]')
         if choosen:
             delete_successful = True
             for selected in choosen:
@@ -1591,19 +1620,19 @@ def supplier(request):
             messages.info(
                 request, "Supplier(s) data has been deleted successfully.", extra_tags='success')
 
-    if 'save' in request.POST:
-        supp_name = request.POST['sup_name']
-        supp_surname = request.POST['sup_surname']
-        supp_comp_name = request.POST['sup_comp_name']
-        supp_email = request.POST['supp_email']
-        supp_phone = request.POST['supp_phone']
-        supp_address = request.POST['supp_address']
+    if 'save' in request.GET:
+        supp_name = request.GET['sup_name']
+        supp_surname = request.GET['sup_surname']
+        supp_comp_name = request.GET['sup_comp_name']
+        supp_email = request.GET['supp_email']
+        supp_phone = request.GET['supp_phone']
+        supp_address = request.GET['supp_address']
 
         if supp_name and supp_surname and supp_comp_name and supp_email and supp_phone and supp_address and 'sup_photo' in request.FILES:
-            if Supplier.objects.filter(supplier_email=request.POST['supp_email']).exists():
+            if Supplier.objects.filter(supplier_email=request.GET['supp_email']).exists():
                 messages.info(request, "Email already exists.",
                               extra_tags='warning')
-            elif Supplier.objects.filter(supplier_phone=request.POST['supp_phone']).exists():
+            elif Supplier.objects.filter(supplier_phone=request.GET['supp_phone']).exists():
                 messages.info(request, "Phone already exists.",
                               extra_tags='warning')
             else:
@@ -1626,36 +1655,36 @@ def supplier(request):
                     request, "Supplier added successfully.", extra_tags='success')
         else:
             messages.info(request, "Empty fields.", extra_tags='error')
-    if 'serach' in request.POST:
-        data = Supplier.objects.filter(Q(supplier_name__contains=request.POST['question']) | Q(supplier_surname__contains=request.POST['question']) | Q(supplier_email__contains=request.POST['question']) | Q(
-            supplier_phone__contains=request.POST['question']) | Q(supplier_address__contains=request.POST['question']) | Q(supplier_add_d__contains=request.POST['question']) | Q(supplier_company_name__contains=request.POST['question'])).order_by('-id')
+    if 'serach' in request.GET:
+        data = Supplier.objects.filter(Q(supplier_name__contains=request.GET['question']) | Q(supplier_surname__contains=request.GET['question']) | Q(supplier_email__contains=request.GET['question']) | Q(
+            supplier_phone__contains=request.GET['question']) | Q(supplier_address__contains=request.GET['question']) | Q(supplier_add_d__contains=request.GET['question']) | Q(supplier_company_name__contains=request.GET['question'])).order_by('-id')
     else:
-        if 'order' in request.POST:
-            if request.POST['order'] == 'a':
+        if 'order' in request.GET:
+            if request.GET['order'] == 'a':
                 data = Supplier.objects.all().order_by('-supplier_name')
-            elif request.POST['order'] == 'b':
+            elif request.GET['order'] == 'b':
                 data = Supplier.objects.all().order_by('supplier_name')
-            elif request.POST['order'] == 'c':
+            elif request.GET['order'] == 'c':
                 data = Supplier.objects.all().order_by('-supplier_surname')
-            elif request.POST['order'] == 'd':
+            elif request.GET['order'] == 'd':
                 data = Supplier.objects.all().order_by('-supplier_company_name')
-            elif request.POST['order'] == 'e':
+            elif request.GET['order'] == 'e':
                 data = Supplier.objects.all().order_by('supplier_company_name')
-            elif request.POST['order'] == 'f':
+            elif request.GET['order'] == 'f':
                 data = Supplier.objects.all().order_by('-supplier_email')
-            elif request.POST['order'] == 'g':
+            elif request.GET['order'] == 'g':
                 data = Supplier.objects.all().order_by('supplier_email')
-            elif request.POST['order'] == 'h':
+            elif request.GET['order'] == 'h':
                 data = Supplier.objects.all().order_by('-supplier_phone')
-            elif request.POST['order'] == 'i':
+            elif request.GET['order'] == 'i':
                 data = Supplier.objects.all().order_by('supplier_phone')
-            elif request.POST['order'] == 'j':
+            elif request.GET['order'] == 'j':
                 data = Supplier.objects.all().order_by('-supplier_address')
-            elif request.POST['order'] == 'k':
+            elif request.GET['order'] == 'k':
                 data = Supplier.objects.all().order_by('supplier_address')
-            elif request.POST['order'] == 'l':
+            elif request.GET['order'] == 'l':
                 data = Supplier.objects.all().order_by('-supplier_add_d')
-            elif request.POST['order'] == 'm':
+            elif request.GET['order'] == 'm':
                 data = Supplier.objects.all().order_by('supplier_add_d')
         else:
             data = Supplier.objects.all().order_by('-id')
@@ -1692,11 +1721,11 @@ def supplier_update(request, supp_id):
     file_url = ''
     update = Supplier.objects.get(id=supp_id)
 
-    if 'update' in request.POST:
-        if Supplier.objects.filter(supplier_email=request.POST['supp_email']).exclude(id=update.id).exclude(supplier_email=request.POST['supp_email']):
+    if 'update' in request.GET:
+        if Supplier.objects.filter(supplier_email=request.GET['supp_email']).exclude(id=update.id).exclude(supplier_email=request.GET['supp_email']):
             messages.info(request, "Email already exists.",
                           extra_tags='warning')
-        elif Supplier.objects.filter(supplier_phone=request.POST['supp_phone']).exclude(id=update.id).exclude(supplier_phone=request.POST['supp_phone']):
+        elif Supplier.objects.filter(supplier_phone=request.GET['supp_phone']).exclude(id=update.id).exclude(supplier_phone=request.GET['supp_phone']):
             messages.info(request, "Phone already exists.",
                           extra_tags='warning')
         if 'sup_photo' in request.FILES:
@@ -1708,161 +1737,12 @@ def supplier_update(request, supp_id):
             update.save()
             messages.info(request, "Photo updated.", extra_tags='success')
         else:
-            update.supplier_name = request.POST['sup_name']
-            update.supplier_surname = request.POST['sup_surname']
-            update.supplier_company_name = request.POST['sup_comp_name']
-            update.supplier_email = request.POST['supp_email']
-            update.supplier_phone = request.POST['supp_phone']
-            update.supplier_address = request.POST['supp_address']
+            update.supplier_name = request.GET['sup_name']
+            update.supplier_surname = request.GET['sup_surname']
+            update.supplier_company_name = request.GET['sup_comp_name']
+            update.supplier_email = request.GET['supp_email']
+            update.supplier_phone = request.GET['supp_phone']
+            update.supplier_address = request.GET['supp_address']
             update.save()
             messages.info(request, "Profile updated.", extra_tags='success')
     return redirect('supplier')
-
-
-def loader(request):
-    data = ''
-
-    if 'del_brand' in request.GET:
-        brand = Brand.objects.get(id=request.GET['del_brand'])
-        data = Brand.objects.all().order_by('-id')
-        number = Products.objects.filter(
-            brand_id=request.GET['del_brand']).count()
-
-        if number > 0:
-            messages.info(
-                request, f"Brand '{brand.brand_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
-        else:
-            brand.delete()
-            messages.info(
-            request, "The brand has been successfully deleted.", extra_tags='success')
-    
-    if 'del_client' in request.GET:
-        clients = Clients.objects.get(id=request.GET['del_client'])
-        data = Clients.objects.all().order_by('-id')
-        active_orders = Orders.objects.filter(
-            client_id=request.GET['del_client']).count()
-        
-        if active_orders > 0:
-            messages.info(
-            request, f"Client '{clients.name} {clients.surname}' cannot be deleted. There are {active_orders} active products in it.", extra_tags='error')
-        else:
-            clients.delete()
-            messages.info(
-            request, "Customer's data has been deleted successfully.", extra_tags='success')
-
-    if 'del_expense' in request.GET:
-        Expenses.objects.get(id=request.GET['del_expense']).delete()
-        data = Expenses.objects.all().order_by('-id')
-        messages.info(
-            request, "Expens data has been deleted successfully.", extra_tags='success')
-
-    if 'del_product' in request.GET:
-        products = Products.objects.get(id=request.GET['del_product'])
-        data = Products.objects.all().order_by('-id')
-        active_order = Orders.objects.filter(
-            product_id=request.GET['del_product']).count()
-
-        if active_order > 0:
-            messages.info(
-                request, f"Product '{products.product}' cannot be deleted. There are {active_order} active products in it.", extra_tags='error')
-        else:
-            products.delete()
-            messages.info(
-                request, "Products data has been deleted successfully.", extra_tags='success')
-
-    if 'del_order' in request.GET:
-        Orders.objects.get(id=request.GET['del_order']).delete()
-        data = Orders.objects.all().order_by('-id')
-        messages.info(
-            request, "Order data has been deleted successfully.", extra_tags='success')
-
-    if 'del_departments' in request.GET:
-        departments = Departments.objects.get(
-            id=request.GET['del_departments'])
-        data = Departments.objects.all().order_by('-id')
-        position = Positions.objects.filter(
-            dep_id_id=request.GET['del_departments']).count()
-
-        if position > 0:
-            messages.info(
-                request, f"Department '{departments.department_name}' cannot be deleted. There are {position} active position in it.", extra_tags='error')
-        else:
-            departments.delete()
-            messages.info(
-                request, "Department  has been deleted successfully.", extra_tags='success')
-
-    if 'del_positions' in request.GET:
-        positions = Positions.objects.get(id=request.GET['del_positions'])
-        data = Positions.objects.all().order_by('-id')
-        staffs = Staff.objects.filter(
-            pos_id=request.GET['del_positions']).count()
-        if staffs > 0:
-            messages.info(
-                request, f"Position '{positions.positions}' cannot be deleted. There are {staffs} active staff in it.", extra_tags='error')
-        else:
-            positions.delete()
-            messages.info(
-                request, "Positions has been deleted successfully.", extra_tags='success')
-
-    if 'del_staff' in request.GET:
-        staff = Staff.objects.get(id=request.GET['del_staff'])
-        documents = Documents.objects.filter(
-            staff_id_id=request.GET['del_staff']).count()
-        if documents > 0:
-            messages.info(
-                request, f"Staff '{staff.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
-        else:
-            Staff.objects.get(id=request.GET['del_staff']).delete()
-            messages.info(
-                request, "Employee has been deleted successfully.", extra_tags='success')
-
-    if 'del_documents' in request.GET:
-        Documents.objects.get(id=request.GET['del_documents']).delete()
-        data = Documents.objects.all().order_by('-id')
-        messages.info(
-            request, "Document has been deleted successfully.", extra_tags='success')
-
-    if 'del_assignment' in request.GET:
-        Assignments.objects.get(id=request.GET['del_assignment']).delete()
-        data = Assignments.objects.all().order_by('-id')
-        messages.info(
-            request, "Assignment has been deleted successfully.", extra_tags='success')
-
-    if 'del_supplier' in request.GET:
-        supplier = Supplier.objects.get(id=request.GET['del_supplier'])
-        data = Supplier.objects.all().order_by('-id')
-        number = Products.objects.filter(
-            supplier_id_id=request.GET['del_supplier']).count()
-
-        if number > 0:
-            messages.info(
-                request, f"Supplier '{supplier.supplier_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
-        else:
-            supplier.delete()
-            messages.info(
-                request, "Supplier has been deleted successfully.", extra_tags='success')
-            
-    if request.GET['section'] == 'brands':
-        data = Brand.objects.all().order_by('-id')
-    elif request.GET['section'] == 'clients':
-        data = Clients.objects.all().order_by('-id')
-    elif request.GET['section'] == 'expenses':
-        data = Expenses.objects.all().order_by('-id')
-    elif request.GET['section'] == 'products':
-        data = Products.objects.all().order_by('-id')
-    elif request.GET['section'] == 'orders':
-        data = Orders.objects.all().order_by('-id')
-    elif request.GET['section'] == 'suppliers':
-        data = Supplier.objects.all().order_by('-id')
-    elif request.GET['section'] == 'departments':
-        data = Departments.objects.all().order_by('-id')
-    elif request.GET['section'] == 'positions':
-        data = Positions.objects.all().order_by('-id')
-    elif request.GET['section'] == 'staffs':
-        data = Staff.objects.all().order_by('-id')
-    elif request.GET['section'] == 'documents':
-        data = Documents.objects.all().order_by('-id')
-    elif request.GET['section'] == 'assignments':
-        data = Assignments.objects.all().order_by('-id')
-
-    return render(request, 'loader.html', {'data': data, })

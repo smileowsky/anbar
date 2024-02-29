@@ -11,7 +11,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
+        <form method="GET" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit brand name</label>
@@ -47,7 +47,7 @@
         <p class="card-description">
           Fill in the blanks
         </p>
-        <form method="post" id="insert_brand" action="{% url 'loader'%}" class="forms-sample"
+        <form method="GET" id="insert_brand" action="{% url 'loader'%}" class="forms-sample"
           enctype="multipart/form-data">
           {% csrf_token %}
           <input type="hidden" name="section" value="brands">

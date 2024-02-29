@@ -1,5 +1,5 @@
 <!--Brand AJAX-->
-{% if request.GET.section == 'brands' or request.POST.section == 'brands' %}
+{% if request.GET.section == 'brands' or request.GET.section == 'brands' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -37,7 +37,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -63,7 +63,7 @@
         <h4 class="card-title">Brands Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
               <thead>
@@ -71,7 +71,7 @@
                 <th>Brand Picture</th>
                 <th>
                   Brand
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="z"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -81,7 +81,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'd' %}
+                  {% if request.GET.order == 'd' %}
                   <button class="btn btn-link btn-sm" name="order" value="e"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -124,7 +124,7 @@
 <!--Brand AJAX end-->
 
 <!--Client AJAX-->
-{% elif request.GET.section == 'clients' or request.POST.section == 'clients' %}
+{% elif request.GET.section == 'clients' or request.GET.section == 'clients' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -162,7 +162,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -186,7 +186,7 @@
         <h4 class="card-title">Clients Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -194,7 +194,7 @@
                 <th>#</th>
                 <th>
                   Name
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -204,7 +204,7 @@
                 </th>
                 <th>
                   Surname
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -214,7 +214,7 @@
                 </th>
                 <th>
                   Email
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -224,7 +224,7 @@
                 </th>
                 <th>
                   Phone
-                  {% if request.POST.order == 'g' %}
+                  {% if request.GET.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="k"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -234,7 +234,7 @@
                 </th>
                 <th>
                   Company
-                  {% if request.POST.order == 'l' %}
+                  {% if request.GET.order == 'l' %}
                   <button class="btn btn-link btn-sm" name="order" value="m"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -244,7 +244,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'n' %}
+                  {% if request.GET.order == 'n' %}
                   <button class="btn btn-link btn-sm" name="order" value="o"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -291,7 +291,7 @@
 <!--Client AJAX end-->
 
 <!--Expens AJAX-->
-{% elif request.GET.section == 'expenses' or request.POST.section == 'expenses' %}
+{% elif request.POST.x == 'expenses' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -311,6 +311,69 @@
 </div>
 {% endif %}
 
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Expenses</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="get" action="{% url 'expens_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit expens title</label>
+            <input type="text" name="assignment" value="{{edit.assignment}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit amount</label>
+            <input type="text" name="amount" value="{{edit.amount}}" class="form-control"><br>
+          </div>
+          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+          <a href="{% url 'expens' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add expenses</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_expens">
+          <input type="hidden" name="x" value="expenses">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Expense title</label>
+            <input type="text" class="form-control" placeholder="Expense title" name="assignment">
+          </div>
+          <div class="form-group">
+            <label>Amount</label>
+            <input type="text" class="form-control" placeholder="Amount" name="amount">
+          </div>
+          <button type="button" name="save" class="btn btn-primary text-white insert">Save</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<div class="alert alert-primary" role="alert">
+ <center>
+   <b>Expenses: </b> {{expens_num}} |
+ </center>
+</div>
+
 <!--
 {% if client %}
 <div class="alert alert-danger" role="alert">
@@ -324,7 +387,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items</b>?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -342,7 +405,7 @@
         <h4 class="card-title">Expenses Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -350,7 +413,7 @@
                 <th>#</th>
                 <th>
                   Assignments
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -360,7 +423,7 @@
                 </th>
                 <th>
                   Amount
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -370,7 +433,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -417,7 +480,7 @@
 <!--Expens AJAX End-->
 
 <!--Product AJAX-->
-{% elif request.GET.section == 'products' or request.POST.section == 'products' %}
+{% elif request.GET.section == 'products' or request.GET.section == 'products' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -455,7 +518,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -480,7 +543,7 @@
       <div class="card-body">
         <h4 class="card-title">Products Table</h4>
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -489,7 +552,7 @@
                 <th>Products Photo</th>
                 <th>
                   Supplier
-                  {% if request.POST.order == 'k' %}
+                  {% if request.GET.order == 'k' %}
                   <button class="btn btn-link btn-sm" name="order" value="l"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -499,7 +562,7 @@
                 </th>
                 <th>
                   Brand
-                  {% if request.POST.order == 'm' %}
+                  {% if request.GET.order == 'm' %}
                   <button class="btn btn-link btn-sm" name="order" value="n"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -509,7 +572,7 @@
                 </th>
                 <th>
                   Products
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -519,7 +582,7 @@
                 </th>
                 <th>
                   Buy
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -529,7 +592,7 @@
                 </th>
                 <th>
                   Sell
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -539,7 +602,7 @@
                 </th>
                 <th>
                   Quantity
-                  {% if request.POST.order == 'g' %}
+                  {% if request.GET.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -549,7 +612,7 @@
                 </th>
                 <th>
                   Profit
-                  {% if request.POST.order == 'o' %}
+                  {% if request.GET.order == 'o' %}
                   <button class="btn btn-link btn-sm" name="order" value="p"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -559,7 +622,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'i' %}
+                  {% if request.GET.order == 'i' %}
                   <button class="btn btn-link btn-sm" name="order" value="j"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -610,7 +673,7 @@
 <!--Products AJAX End-->
 
 <!--Orders AJAX-->
-{% elif request.GET.section == 'orders' or request.POST.section == 'orders' %}
+{% elif request.GET.section == 'orders' or request.GET.section == 'orders' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -649,7 +712,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -679,7 +742,7 @@
       <div class="card-body">
         <h4 class="card-title">Orders Table</h4>
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -687,7 +750,7 @@
                 <th>#</th>
                 <th>
                   Client
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -697,7 +760,7 @@
                 </th>
                 <th>
                   Brand
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -707,7 +770,7 @@
                 </th>
                 <th>
                   Products
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -717,7 +780,7 @@
                 </th>
                 <th>
                   Stock
-                  {% if request.POST.order == 'g' %}
+                  {% if request.GET.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -727,7 +790,7 @@
                 </th>
                 <th>
                   Buy
-                  {% if request.POST.order == 'i' %}
+                  {% if request.GET.order == 'i' %}
                   <button class="btn btn-link btn-sm" name="order" value="j"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -737,7 +800,7 @@
                 </th>
                 <th>
                   Sell
-                  {% if request.POST.order == 'k' %}
+                  {% if request.GET.order == 'k' %}
                   <button class="btn btn-link btn-sm" name="order" value="l"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -747,7 +810,7 @@
                 </th>
                 <th>
                   Order
-                  {% if request.POST.order == 'n' %}
+                  {% if request.GET.order == 'n' %}
                   <button class="btn btn-link btn-sm" name="order" value="m"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -757,7 +820,7 @@
                 </th>
                 <th>
                   Profit
-                  {% if request.POST.order == 'o' %}
+                  {% if request.GET.order == 'o' %}
                   <button class="btn btn-link btn-sm" name="order" value="p"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -767,7 +830,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'q' %}
+                  {% if request.GET.order == 'q' %}
                   <button class="btn btn-link btn-sm" name="order" value="r"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -828,7 +891,7 @@
 <!--Orders AJAX end-->
 
 <!--Supplier AJAX-->
-{% elif request.GET.section == 'suppliers' or request.POST.section == 'suppliers' %}
+{% elif request.GET.section == 'suppliers' or request.GET.section == 'suppliers' %}
 
 <!--
 {% if supplier %}
@@ -843,7 +906,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want delete all selected?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -856,7 +919,7 @@
 <!--Supplier Ajax end-->
 
 <!--Departments AJAX-->
-{% elif request.GET.section == 'departments' or request.POST.section == 'departments' %}
+{% elif request.GET.section == 'departments' or request.GET.section == 'departments' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -894,7 +957,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -912,7 +975,7 @@
         <h4 class="card-title">Departments Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -920,7 +983,7 @@
                 <th>#</th>
                 <th>
                   Department
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -930,7 +993,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -974,7 +1037,7 @@
 <!--Departments AJAX end-->
 
 <!--Positions AJAX-->
-{% elif request.GET.section == 'positions' or request.POST.section == 'positions' %}
+{% elif request.GET.section == 'positions' or request.GET.section == 'positions' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1012,7 +1075,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1030,7 +1093,7 @@
         <h4 class="card-title">Clients Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -1038,7 +1101,7 @@
                 <th>#</th>
                 <th>
                   Departments
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1048,7 +1111,7 @@
                 </th>
                 <th>
                   Position
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1058,7 +1121,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1102,7 +1165,7 @@
 <!--Positions AJAX end-->
 
 <!--Staff AJAX-->
-{% elif request.GET.section == 'staffs' or request.POST.section == 'staffs' %}
+{% elif request.GET.section == 'staffs' or request.GET.section == 'staffs' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1141,7 +1204,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1159,7 +1222,7 @@
         <h4 class="card-title">Staff Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -1170,7 +1233,7 @@
                 </th>
                 <th>
                   Name
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1180,7 +1243,7 @@
                 </th>
                 <th>
                   Surname
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1190,7 +1253,7 @@
                 </th>
                 <th>
                   Birthdate
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1200,7 +1263,7 @@
                 </th>
                 <th>
                   Departments
-                  {% if request.POST.order == 'o' %}
+                  {% if request.GET.order == 'o' %}
                   <button class="btn btn-link btn-sm" name="order" value="p"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1210,7 +1273,7 @@
                 </th>
                 <th>
                   Positions
-                  {% if request.POST.order == 'q' %}
+                  {% if request.GET.order == 'q' %}
                   <button class="btn btn-link btn-sm" name="order" value="r"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1220,7 +1283,7 @@
                 </th>
                 <th>
                   Email
-                  {% if request.POST.order == 'g' %}
+                  {% if request.GET.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1230,7 +1293,7 @@
                 </th>
                 <th>
                   Phone
-                  {% if request.POST.order == 'j' %}
+                  {% if request.GET.order == 'j' %}
                   <button class="btn btn-link btn-sm" name="order" value="i"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1240,7 +1303,7 @@
                 </th>
                 <th>
                   Sallary
-                  {% if request.POST.order == 'k' %}
+                  {% if request.GET.order == 'k' %}
                   <button class="btn btn-link btn-sm" name="order" value="l"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1250,7 +1313,7 @@
                 </th>
                 <th>
                   Start Date
-                  {% if request.POST.order == 'm' %}
+                  {% if request.GET.order == 'm' %}
                   <button class="btn btn-link btn-sm" name="order" value="n"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1303,7 +1366,7 @@
 <!--Staff AJAX end-->
 
 <!--Documents AJAX-->
-{% elif request.GET.section == 'documents' or request.POST.section == 'documents' %}
+{% elif request.GET.section == 'documents' or request.GET.section == 'documents' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1341,7 +1404,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1359,7 +1422,7 @@
         <h4 class="card-title">Document Table</h4>
 
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -1368,7 +1431,7 @@
                 <th>Document photo</th>
                 <th>
                   Employee
-                  {% if request.POST.order == 'a' %}
+                  {% if request.GET.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1378,7 +1441,7 @@
                 </th>
                 <th>
                   Document name
-                  {% if request.POST.order == 'c' %}
+                  {% if request.GET.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical>"></i></button>
                   {% else %}
@@ -1388,7 +1451,7 @@
                 </th>
                 <th>
                   Document number
-                  {% if request.POST.order == 'e' %}
+                  {% if request.GET.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1398,7 +1461,7 @@
                 </th>
                 <th>
                   Note
-                  {% if request.POST.order == 'g' %}
+                  {% if request.GET.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1445,7 +1508,7 @@
 <!--Documents AJAX end-->
 
 <!--Assignments AJAX-->
-{% elif request.GET.section == 'assignments' or request.POST.section == 'assignments' %}
+{% elif request.GET.section == 'assignments' or request.GET.section == 'assignments' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1483,7 +1546,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="post">
+  <form method="get">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1500,7 +1563,7 @@
       <div class="card-body">
         <h4 class="card-title">Orders Table</h4>
         <div class="table-responsive">
-          <form method="post" action="#table">
+          <form method="get" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
