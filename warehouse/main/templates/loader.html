@@ -1,5 +1,5 @@
 <!--Brand AJAX-->
-{% if request.GET.section == 'brands' or request.GET.section == 'brands' %}
+{% if request.POST.x == 'brands' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -21,6 +21,74 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Brands</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit brand name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="brand_name"
+              value="{{edit.brand_name}}">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="brand_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.brand_pic}}">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+                name="brand_photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <button type="submit" name="save1" class="btn btn-primary me-2 text-white">Update</button>
+          <a href="{% url 'brand' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add brands</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_brands"
+          enctype="multipart/form-data">
+          <input type="hidden" name="x" value="brands">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Brand name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <div class="input-group col-xs-12">
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="brand_photo">
+            </div>
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 
@@ -124,7 +192,7 @@
 <!--Brand AJAX end-->
 
 <!--Client AJAX-->
-{% elif request.GET.section == 'clients' or request.GET.section == 'clients' %}
+{% elif request.POST.x == 'clients' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -146,6 +214,86 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Clients</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" class="forms-sample" action="{% url 'client_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit client name</label>
+            <input type="text" name="name" value="{{edit.name}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client surname</label>
+            <input type="text" name="surname" value="{{edit.surname}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client e-mail</label>
+            <input type="text" name="email" value="{{edit.email}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client phone number</label>
+            <input type="text" name="phone" value="{{edit.phone}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit client company name</label>
+            <input type="text" name="company" value="{{edit.company}}" class="form-control"><br>
+          </div>
+          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+          <a href="{% url 'client' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add clients</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_clients">
+          <input type="hidden" name="x" value="clients">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Client name</label>
+            <input class="form-control" placeholder="Client name" name="name">
+          </div>
+          <div class="form-group">
+            <label>Client surname</label>
+            <input class="form-control" placeholder="Client surname" name="surname">
+          </div>
+          <div class="form-group">
+            <label>Client e-mail</label>
+            <input class="form-control" placeholder="Client e-mail" name="email">
+          </div>
+          <div class="form-group">
+            <label>Client number</label>
+            <input class="form-control" placeholder="+9941234567" name="phone">
+          </div>
+          <div class="form-group">
+            <label>Client company name</label>
+            <input class="form-control" placeholder="Client company name" name="company">
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 
@@ -311,7 +459,6 @@
 </div>
 {% endif %}
 
-
 {% if edit %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
@@ -360,19 +507,13 @@
             <label>Amount</label>
             <input type="text" class="form-control" placeholder="Amount" name="amount">
           </div>
-          <button type="button" name="save" class="btn btn-primary text-white insert">Save</button>
+          <button type="button" name="save" class="btn btn-primary text-white insert">Add</button>
         </form>
       </div>
     </div>
   </div>
 </div>
 {% endif %}
-
-<div class="alert alert-primary" role="alert">
- <center>
-   <b>Expenses: </b> {{expens_num}} |
- </center>
-</div>
 
 <!--
 {% if client %}
@@ -397,6 +538,12 @@
   </form>
 </div>
 {% endif %}
+
+<div class="alert alert-primary" role="alert">
+ <center>
+   <b>Expenses: </b> {{expens_num}} |
+ </center>
+</div>
 
 <div class="row">
   <div class="col-lg-12 grid-margin stretch-card">
@@ -480,7 +627,7 @@
 <!--Expens AJAX End-->
 
 <!--Product AJAX-->
-{% elif request.GET.section == 'products' or request.GET.section == 'products' %}
+{% elif request.POST.x == 'products' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -502,6 +649,136 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Products</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" action="{% url 'products_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputName1">Edit supplier</label>
+            <select name="supp_id" class="form-control">
+              <option value="">Choose the supplier</option>
+              {% for supplier_option in suppliers %}
+              <option {% if edit.supplier_id.id == supplier_option.id %} selected {% endif %}
+                value="{{ supplier_option.id }}">
+                {{supplier_option.supplier_name}} {{supplier_option.supplier_surname}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Edit brand</label>
+            <select name="brand_id" class="form-control">
+              <option value="">Choose the brand</option>
+              {% for brand_option in brands %}
+              <option {% if edit.brand.id == brand_option.id %} selected {% endif %} value="{{ brand_option.id }}">
+                {{brand_option.brand_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Edit product name</label>
+            <input type="text" class="form-control" id="exampleInputName1" placeholder="Brand name" name="product"
+              value="{{edit.product}}">
+          </div>
+          <div class="input-group col-xs-12">
+            <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.product_photo}}">
+            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
+            <span class="input-group-append">
+              <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+            </span>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Edit product "buy" price</label>
+            <input type="text" class="form-control" id="exampleInputName1" placeholder="Product buy price" name="buy"
+              value="{{edit.buy}}">
+          </div>
+          <div class="form-group">
+            <div class="form-group">
+              <label for="exampleInputName1">Edit product "sell" price</label>
+              <input type="text" class="form-control" id="exampleInputName1" placeholder="Edit product sell price"
+                name="sell" value="{{edit.sell}}">
+            </div>
+            <div class="form-group">
+              <label for="exampleInputName1">Edit product "amount"</label>
+              <input type="text" class="form-control" id="exampleInputName1" placeholder="Edit product amount"
+                name="quantity" value="{{edit.quantity}}">
+            </div>S
+            <button name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'products' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add products</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_products" 
+          enctype="multipart/form-data">
+          <input type="hidden" name="x" value="products">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputName1">Supplier</label>
+            <select name="supp_id" class="form-control">
+              <option value="">Choose the supplier...</option>
+              {% for supplier in suppliers %}
+              <option value="{{supplier.id}}">{{supplier.supplier_name}} {{supplier.supplier_surname}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Brand</label>
+            <select name="brand_id" class="form-control">
+              <option value="">Choose the brand...</option>
+              {% for brand in brands %}
+              <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Product name</label>
+            <input class="form-control" id="exampleInputName1" placeholder="Product name" name="product">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <div class="input-group col-xs-12">
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="photo">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Product "buy" price</label>
+            <input type="text" class="form-control" id="exampleInputName1" placeholder="Buy price" name="buy">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Product "sell" price</label>
+            <input type="text" class="form-control" id="exampleInputName1" placeholder="Sell price" name="sell">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputName1">Product "amount"</label>
+            <input type="text" class="form-control" id="exampleInputName1" placeholder="Product amount" name="quantity">
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 
@@ -673,7 +950,7 @@
 <!--Products AJAX End-->
 
 <!--Orders AJAX-->
-{% elif request.GET.section == 'orders' or request.GET.section == 'orders' %}
+{% elif request.POST.x == 'orders' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -695,6 +972,95 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Orders</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" action="{% url 'orders_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit client</label>
+            <select name="client_id" class="form-control">
+              <option value="">Choose the client</option>
+              {% for client_obj in client %}
+              <option {% if edit.client.id == client_obj.id %} selected {% endif %} value="{{client_obj.id}}">
+                {{client_obj.name}}
+                {{client_obj.surname}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit product</label>
+            <select name="product_id" class="form-control">
+              <option value="">Choose the product</option>
+              {% for product_obj in product %}
+              <option {% if edit.product.id == product_obj.id %} selected {% endif %} value="{{product_obj.id}}">
+                {{product_obj.brand.brand_name}} - {{product_obj.product}} [{{product_obj.quantity}}]</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit "amount" of product</label>
+            <input type="text" class="form-control" placeholder="Edit amount of product" name="amount"
+              value="{{edit.amount}}"><br>
+            <button name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'orders' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add order</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" class="forms-sample" id="insert_orders">
+          <input type="hidden" name="x" value="orders">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Client</label>
+            <select name="client_id" class="form-control">
+              <option value="">Choose the client...</option>
+              {% for client_obj in client %}
+              <option value="{{client_obj.id}}">{{client_obj.name}} {{client_obj.surname}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Product</label>
+            <select name="product_id" class="form-control">
+              <option value="">Choose the product...</option>
+              {% for product_obj in product %}
+              <option value="{{product_obj.id}}">{{product_obj.brand.brand_name}} - {{product_obj.product}}
+                [{{product_obj.quantity}}]</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Product "amount"</label>
+            <input type="text" class="form-control" placeholder="Product amount" name="amount"><br>
+            <button type="button" name="save" class="btn btn-primary text-white insert">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 
@@ -891,35 +1257,7 @@
 <!--Orders AJAX end-->
 
 <!--Supplier AJAX-->
-{% elif request.GET.section == 'suppliers' or request.GET.section == 'suppliers' %}
-
-<!--
-{% if supplier %}
-<div class="alert alert-danger" role="alert">
-    Do you want to delete supplier? <br><b>{{supplier.supplier_name}}</b><br><br>
-    <a class="btn btn-success text-white" href="{% url 'delete_config' supplier.id %}">Yes</a>
-    <a class="btn btn-danger text-white" href="{% url 'supplier' %}">No</a><br>
-</div>
-{% endif %}
--->
-
-{% if del_all %}
-<div class="alert alert-danger" role="alert">
-  Do you want delete all selected?<br>
-  <form method="get">
-    {% csrf_token %}
-    {% for id in del_all %}
-    <input type="hidden" name="x[]" value="{{id}}">
-    {% endfor %}
-    <button class="btn btn-success" name="confirm_delete_all">Yes</button>
-    <button class="btn btn-danger">No</button>
-  </form>
-</div>
-{% endif %}
-<!--Supplier Ajax end-->
-
-<!--Departments AJAX-->
-{% elif request.GET.section == 'departments' or request.GET.section == 'departments' %}
+{% elif request.POST.x == 'suppliers' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -941,6 +1279,349 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Suppliers</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="POST" action="{% url 'supplier_update' edit.id %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="form-group">
+            <div class="input-group col-xs-12">
+              <label>File upload</label>
+              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.supplier_photo}}">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+                name="sup_photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Edit supplier name</label>
+            <input type="text" class="form-control" placeholder="Supplier name" name="sup_name"
+              value="{{edit.supplier_name}}">
+          </div>
+          <div class="form-group">
+            <label>Edit supplier surname</label>
+            <input type="text" class="form-control" placeholder="Supplier surname" name="sup_surname"
+              value="{{edit.supplier_surname}}">
+          </div>
+          <div class="form-group">
+            <label>Edit supplier surname</label>
+            <input type="text" class="form-control" placeholder="Company name" name="sup_comp_name"
+              value="{{edit.supplier_company_name}}">
+          </div>
+          <div class="form-group">
+            <label>Edit e-mail</label>
+            <input type="email" class="form-control" placeholder="E-mail" name="supp_email"
+              value="{{edit.supplier_email}}">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" class="form-control" placeholder="+9941234567" name="supp_phone"
+              value="{{edit.supplier_phone}}">
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" class="form-control" placeholder="Address" name="supp_address"
+              value="{{edit.supplier_address}}">
+          </div>
+          <button name="update" class="btn btn-primary me-2 text-white">Update</button>
+          <a href="{% url 'supplier' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add suppliers</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_suppliers" 
+          enctype="multipart/form-data">
+          <input type="hidden" name="x" value="suppliers">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Supplier name</label>
+            <input type="text" class="form-control" placeholder="Name" name="sup_name">
+          </div>
+          <div class="form-group">
+            <label>Supplier surname</label>
+            <input type="text" class="form-control" placeholder="Surname name" name="sup_surname">
+          </div>
+          <div class="form-group">
+            <label>Company</label>
+            <input type="text" class="form-control" placeholder="Company" name="sup_comp_name">
+          </div>
+          <div class="form-group">
+            <label>Company</label>
+            <input type="email" class="form-control" placeholder="e-mail" name="supp_email">
+          </div>
+          <div class="form-group">
+            <label>Phone</label>
+            <input type="tel" class="form-control" placeholder="+9941234567" name="supp_phone">
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" class="form-control" placeholder="Address" name="supp_address">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <div class="input-group col-xs-12">
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="sup_photo">
+            </div>
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+<!--
+{% if supplier %}
+<div class="alert alert-danger" role="alert">
+    Do you want to delete supplier? <br><b>{{supplier.supplier_name}}</b><br><br>
+    <a class="btn btn-success text-white delete" id="{supplier.id}" href="#table">Yes</a>
+    <a class="btn btn-danger text-white" href="{% url 'supplier' %}">No</a><br>
+</div>
+{% endif %}
+-->
+
+{% if del_all %}
+<div class="alert alert-danger" role="alert">
+  Do you want delete all selected?<br>
+  <form method="get">
+    {% csrf_token %}
+    {% for id in del_all %}
+    <input type="hidden" name="x[]" value="{{id}}">
+    {% endfor %}
+    <button class="btn btn-success" name="confirm_delete_all">Yes</button>
+    <button class="btn btn-danger">No</button>
+  </form>
+</div>
+{% endif %}
+
+<div class="alert alert-primary" role="alert">
+  <center>
+    <b>Supplier: </b> {{supplier_num}} |
+    <b>Products: </b> {{product_num}} |
+    <b>Orders: </b> {{orders_num}} |
+  </center>
+</div>
+
+<div class="row">
+  <div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Supplier Table</h4>
+
+        <div class="table-responsive">
+          <form method="POST" action="#table">
+            {% csrf_token %}
+            <table class="table table-striped" id="table">
+              <thead>
+                <th>#</th>
+                <th>Photo</th>
+                <th>
+                  Name
+                  {% if request.POST.order == 'a' %}
+                  <button class="btn btn-link btn-sm" name="order" value="b"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="a"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Surname
+                  {% if request.POST.order == 'c' %}
+                  <button class="btn btn-link btn-sm" name="order" value="d"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="c"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Company name
+                  {% if request.POST.order == 'e' %}
+                  <button class="btn btn-link btn-sm" name="order" value="f"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="e"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Email
+                  {% if request.POST.order == 'g' %}
+                  <button class="btn btn-link btn-sm" name="order" value="h"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="g"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Phone
+                  {% if request.POST.order == 'j' %}
+                  <button class="btn btn-link btn-sm" name="order" value="k"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="j"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Address
+                  {% if request.POST.order == 'l' %}
+                  <button class="btn btn-link btn-sm" name="order" value="m"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="l"><i
+                      class="mdi mdi-sort-alphabetical"></i></button>
+                  {% endif %}
+                </th>
+                <th>
+                  Date of add
+                  {% if request.POST.order == 'n' %}
+                  <button class="btn btn-link btn-sm" name="order" value="o"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% else %}
+                  <button class="btn btn-link btn-sm" name="order" value="n"><i
+                      class="mdi mdi-sort-numeric"></i></button>
+                  {% endif %}
+                </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete
+                    selected</button></th>
+              </thead>
+
+              <tbody>
+                {% for info in data %}
+                <tr>
+                  <td>
+                    <div class="form-check form-check-info">
+                      <label class="form-check-label">
+                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                      </label>
+                    </div>
+                  </td>
+                  <td><img style="width: 50px; height: 60px;" src="{{info.supplier_photo}}"></td>
+                  <td>{{info.supplier_name}}</td>
+                  <td>{{info.supplier_surname}}</td>
+                  <td>{{info.supplier_company_name}}</td>
+                  <td>{{info.supplier_email}}</td>
+                  <td>{{info.supplier_phone}}</td>
+                  <td>{{info.supplier_address}}</td>
+                  <td>{{info.supplier_add_d | date:'d-m-Y'}}</td>
+                  <td>
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
+                        class="mdi mdi-delete"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="{% url 'supplier_edit' info.id %}" title="Edit"><i
+                        class="mdi mdi-grease-pencil"></i></a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!--Supplier Ajax end-->
+
+<!--Departments AJAX-->
+{% elif request.POST.x == 'departments' %}
+
+{% if messages %}
+<div class="alert alert-dismissible fade show" role="alert">
+  {% for message in messages %}
+  {% if 'success' in message.tags %}
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'error' in message.tags %}
+  <div class="alert alert-danger alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% elif 'warning' in message.tags %}
+  <div class="alert alert-warning alert-dismissible fade show" role="alert">
+    {{message}}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% endif %}
+
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Departments</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" action="{% url 'department_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Edit department name</label>
+            <input type="text" class="form-control" placeholder="Department name" name="department_name"
+              value="{{edit.department_name}}" class="form-control"><br>
+            <button type="submit" name="update" class="btn btn-primary me-2 text-white">Update</button>
+            <a href="{%url 'departments'%}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add departments</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_departments">
+          <input type="hidden" name="x" value="departments">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Department name</label>
+            <input type="text" class="form-control" placeholder="Department name" name="department_name"><br>
+            <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 
@@ -1037,7 +1718,7 @@
 <!--Departments AJAX end-->
 
 <!--Positions AJAX-->
-{% elif request.GET.section == 'positions' or request.GET.section == 'positions' %}
+{% elif request.POST.x == 'positions' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1059,6 +1740,73 @@
   </div>
   {% endif %}
   {% endfor %}
+</div>
+{% endif %}
+
+{%if edit%}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Positions</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" action="{%url 'position_update' edit.id%}">
+          {%csrf_token%}
+          <div class="form-group">
+            <label>Edit Department</label>
+            <select name="department_id" class="form-control">
+              <option value="">Choose the departament</option>
+              {%for department_obj in departments%}
+              <option {% if edit.dep_id.id == department_obj.id %} selected {%endif%} value="{{department_obj.id}}">
+                {{department_obj.department_name}}</option>
+              {%endfor%}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit position name</label>
+            <input type="text" name="position_name" value="{{edit.positions}}" class="form-control"><br>
+            <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{%url 'positions'%}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%else%}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add positions</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_positions">
+          <input type="hidden" name="x" value="positions">
+          <input type="hidden" name="save">
+          {%csrf_token%}
+          <div class="form-group">
+            <label>Position name</label>
+            <select name="department_id" class="form-control">
+              <option value="">Choose the department...</option>
+              {%for department_obj in departments%}
+              <option value="{{department_obj.id}}">{{department_obj.department_name}}</option>
+              {%endfor%}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Client name</label>
+            <input class="form-control" placeholder="Position name" name="position_name"><br>
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 {% endif %}
 

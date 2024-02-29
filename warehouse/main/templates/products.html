@@ -2,145 +2,14 @@
 
 {% block 'content' %}
 
-{% if edit %}
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Edit Products</h4>
-        <p class="card-description">
-          Edit the information in the cells
-        </p>
-        <form method="GET" action="{% url 'products_update' edit.id %}">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="exampleInputName1">Edit supplier</label>
-            <select name="supp_id" class="form-control">
-              <option value="">Choose the supplier</option>
-              {% for supplier_option in suppliers %}
-              <option {% if edit.supplier_id.id == supplier_option.id %} selected {% endif %}
-                value="{{ supplier_option.id }}">
-                {{supplier_option.supplier_name}} {{supplier_option.supplier_surname}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Edit brand</label>
-            <select name="brand_id" class="form-control">
-              <option value="">Choose the brand</option>
-              {% for brand_option in brands %}
-              <option {% if edit.brand.id == brand_option.id %} selected {% endif %} value="{{ brand_option.id }}">
-                {{brand_option.brand_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Edit product name</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Brand name" name="product"
-              value="{{edit.product}}">
-          </div>
-          <div class="input-group col-xs-12">
-            <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.product_photo}}">
-            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
-            <span class="input-group-append">
-              <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
-            </span>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Edit product "buy" price</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Product buy price" name="buy"
-              value="{{edit.buy}}">
-          </div>
-          <div class="form-group">
-            <div class="form-group">
-              <label for="exampleInputName1">Edit product "sell" price</label>
-              <input type="text" class="form-control" id="exampleInputName1" placeholder="Edit product sell price"
-                name="sell" value="{{edit.sell}}">
-            </div>
-            <div class="form-group">
-              <label for="exampleInputName1">Edit product "amount"</label>
-              <input type="text" class="form-control" id="exampleInputName1" placeholder="Edit product amount"
-                name="quantity" value="{{edit.quantity}}">
-            </div>S
-            <button name="update" class="btn btn-primary text-white">Update</button>
-            <a href="{% url 'products' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% else %}
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Add products</h4>
-        <p class="card-description">
-          Fill in the blanks
-        </p>
-        <form method="GET" class="forms-sample" enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="exampleInputName1">Supplier</label>
-            <select name="supp_id" class="form-control">
-              <option value="">Choose the supplier...</option>
-              {% for supplier in suppliers %}
-              <option value="{{supplier.id}}">{{supplier.supplier_name}} {{supplier.supplier_surname}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Brand</label>
-            <select name="brand_id" class="form-control">
-              <option value="">Choose the brand...</option>
-              {% for brand in brands %}
-              <option value="{{ brand.id }}">{{ brand.brand_name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Product name</label>
-            <input class="form-control" id="exampleInputName1" placeholder="Product name" name="product">
-          </div>
-          <div class="form-group">
-            <label>File upload</label>
-            <input type="file" name="photo" class="file-upload-default">
-            <div class="input-group col-xs-12">
-              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
-              <span class="input-group-append">
-                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
-              </span>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Product "buy" price</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Buy price" name="buy">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Product "sell" price</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Sell price" name="sell">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Product "amount"</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Product amount" name="quantity">
-          </div>
-          <button type="submit" name="save" class="btn btn-primary me-2 text-white">Save</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <div id="data"></div>
 <script>
   $(document).on('click', '.insert', function(){
-    let form = $('#insert_brand')[0]
+    let form = $('#insert_products')[0]
     let data = new FormData(form)
 
     $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: '{% url "loader" %}',
       data: data,
       processData: false,
@@ -155,13 +24,12 @@
 
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-    let section = 'products'
 
     if (confirm("Do you want to delete?")) {
       $.ajax({
-        method: 'GET',
-        url: '{% url "loader"%}',
-        data: { del_product: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        method: 'POST',
+        url: '{% url "loader" %}',
+        data: {'x':'products','del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -170,13 +38,12 @@
   })
 
   $(document).ready(function () {
-    let section = 'products'
     
     $.ajax({
-      type: 'GET',
-      url: '{% url "loader"%}',
-      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      type: 'POST',
+      url: '{% url "loader" %}',
       dataType: 'html',
+      data:{'x':'products', csrfmiddlewaretoken: '{{csrf_token}}'},
       success: function (response) {
         $('#data').html(response)
       }

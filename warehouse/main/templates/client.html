@@ -2,92 +2,14 @@
 
 {% block 'content' %}
 
-{% if edit %}
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Edit Clients</h4>
-        <p class="card-description">
-          Edit the information in the cells
-        </p>
-        <form method="GET" class="forms-sample" action="{% url 'client_update' edit.id %}">
-          {% csrf_token %}
-          <div class="form-group">
-            <label>Edit client name</label>
-            <input type="text" name="name" value="{{edit.name}}" class="form-control">
-          </div>
-          <div class="form-group">
-            <label>Edit client surname</label>
-            <input type="text" name="surname" value="{{edit.surname}}" class="form-control">
-          </div>
-          <div class="form-group">
-            <label>Edit client e-mail</label>
-            <input type="text" name="email" value="{{edit.email}}" class="form-control">
-          </div>
-          <div class="form-group">
-            <label>Edit client phone number</label>
-            <input type="text" name="phone" value="{{edit.phone}}" class="form-control">
-          </div>
-          <div class="form-group">
-            <label>Edit client company name</label>
-            <input type="text" name="company" value="{{edit.company}}" class="form-control"><br>
-          </div>
-          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
-          <a href="{% url 'client' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% else %}
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Add clients</h4>
-        <p class="card-description">
-          Fill in the blanks
-        </p>
-        <form method="GET" class="forms-sample">
-          {% csrf_token %}
-          <div class="form-group">
-            <label>Client name</label>
-            <input class="form-control" placeholder="Client name" name="name">
-          </div>
-          <div class="form-group">
-            <label>Client surname</label>
-            <input class="form-control" placeholder="Client surname" name="surname">
-          </div>
-          <div class="form-group">
-            <label>Client e-mail</label>
-            <input class="form-control" placeholder="Client e-mail" name="email">
-          </div>
-          <div class="form-group">
-            <label>Client number</label>
-            <input class="form-control" placeholder="+9941234567" name="phone">
-          </div>
-          <div class="form-group">
-            <label>Client company name</label>
-            <input class="form-control" placeholder="Client company name" name="company">
-          </div>
-          <button type="submit" name="save" class="btn btn-primary me-2 text-white">Save</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <div id="data"></div>
 <script>
   $(document).on('click', '.insert', function(){
-    let form = $('#insert_brand')[0]
+    let form = $('#insert_clients')[0]
     let data = new FormData(form)
 
     $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: '{% url "loader" %}',
       data: data,
       processData: false,
@@ -102,13 +24,12 @@
 
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-    let section = 'clients'
 
     if (confirm("Do you want to delete?")) {
       $.ajax({
-        method: 'GET',
-        url: '{% url "loader"%}',
-        data: { del_client: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        method: 'POST',
+        url: '{% url "loader" %}',
+        data: {'x':'clients','del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -117,13 +38,12 @@
   })
 
   $(document).ready(function () {
-    let section = 'clients'
     
     $.ajax({
-      type: 'GET',
-      url: '{% url "loader"%}',
-      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      type: 'POST',
+      url: '{% url "loader" %}',
       dataType: 'html',
+      data:{'x':'clients', csrfmiddlewaretoken: '{{csrf_token}}'},
       success: function (response) {
         $('#data').html(response)
       }
