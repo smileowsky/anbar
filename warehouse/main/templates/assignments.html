@@ -2,97 +2,14 @@
 
 {% block 'content' %}
 
-{% if edit %}
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Edit Assignments</h4>
-        <p class="card-description">
-          Edit the information in the cells
-        </p>
-        <form method="GET" class="forms-sample" action="{% url 'assignment_update' edit.id %}">
-          {% csrf_token %}
-          <div class="form-group">
-            <label for="exampleInputName1">Edit performer</label>
-            <select name="staff_id" class="form-control">
-              <option value="">Choose staff member...</option>
-              {% for staff_obj in staffs %}
-              {% if staff_obj.id == edit.staff_id_id%}
-              <option selected value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
-                {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
-              {% else %}
-              <option value="{{staff_obj.id}}">{{staff_obj.staff_id.name}} /
-                {{staff_obj.staff_id.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}
-              </option>
-              {% endif %}
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Edit assignment</label>
-            <textarea type="textarea" class="form-control" placeholder="Edit assignment"
-              name="assign_n">{{edit.assignment_name}}</textarea>
-          </div>
-          <div class="form-group">
-            <label>Edit deadline date</label>
-            <input type="datetime-local" class="form-control" name="deadline" value="{{edit.deadline}}"><br>
-            <button name="update" class="btn btn-primary text-white">Update</button>
-            <a href="{% url 'assignments' %}"><button type="button"
-                class="btn btn-danger text-white">Cancel</button></a>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-{% else %}
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Add order</h4>
-        <p class="card-description">
-          Fill in the blanks
-        </p>
-        <form method="GET" class="forms-sample">
-          {% csrf_token %}
-          <div class="form-group">
-            <label>Performer name</label>
-            <select name="staff_id" class="form-control">
-              <option value="">Choose staff member...</option>
-              {% for staff_obj in staffs %}
-              <option value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
-                {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Assignment</label>
-            <textarea type="textarea" name="assign_n" class="form-control"
-              placeholder="Enter assignment name"></textarea>
-          </div>
-          <div class="form-group">
-            <label>Deadline date</label>
-            <input type="datetime-local" class="form-control" name="deadline"><br>
-            <button name="add" class="btn btn-primary text-white">Add</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-{% endif %}
-
 <div id="data"></div>
 <script>
   $(document).on('click', '.insert', function(){
-    let form = $('#insert_brand')[0]
+    let form = $('#insert_assignments')[0]
     let data = new FormData(form)
 
     $.ajax({
-      type: 'GET',
+      type: 'POST',
       url: '{% url "loader" %}',
       data: data,
       processData: false,
@@ -107,13 +24,12 @@
 
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-    let section = 'assignments'
 
     if (confirm("Do you want to delete?")) {
       $.ajax({
-        method: 'GET',
-        url: '{% url "loader"%}',
-        data: { del_assignment: id, section: section, csrfmiddlewaretoken: '{{csrf_token}}' },
+        method: 'POST',
+        url: '{% url "loader" %}',
+        data: {'x':'assignments','del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -122,13 +38,12 @@
   })
 
   $(document).ready(function () {
-    let section = 'assignments'
     
     $.ajax({
-      type: 'GET',
-      url: '{% url "loader"%}',
-      data: { section : section, csrfmiddlewaretoken: '{{csrf_token}}' },
+      type: 'POST',
+      url: '{% url "loader" %}',
       dataType: 'html',
+      data:{'x':'assignments', csrfmiddlewaretoken: '{{csrf_token}}'},
       success: function (response) {
         $('#data').html(response)
       }

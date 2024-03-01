@@ -33,7 +33,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="GET" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
+        <form method="post" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit brand name</label>
@@ -105,7 +105,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -131,7 +131,7 @@
         <h4 class="card-title">Brands Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
               <thead>
@@ -139,7 +139,7 @@
                 <th>Brand Picture</th>
                 <th>
                   Brand
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="z"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -149,7 +149,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'd' %}
+                  {% if request.post.order == 'd' %}
                   <button class="btn btn-link btn-sm" name="order" value="e"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -175,9 +175,9 @@
                   <td>{{info.brand_name}}</td>
                   <td>{{info.add_date | date:'d-m-Y'}}</td>
                   <td>
-                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table"><i
+                    <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="#"><i class="mdi mdi-grease-pencil"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="#"><i class="mdi mdi-grease-pencil" title="Edit"></i></a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -226,7 +226,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="GET" class="forms-sample" action="{% url 'client_update' edit.id %}">
+        <form method="post" class="forms-sample" action="{% url 'client_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit client name</label>
@@ -310,7 +310,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -334,7 +334,7 @@
         <h4 class="card-title">Clients Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -342,7 +342,7 @@
                 <th>#</th>
                 <th>
                   Name
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -352,7 +352,7 @@
                 </th>
                 <th>
                   Surname
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -362,7 +362,7 @@
                 </th>
                 <th>
                   Email
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -372,7 +372,7 @@
                 </th>
                 <th>
                   Phone
-                  {% if request.GET.order == 'g' %}
+                  {% if request.post.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="k"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -382,7 +382,7 @@
                 </th>
                 <th>
                   Company
-                  {% if request.GET.order == 'l' %}
+                  {% if request.post.order == 'l' %}
                   <button class="btn btn-link btn-sm" name="order" value="m"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -392,7 +392,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'n' %}
+                  {% if request.post.order == 'n' %}
                   <button class="btn btn-link btn-sm" name="order" value="o"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -468,7 +468,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="get" action="{% url 'expens_update' edit.id %}">
+        <form method="post" action="{% url 'expens_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit expens title</label>
@@ -528,7 +528,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items</b>?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -552,7 +552,7 @@
         <h4 class="card-title">Expenses Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -560,7 +560,7 @@
                 <th>#</th>
                 <th>
                   Assignments
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -570,7 +570,7 @@
                 </th>
                 <th>
                   Amount
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -580,7 +580,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -661,7 +661,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="GET" action="{% url 'products_update' edit.id %}">
+        <form method="post" action="{% url 'products_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label for="exampleInputName1">Edit supplier</label>
@@ -795,7 +795,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -820,7 +820,7 @@
       <div class="card-body">
         <h4 class="card-title">Products Table</h4>
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -829,7 +829,7 @@
                 <th>Products Photo</th>
                 <th>
                   Supplier
-                  {% if request.GET.order == 'k' %}
+                  {% if request.post.order == 'k' %}
                   <button class="btn btn-link btn-sm" name="order" value="l"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -839,7 +839,7 @@
                 </th>
                 <th>
                   Brand
-                  {% if request.GET.order == 'm' %}
+                  {% if request.post.order == 'm' %}
                   <button class="btn btn-link btn-sm" name="order" value="n"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -849,7 +849,7 @@
                 </th>
                 <th>
                   Products
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -859,7 +859,7 @@
                 </th>
                 <th>
                   Buy
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -869,7 +869,7 @@
                 </th>
                 <th>
                   Sell
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -879,7 +879,7 @@
                 </th>
                 <th>
                   Quantity
-                  {% if request.GET.order == 'g' %}
+                  {% if request.post.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -889,7 +889,7 @@
                 </th>
                 <th>
                   Profit
-                  {% if request.GET.order == 'o' %}
+                  {% if request.post.order == 'o' %}
                   <button class="btn btn-link btn-sm" name="order" value="p"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -899,7 +899,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'i' %}
+                  {% if request.post.order == 'i' %}
                   <button class="btn btn-link btn-sm" name="order" value="j"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -984,7 +984,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="GET" action="{% url 'orders_update' edit.id %}">
+        <form method="post" action="{% url 'orders_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit client</label>
@@ -1078,7 +1078,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1108,7 +1108,7 @@
       <div class="card-body">
         <h4 class="card-title">Orders Table</h4>
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -1116,7 +1116,7 @@
                 <th>#</th>
                 <th>
                   Client
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1126,7 +1126,7 @@
                 </th>
                 <th>
                   Brand
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1136,7 +1136,7 @@
                 </th>
                 <th>
                   Products
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1146,7 +1146,7 @@
                 </th>
                 <th>
                   Stock
-                  {% if request.GET.order == 'g' %}
+                  {% if request.post.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1156,7 +1156,7 @@
                 </th>
                 <th>
                   Buy
-                  {% if request.GET.order == 'i' %}
+                  {% if request.post.order == 'i' %}
                   <button class="btn btn-link btn-sm" name="order" value="j"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1166,7 +1166,7 @@
                 </th>
                 <th>
                   Sell
-                  {% if request.GET.order == 'k' %}
+                  {% if request.post.order == 'k' %}
                   <button class="btn btn-link btn-sm" name="order" value="l"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1176,7 +1176,7 @@
                 </th>
                 <th>
                   Order
-                  {% if request.GET.order == 'n' %}
+                  {% if request.post.order == 'n' %}
                   <button class="btn btn-link btn-sm" name="order" value="m"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1186,7 +1186,7 @@
                 </th>
                 <th>
                   Profit
-                  {% if request.GET.order == 'o' %}
+                  {% if request.post.order == 'o' %}
                   <button class="btn btn-link btn-sm" name="order" value="p"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1196,7 +1196,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'q' %}
+                  {% if request.post.order == 'q' %}
                   <button class="btn btn-link btn-sm" name="order" value="r"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1407,7 +1407,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want delete all selected?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1585,7 +1585,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="GET" action="{% url 'department_update' edit.id %}">
+        <form method="post" action="{% url 'department_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit department name</label>
@@ -1638,7 +1638,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1656,7 +1656,7 @@
         <h4 class="card-title">Departments Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -1664,7 +1664,7 @@
                 <th>#</th>
                 <th>
                   Department
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1674,7 +1674,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1752,7 +1752,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="GET" action="{%url 'position_update' edit.id%}">
+        <form method="post" action="{%url 'position_update' edit.id%}">
           {%csrf_token%}
           <div class="form-group">
             <label>Edit Department</label>
@@ -1823,7 +1823,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1838,18 +1838,17 @@
   <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Clients Table</h4>
+        <h4 class="card-title">Positions Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
-
               <thead>
                 <th>#</th>
                 <th>
                   Departments
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1859,7 +1858,7 @@
                 </th>
                 <th>
                   Position
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1869,7 +1868,7 @@
                 </th>
                 <th>
                   Date
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -1877,7 +1876,7 @@
                       class="mdi mdi-sort-numeric"></i></button>
                   {% endif %}
                 </th>
-                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button> </th>
+                <th><button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button></th>
               </thead>
 
               <tbody>
@@ -1886,7 +1885,7 @@
                   <td>
                     <div class="form-check form-check-info">
                       <label class="form-check-label">
-                        <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
+                        <input type="checkbox" class="form-check-info" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
                           name="x[]" value="{{info.id}}">{{forloop.counter}}
                       </label>
                     </div>
@@ -1913,7 +1912,7 @@
 <!--Positions AJAX end-->
 
 <!--Staff AJAX-->
-{% elif request.GET.section == 'staffs' or request.GET.section == 'staffs' %}
+{% elif request.POST.x == 'staffs' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -1938,6 +1937,150 @@
 </div>
 {% endif %}
 
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Staff</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" enctype="multipart/form-data" action="{% url 'staff_update' edit.id %}">
+          {%csrf_token%}
+          <div class="form-group">
+            <label>Edit positions</label>
+            <select name="position_id" class="form-control">
+              <option value="">Choose position...</option>
+              {% for position_obj in positions %}
+              {% if position_obj.id == edit.pos_id_id %}
+              <option selected value="{{position_obj.id}}">{{position_obj.dep_id.department_name}} /
+                {{position_obj.positions}}
+              </option>
+              {% else %}
+              <option value="{{position_obj.id}}">{{position_obj.dep_id.department_name}} / {{position_obj.positions}}
+              </option>
+              {% endif %}
+              {%endfor%}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit name</label>
+            <input type="text" name="s_name" value="{{edit.name}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit surnme</label>
+            <input type="text" name="s_surname" value="{{edit.surname}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit birth date</label>
+            <input type="date" name="s_birth_d" value="{{edit.birth_date | date:'Y-m-d'}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit e-mail</label>
+            <input type="email" name="s_email" value="{{edit.email}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit phone</label>
+            <input type="text" name="s_phone" value="{{edit.phone}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit sallary</label>
+            <input type="number" name="s_sallary" value="{{edit.sallary}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit job start date</label>
+            <input type="date" name="s_start_d" value="{{edit.j_start_d | date:'Y-m-d'}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.photo}}">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <button type="submit" name="update" class="btn btn-primary me-2 text-white">Update</button>
+          <a href="{%url 'staff'%}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{%else%}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add staff</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_staffs" 
+          enctype="multipart/form-data">
+          <input type="hidden" name="x" value="staffs">
+          <input type="hidden" name="save">
+          {%csrf_token%}
+          <div class="form-group">
+            <label>Position</label>
+            <select name="position_id" class="form-control">
+              <option value="">Choose position...</option>
+              {%for position_obj in positions%}
+              <option value="{{position_obj.id}}">{{position_obj.dep_id.department_name}} / {{position_obj.positions}}
+              </option>
+              {%endfor%}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Employee name</label>
+            <input type="text" class="form-control" placeholder="Employee name" name="s_name">
+          </div>
+          <div class="form-group">
+            <label>Employee surname</label>
+            <input type="text" class="form-control" placeholder="Employee surname" name="s_surname">
+            <div class="form-group">
+              <label>Employee birth date</label>
+              <input type="date" class="form-control" name="s_birth_d">
+            </div>
+            <div class="form-group">
+              <label>Employee e-mail</label>
+              <input type="email" class="form-control" placeholder="test@gmail.com" name="s_email">
+            </div>
+            <div class="form-group">
+              <label>Employee phone</label>
+              <input type="tel" class="form-control" placeholder="+9941234567" name="s_phone">
+            </div>
+            <div class="form-group">
+              <label>Employee sallary</label>
+              <input type="number" class="form-control" placeholder="1000" name="s_sallary">
+            </div>
+            <div class="form-group">
+              <label>Employee job start date</label>
+              <input type="date" class="form-control" name="s_start_d">
+            </div>
+            <div class="form-group">
+              <label>File upload</label>
+              <input type="file" name="photo" class="file-upload-default">
+              <div class="input-group col-xs-12">
+                <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
+                  name="photo">
+                <span class="input-group-append">
+                  <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+                </span>
+              </div>
+            </div>
+            <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <!--
 {%if staff%}
 <div class="alert alert-danger" role="alert">
@@ -1952,7 +2095,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -1970,7 +2113,7 @@
         <h4 class="card-title">Staff Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -1981,7 +2124,7 @@
                 </th>
                 <th>
                   Name
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -1991,7 +2134,7 @@
                 </th>
                 <th>
                   Surname
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2001,7 +2144,7 @@
                 </th>
                 <th>
                   Birthdate
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2011,7 +2154,7 @@
                 </th>
                 <th>
                   Departments
-                  {% if request.GET.order == 'o' %}
+                  {% if request.post.order == 'o' %}
                   <button class="btn btn-link btn-sm" name="order" value="p"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2021,7 +2164,7 @@
                 </th>
                 <th>
                   Positions
-                  {% if request.GET.order == 'q' %}
+                  {% if request.post.order == 'q' %}
                   <button class="btn btn-link btn-sm" name="order" value="r"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2031,7 +2174,7 @@
                 </th>
                 <th>
                   Email
-                  {% if request.GET.order == 'g' %}
+                  {% if request.post.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2041,7 +2184,7 @@
                 </th>
                 <th>
                   Phone
-                  {% if request.GET.order == 'j' %}
+                  {% if request.post.order == 'j' %}
                   <button class="btn btn-link btn-sm" name="order" value="i"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -2051,7 +2194,7 @@
                 </th>
                 <th>
                   Sallary
-                  {% if request.GET.order == 'k' %}
+                  {% if request.post.order == 'k' %}
                   <button class="btn btn-link btn-sm" name="order" value="l"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -2061,7 +2204,7 @@
                 </th>
                 <th>
                   Start Date
-                  {% if request.GET.order == 'm' %}
+                  {% if request.post.order == 'm' %}
                   <button class="btn btn-link btn-sm" name="order" value="n"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -2114,7 +2257,7 @@
 <!--Staff AJAX end-->
 
 <!--Documents AJAX-->
-{% elif request.GET.section == 'documents' or request.GET.section == 'documents' %}
+{% elif request.POST.x == 'documents' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -2139,6 +2282,98 @@
 </div>
 {% endif %}
 
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Documents</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="GET" class="forms-sample" enctype="multipart/form-data" action="{% url 'doc_update' edit.id %}">
+          {% csrf_token %}
+          Employee name:
+          <b>{{edit.staff_id.name}} {{edit.staff_id.surname}}</b><br>
+          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.staff_id.photo}}"><br>
+          <div class="form-group">
+            <label>Edit document name</label>
+            <input type="text" name="doc_name" value="{{edit.title}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit document number</label>
+            <input type="number" name="doc_num" value="{{edit.doc_num}}" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Edit note</label>
+            <textarea name="about" rows="4" cols="10" class="form-control">{{edit.about}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="doc_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.scan_photo}}">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+            <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'documents' staf_id=staff.id %}"><button type="button"
+                class="btn btn-danger text-white">Cancel</button></a>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add Documents</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_documents" enctype="multipart/form-data">
+          <input type="hidden" name="x" value="documents">
+          <input type="hidden" value="save">
+          {% csrf_token %}
+          Employee name:
+          <b>{{staff.name}} {{staff.surname}}</b><br>
+          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{staff.photo}}"><br>
+          <div class="form-group">
+            <label>Document name</label>
+            <input type="text" class="form-control" placeholder="Document name" name="doc_name">
+          </div>
+          <div class="form-group">
+            <label>Document Number</label>
+            <input type="number" class="form-control" placeholder="Document number" name="doc_num">
+          </div>
+          <div class="form-group">
+            <label>Note</label>
+            <textarea name="about" rows="4" cols="10" class="form-control"
+              placeholder="If there is information that can be added, check it, otherwise leave it blank."></textarea>
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <input type="file" name="doc_photo" class="file-upload-default">
+            <div class="input-group col-xs-12">
+              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
+              <span class="input-group-append">
+                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
+              </span>
+            </div>
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <!--
 {% if doc and staff %}
 <div class="alert alert-danger" role="alert">
@@ -2152,7 +2387,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -2170,7 +2405,7 @@
         <h4 class="card-title">Document Table</h4>
 
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 
@@ -2179,7 +2414,7 @@
                 <th>Document photo</th>
                 <th>
                   Employee
-                  {% if request.GET.order == 'a' %}
+                  {% if request.post.order == 'a' %}
                   <button class="btn btn-link btn-sm" name="order" value="b"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2189,7 +2424,7 @@
                 </th>
                 <th>
                   Document name
-                  {% if request.GET.order == 'c' %}
+                  {% if request.post.order == 'c' %}
                   <button class="btn btn-link btn-sm" name="order" value="d"><i
                       class="mdi mdi-sort-alphabetical>"></i></button>
                   {% else %}
@@ -2199,7 +2434,7 @@
                 </th>
                 <th>
                   Document number
-                  {% if request.GET.order == 'e' %}
+                  {% if request.post.order == 'e' %}
                   <button class="btn btn-link btn-sm" name="order" value="f"><i
                       class="mdi mdi-sort-numeric"></i></button>
                   {% else %}
@@ -2209,7 +2444,7 @@
                 </th>
                 <th>
                   Note
-                  {% if request.GET.order == 'g' %}
+                  {% if request.post.order == 'g' %}
                   <button class="btn btn-link btn-sm" name="order" value="h"><i
                       class="mdi mdi-sort-alphabetical"></i></button>
                   {% else %}
@@ -2256,7 +2491,7 @@
 <!--Documents AJAX end-->
 
 <!--Assignments AJAX-->
-{% elif request.GET.section == 'assignments' or request.GET.section == 'assignments' %}
+{% elif request.POST.x == 'assignments' %}
 
 {% if messages %}
 <div class="alert alert-dismissible fade show" role="alert">
@@ -2281,6 +2516,91 @@
 </div>
 {% endif %}
 
+{% if edit %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Edit Assignments</h4>
+        <p class="card-description">
+          Edit the information in the cells
+        </p>
+        <form method="post" class="forms-sample" action="{% url 'assignment_update' edit.id %}">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputName1">Edit performer</label>
+            <select name="staff_id" class="form-control">
+              <option value="">Choose staff member...</option>
+              {% for staff_obj in staffs %}
+              {% if staff_obj.id == edit.staff_id_id%}
+              <option selected value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
+                {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
+              {% else %}
+              <option value="{{staff_obj.id}}">{{staff_obj.staff_id.name}} /
+                {{staff_obj.staff_id.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}
+              </option>
+              {% endif %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Edit assignment</label>
+            <textarea type="textarea" class="form-control" placeholder="Edit assignment"
+              name="assign_n">{{edit.assignment_name}}</textarea>
+          </div>
+          <div class="form-group">
+            <label>Edit deadline date</label>
+            <input type="datetime-local" class="form-control" name="deadline" value="{{edit.deadline}}"><br>
+            <button name="update" class="btn btn-primary text-white">Update</button>
+            <a href="{% url 'assignments' %}"><button type="button"
+                class="btn btn-danger text-white">Cancel</button></a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% else %}
+<div class="row">
+  <div class="col-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add Assignments</h4>
+        <p class="card-description">
+          Fill in the blanks
+        </p>
+        <form method="post" class="forms-sample" id="insert_assignments">
+          <input type="hidden" name="x" value="assignments">
+          <input type="hidden" name="save">
+          {% csrf_token %}
+          <div class="form-group">
+            <label>Performer name</label>
+            <select name="staff_id" class="form-control">
+              <option value="">Choose staff member...</option>
+              {% for staff_obj in staffs %}
+              <option value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
+                {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Assignment</label>
+            <textarea type="textarea" name="assign_n" class="form-control"
+              placeholder="Enter assignment name"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Deadline date</label>
+            <input type="datetime-local" class="form-control" name="deadline"><br>
+            <button name="save" name="save" class="btn btn-primary text-white insert">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <!--
 {% if assignment %}
 <div class="alert alert-danger" role="alert">
@@ -2294,7 +2614,7 @@
 {% if del_all %}
 <div class="alert alert-danger" role="alert">
   Do you want to delete all selected items?<br>
-  <form method="get">
+  <form method="post">
     {% csrf_token %}
     {% for id in del_all %}
     <input type="hidden" name="x[]" value="{{id}}">
@@ -2311,7 +2631,7 @@
       <div class="card-body">
         <h4 class="card-title">Orders Table</h4>
         <div class="table-responsive">
-          <form method="get" action="#table">
+          <form method="post" action="#table">
             {% csrf_token %}
             <table class="table table-striped" id="table">
 

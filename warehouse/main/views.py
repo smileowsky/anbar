@@ -49,6 +49,8 @@ def loader(request):
     client = ''
     product = ''
     departments = ''
+    staffs = ''
+    positions = ''
 
     if 'x' in request.POST:
         #Brand add without refresh.
@@ -359,12 +361,11 @@ def loader(request):
         
         #Position add without refresh.
         if request.POST['x'] == 'positions':
-
             if 'save' in request.POST:
+
                 if request.POST['department_id'] != '' and request.POST['position_name'] != '':
 
-                    departments = Departments.objects.get(
-                        id=request.POST['department_id'])
+                    departments = Departments.objects.get(id=request.POST['department_id'])
 
                     save_data = Positions(
                         dep_id=departments,
@@ -376,7 +377,7 @@ def loader(request):
                 else:
                     messages.info(request, "Position name is required.",
                                 extra_tags='error')
-            
+                    
             data = Positions.objects.all().order_by('-id')
             departments = Departments.objects.all().order_by('-id')
         #Position add end
@@ -393,7 +394,148 @@ def loader(request):
                     messages.info(
                         request, "Positions has been deleted successfully.", extra_tags='success')
             #Position delete end
-    return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client' : client, 'product' : product, 'departments' : departments})
+        
+        #Satff add without refresh.
+        if request.POST['x'] == 'positions':
+
+            if 'save' in request.POST:
+                if request.GET['s_name'] != '' and request.POST['s_surname'] != '' and request.POST['s_birth_d'] != '' and request.POST['s_email'] != '' and request.POST['s_phone'] != '' and request.POST['s_sallary'] != '' and request.POST['s_start_d'] != '':
+                    positions = Positions.objects.get(id=request.POST['position_id'])
+
+                    if Staff.objects.filter(email=request.POST['s_email']).exists():
+                        messages.info(request, 'Email already exists.',
+                                    extra_tags='warning')
+                    elif Staff.objects.filter(phone=request.POST['s_phone']).exists():
+                        messages.info(request, 'Phone already exists.',
+                                    extra_tags='warning')
+                    elif 'photo' in request.FILES:
+                        # FOTO START
+                        upload = request.FILES['photo']
+                        fs = FileSystemStorage()
+                        file = fs.save(upload.name, upload)
+                        file_url = fs.url(file)
+                        # FOTO END
+
+                        save_info = Staff(
+                            name=request.POST['s_name'],
+                            surname=request.POST['s_surname'],
+                            birth_date=request.POST['s_birth_d'],
+                            email=request.POST['s_email'],
+                            phone=request.POST['s_phone'],
+                            sallary=request.POST['s_sallary'],
+                            j_start_d=request.POST['s_start_d'],
+                            photo=file_url,
+                            pos_id=positions,
+                        )
+                        save_info.save()
+                        messages.info(
+                            request, "Employee  saved successfully.", extra_tags='success')
+
+                    if 'documents' in request.POST:
+                        return redirect('documents')
+                else:
+                    messages.info(request, "Empty fields.", extra_tags='error')
+            
+            data = Staff.objects.all().order_by('-id')
+            positions = Positions.objects.all().order_by('-id')
+        #Staff add end
+            
+            #Staff single deletion without refresh
+            if 'del_id' in request.POST:
+                staffs = Staff.objects.get(id=request.POST['del_id'])
+                documents = Documents.objects.filter(staff_id_id=request.POST['del_id']).count()
+                if documents > 0:
+                    messages.info(
+                        request, f"Staff '{staffs.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
+                else:
+                    staffs.delete()
+                    messages.info(
+                        request, "Employee has been deleted successfully.", extra_tags='success')
+            #Staff delete end
+        
+        #Document add without refresh.
+        if request.POST['x'] == 'positions':
+
+            if 'save' in request.POST:
+                title = request.POST['doc_name']
+                doc_num = request.POST['doc_num']
+                about = request.POST['about']
+
+                if title and doc_num and 'doc_photo' in request.FILES:
+
+                    name = Staff.objects.get(id=request.POST['staff_id'])
+
+                    if Documents.objects.filter(doc_num=request.GET['doc_num']).exists():
+                        messages.info(request, "Document already exists.",
+                                    extra_tags='error')
+                    else:
+                        upload = request.FILES['doc_photo']
+                        fs = FileSystemStorage()
+                        file = fs.save(upload.name, upload)
+                        file_url = fs.url(file)
+
+                        save_info = Documents(
+                            title=request.POST['doc_name'],
+                            doc_num=request.POST['doc_num'],
+                            about=request.POST['about'],
+                            scan_photo=file_url,
+                            staff_id=name,
+                        )
+                        save_info.save()
+
+                        messages.info(
+                            request, "Document  saved successfully.", extra_tags='success')
+                else:
+                    messages.info(request, "Empty fields", extra_tags='warning')
+
+            data = Documents.objects.all().filter(staff_id=request.POST['staff_id']).order_by('-id')
+            staffs = Staff.objects.get(id=request.POST['staff_id'])
+        #Document add end
+            
+            #Document single deletion without refresh
+            if 'del_id' in request.POST:
+                doc = Documents.objects.get(id=request.POST['staff_id'])
+                staff = Staff.objects.get(id=doc.request.POST['del_id'].id)
+                doc.delete()
+                messages.info(
+                    request, "Document has been deleted successfully.", extra_tags='success')
+                return HttpResponseRedirect('/documents/'+str(request.POST['staff_id'].id))
+            #Document delete end
+
+        #Assignment add without refresh.
+        if request.POST['x'] == 'positions':
+
+            if 'save' in request.POST:
+                assignment_name = request.POST['assign_n']
+                sontarix = request.POST['deadline'].replace('T', ' ')
+
+                if assignment_name and sontarix:
+
+                    staffs = Staff.objects.get(id=request.POST['staff_id'])
+
+                    assignment = Assignments(
+                        assignment_name=request.POST['assign_n'],
+                        deadline=sontarix,
+                        staff_id=staffs
+                    )
+                    assignment.save()
+                    messages.info(request, "Assignment successfully aded.",
+                                extra_tags='success')
+                else:
+                    messages.info(request, "Empty fields.", extra_tags='error')
+
+            data = Assignments.objects.all().order_by('-id')
+            staffs = Staff.objects.all().order_by('-id')
+        #Assignment add end
+            
+            #Assignment single deletion without refresh
+            if 'del_id' in request.POST:
+                Assignments.objects.get(id=request.POST['del_id']).delete()
+                messages.info(
+                    request, "Assignment has been deleted successfully.", extra_tags='success')
+            #Assignment delete end
+                
+    return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client' : client, 'product' : product, 'departments' : departments, 'staffs' : staffs, 'positions' : positions})
 
 
 def brand(request):
