@@ -44,8 +44,11 @@ def basic(request):
 
 def loader(request):
     data = ''
-    brand = ''
-    supplier = ''
+    brands = ''
+    suppliers = ''
+    client = ''
+    product = ''
+    departments = ''
 
     if 'x' in request.POST:
         #Brand add without refresh.
@@ -175,6 +178,7 @@ def loader(request):
 
         # Product add without refresh.
         elif request.POST['x'] == 'products':
+
             if 'save' in request.POST:
                 if request.POST['brand_id'] != '' and request.POST['product'] != '' and request.POST['buy'] != '' and request.POST['sell'] != '' and request.POST['quantity'] != '' and 'photo' in request.FILES:
                     # instance
@@ -206,14 +210,16 @@ def loader(request):
                     messages.info(request, "Empty field", extra_tags='error')
 
             data = Products.objects.all().order_by('-id')
+            brands = Brand.objects.all().order_by('-id')
+            suppliers = Supplier.objects.all().order_by('-id')
         # Product add end
 
             # Product single deletion without refresh
             if 'del_id' in request.POST:
                 products = Products.objects.get(
-                    id=request.request.POST['del_id'])
+                    id=request.POST['del_id'])
                 active_order = Orders.objects.filter(
-                    product_id=request.request.POST['del_id']).count()
+                    product_id=request.POST['del_id']).count()
 
                 if active_order > 0:
                     messages.info(
@@ -246,6 +252,8 @@ def loader(request):
                     messages.info(request, "Empty field", extra_tags='error')
 
             data = Orders.objects.all().order_by('-id')
+            client = Clients.objects.all().order_by('-id')
+            product = Products.objects.all().order_by('-id')
         #Order add end
 
             #Order single deletion without refresh
@@ -352,7 +360,7 @@ def loader(request):
         #Position add without refresh.
         if request.POST['x'] == 'positions':
 
-            if 'add' in request.POST:
+            if 'save' in request.POST:
                 if request.POST['department_id'] != '' and request.POST['position_name'] != '':
 
                     departments = Departments.objects.get(
@@ -370,6 +378,7 @@ def loader(request):
                                 extra_tags='error')
             
             data = Positions.objects.all().order_by('-id')
+            departments = Departments.objects.all().order_by('-id')
         #Position add end
             
             #Position single deletion without refresh
@@ -384,7 +393,7 @@ def loader(request):
                     messages.info(
                         request, "Positions has been deleted successfully.", extra_tags='success')
             #Position delete end
-    return render(request, 'loader.html', {'data': data, 'brand': brand, 'supplier': supplier})
+    return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client' : client, 'product' : product, 'departments' : departments})
 
 
 def brand(request):

@@ -516,11 +516,11 @@
 {% endif %}
 
 <!--
-{% if client %}
+{% if expens %}
 <div class="alert alert-danger" role="alert">
-  Do you want to delete? <br><b>{{client.name}} {{client.surname}}</b><br><br>
-  <a class="btn btn-success text-white" href="{% url 'client_delete_config' client.id %}">Yes</a>
-  <a class="btn btn-danger text-white" href="{% url 'client' %}">No</a>
+  Do you want to delete? <br><b>{{expens.name}}</b><br><br>
+  <a class="btn btn-success text-white" href="{% url 'expens_delete_config' expens.id %}">Yes</a>
+  <a class="btn btn-danger text-white" href="{% url 'expens' %}">No</a>
 </div>
 {% endif %}
 -->
@@ -735,7 +735,7 @@
           <input type="hidden" name="save">
           {% csrf_token %}
           <div class="form-group">
-            <label for="exampleInputName1">Supplier</label>
+            <label>Supplier</label>
             <select name="supp_id" class="form-control">
               <option value="">Choose the supplier...</option>
               {% for supplier in suppliers %}
@@ -744,7 +744,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="exampleInputName1">Brand</label>
+            <label>Brand</label>
             <select name="brand_id" class="form-control">
               <option value="">Choose the brand...</option>
               {% for brand in brands %}
@@ -1790,7 +1790,7 @@
           <input type="hidden" name="save">
           {%csrf_token%}
           <div class="form-group">
-            <label>Position name</label>
+            <label>Choose departament</label>
             <select name="department_id" class="form-control">
               <option value="">Choose the department...</option>
               {%for department_obj in departments%}
@@ -1799,10 +1799,10 @@
             </select>
           </div>
           <div class="form-group">
-            <label>Client name</label>
+            <label>Position name</label>
             <input class="form-control" placeholder="Position name" name="position_name"><br>
           </div>
-          <button type="button" name="save" class="btn btn-primary me-2 text-white">Add</button>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
         </form>
       </div>
     </div>
