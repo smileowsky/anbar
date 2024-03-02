@@ -234,11 +234,13 @@ def loader(request):
 
         # Order add without refresh.
         if request.POST['x'] == 'orders':
+
             if 'save' in request.POST:
 
                 if request.POST['client_id'] != '' and request.POST['product_id'] != '' and request.POST['amount'] != '':
 
-                    client = Clients.objects.get(id=request.POST['client_id'])
+                    client = Clients.objects.get(
+                        id=request.POST['client_id'])
                     product = Products.objects.get(
                         id=request.POST['product_id'])
 
@@ -361,16 +363,19 @@ def loader(request):
         
         #Position add without refresh.
         if request.POST['x'] == 'positions':
+
             if 'save' in request.POST:
 
                 if request.POST['department_id'] != '' and request.POST['position_name'] != '':
 
-                    departments = Departments.objects.get(id=request.POST['department_id'])
+                    department = Departments.objects.get(
+                        id=request.POST['department_id'])
 
                     save_data = Positions(
-                        dep_id=departments,
+                        dep_id=department,
                         positions=request.POST['position_name']
                     )
+
                     save_data.save()
                     messages.info(request, "Position saved.", extra_tags='success')
 
@@ -384,8 +389,11 @@ def loader(request):
             
             #Position single deletion without refresh
             if 'del_id' in request.POST:
-                positions = Positions.objects.get(id=request.POST['del_id'])
-                staffs = Staff.objects.filter(pos_id=request.POST['del_id']).count()
+                positions = Positions.objects.get(
+                    id=request.POST['del_id'])
+                staffs = Staff.objects.filter(
+                    pos_id=request.POST['del_id']).count()
+                
                 if staffs > 0:
                     messages.info(
                         request, f"Position '{positions.positions}' cannot be deleted. There are {staffs} active staff in it.", extra_tags='error')
@@ -395,11 +403,12 @@ def loader(request):
                         request, "Positions has been deleted successfully.", extra_tags='success')
             #Position delete end
         
-        #Satff add without refresh.
-        if request.POST['x'] == 'positions':
+        #Staff add without refresh.
+        if request.POST['x'] == 'staffs':
 
             if 'save' in request.POST:
-                if request.GET['s_name'] != '' and request.POST['s_surname'] != '' and request.POST['s_birth_d'] != '' and request.POST['s_email'] != '' and request.POST['s_phone'] != '' and request.POST['s_sallary'] != '' and request.POST['s_start_d'] != '':
+                
+                if request.POST['s_name'] != '' and request.POST['s_surname'] != '' and request.POST['s_birth_d'] != '' and request.POST['s_email'] != '' and request.POST['s_phone'] != '' and request.POST['s_sallary'] != '' and request.POST['s_start_d'] != '':
                     positions = Positions.objects.get(id=request.POST['position_id'])
 
                     if Staff.objects.filter(email=request.POST['s_email']).exists():
@@ -454,7 +463,7 @@ def loader(request):
             #Staff delete end
         
         #Document add without refresh.
-        if request.POST['x'] == 'positions':
+        if request.POST['x'] == 'documents':
 
             if 'save' in request.POST:
                 title = request.POST['doc_name']
@@ -488,7 +497,7 @@ def loader(request):
                 else:
                     messages.info(request, "Empty fields", extra_tags='warning')
 
-            data = Documents.objects.all().filter(staff_id=request.POST['staff_id']).order_by('-id')
+            data = Documents.objects.all().order_by('-id')
             staffs = Staff.objects.get(id=request.POST['staff_id'])
         #Document add end
             
@@ -503,7 +512,7 @@ def loader(request):
             #Document delete end
 
         #Assignment add without refresh.
-        if request.POST['x'] == 'positions':
+        if request.POST['x'] == 'assignments':
 
             if 'save' in request.POST:
                 assignment_name = request.POST['assign_n']
