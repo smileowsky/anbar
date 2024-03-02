@@ -1,4 +1,14 @@
-{% extends 'main_layout.html' %}
+// Edit expenses
+  $(document).on('click', '.edit', function () {
+    let id = $(this).attr('id');
+    $.ajax({
+      method: 'POST',
+      url: '{% url "loader" %}',
+      data: {'edit': 'edit', 'expens_id': id, csrfmiddlewaretoken: '{{csrf_token}}'},
+      success: function (response) {
+        $('#data').html(response);
+      }
+    });
 
 {% block 'content' %}
 

@@ -3,11 +3,25 @@
 {% block 'content' %}
 
 <div id="data"></div>
+
 <script>
-  $(document).on('click', '.insert', function(){
+  // Edit expenses
+  $(document).on('click', '.edit', function () {
+    let id = $(this).attr('id');
+    $.ajax({
+      method: 'POST',
+      url: '{% url "loader" %}',
+      data: {'edit': 'expenses', 'expens_id': id, csrfmiddlewaretoken: '{{csrf_token}}'},
+      success: function (response) {
+        $('#data').html(response);
+      }
+    });
+  });
+
+  // Insert expenses
+  $(document).on('click', '.insert', function () {
     let form = $('#insert_expens')[0]
     let data = new FormData(form)
-
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
@@ -16,20 +30,20 @@
       contentType: false,
       cache: false,
       timeout: 600000,
-      success: function(response){
+      success: function (response) {
         $('#data').html(response)
       }
     })
   })
 
+  // Delete expenses
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-
     if (confirm("Do you want to delete?")) {
       $.ajax({
         method: 'POST',
         url: '{% url "loader" %}',
-        data: {'x':'expenses','del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+        data: { 'x': 'expenses', 'del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -37,13 +51,13 @@
     }
   })
 
+  // Load expenses on page load
   $(document).ready(function () {
-    
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
       dataType: 'html',
-      data:{'x':'expenses', csrfmiddlewaretoken: '{{csrf_token}}'},
+      data: { 'x': 'expenses', csrfmiddlewaretoken: '{{csrf_token}}' },
       success: function (response) {
         $('#data').html(response)
       }

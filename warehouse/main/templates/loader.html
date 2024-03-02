@@ -468,7 +468,9 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" action="{% url 'expens_update' edit.id %}">
+        <form method="post" class="forms-sample" id="edit_expenses">
+          <input type="hidden" name="edit" value="expenses">
+          <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit expens title</label>
@@ -478,7 +480,7 @@
             <label>Edit amount</label>
             <input type="text" name="amount" value="{{edit.amount}}" class="form-control"><br>
           </div>
-          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+          <button type="button" name="update" class="btn btn-primary text-white edit">Update</button>
           <a href="{% url 'expens' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
         </form>
       </div>

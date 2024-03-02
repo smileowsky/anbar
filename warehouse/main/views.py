@@ -150,9 +150,9 @@ def loader(request):
                     clients.delete()
                     messages.info(
                         request, "Customer's data has been deleted successfully.", extra_tags='success')
-            # Client delete end
+            #Client delete end
 
-        # Expens add without refresh
+        #Expens add without refresh
         elif request.POST['x'] == 'expenses':
 
             if 'save' in request.POST:
@@ -167,17 +167,76 @@ def loader(request):
                                   extra_tags='success')
                 else:
                     messages.info(request, "Empty field.", extra_tags='error')
+                
+                #Expens search without refresh
+                if 'search' in request.GET:
+                    data = Expenses.objects.filter(
+                        Q(assignment__contains=request.GET['question'])).order_by('-id')
+                elif 'search' in request.GET:
+                    data = Expenses.objects.filter(
+                        Q(amount__contains=request.GET['question'])).order_by('-id')
+                else:
+                    if 'order' in request.GET:
+                        if request.GET['order'] == 'a':
+                            data = Expenses.objects.all().order_by('assignment')
+                        elif request.GET['order'] == 'b':
+                            data = Expenses.objects.all().order_by('-assignment')
+                        elif request.GET['order'] == 'c':
+                            data = Expenses.objects.all().order_by('amount')
+                        elif request.GET['order'] == 'd':
+                            data = Expenses.objects.all().order_by('-amount')
+                        elif request.GET['order'] == 'e':
+                            data = Expenses.objects.all().order_by('add_date')
+                        elif request.GET['order'] == 'f':
+                            data = Expenses.objects.all().order_by('-add_date')
+                    else:
+                        data = Expenses.objects.all().order_by('-id')
+                #Expens search end
+        #Expens end
 
-            data = Expenses.objects.all().order_by('-id')
-        # Expens end
-
-            # Expens single deletion without refresh
+            #Expens single deletion without refresh
             if 'del_id' in request.POST:
                 Expenses.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
                     request, "Expens data has been deleted successfully.", extra_tags='success')
             # Expens delete end
+                
+            #Expens multi deletion without refresh
+            if 'delete_all' in request.GET:
+                del_all = request.GET.getlist('x[]')
+                if not del_all:
+                    messages.info(request, "Please select to delete.",
+                                extra_tags='error')
+            elif 'confirm_delete_all' in request.GET:
+                choosen = request.GET.getlist('x[]')
+                if choosen:
+                    for selected in choosen:
+                        picked = Expenses.objects.filter(id=selected)
+                        if picked.exists():
+                            picked.delete()
+                    messages.info(
+                        request, "Expens data has been deleted successfully.", extra_tags='success')
+                
+            # Expens edit without refresh
+            if 'edit' in request.POST:
+                edit = Expenses.objects.get(id=request.POST['expens_id'])
 
+                if 'update' in request.POST:
+                    assignment = request.POST['assignment']
+                    amount = request.POST['amount']
+
+                    if assignment and amount:
+                        expens = Expenses.objects.get(id=request.POST['expens_id'])
+                        expens.assignment = request.POST['assignment']
+                        expens.amount = request.POST['amount']
+
+                        expens.save()
+                        messages.info(request, "Update was successful.", extra_tags='success')
+
+                    else:
+                        messages.info(request, "Empty field.", extra_tags='error')
+
+            data = Expenses.objects.all().order_by('-id')
         # Product add without refresh.
         elif request.POST['x'] == 'products':
 
@@ -1871,13 +1930,13 @@ def user_profile_update(request):
 
     if 'update' in request.POST:
         if password:
-            if User.objects.filter(email=request.POST['email']).exclude(id=request.user.id).exclude(email=request.GET['email']):
+            if User.objects.filter(email=request.POST['email']).exclude(id=request.user.id).exclude(email=request.POST['email']):
                 messages.info(request, "Email already exists.",
                               extra_tags='warning')
-            elif User.objects.filter(phone=request.POST['tel_n']).exclude(id=request.user.id).exclude(phone=request.GET['tel_n']):
+            elif User.objects.filter(phone=request.POST['tel_n']).exclude(id=request.user.id).exclude(phone=request.POST['tel_n']):
                 messages.info(
                     request, "Phone number already exists.", extra_tags='warning')
-            elif User.objects.filter(username=request.POST['user_name']).exclude(id=request.user.id).exclude(username=request.GET['user_name']):
+            elif User.objects.filter(username=request.POST['user_name']).exclude(id=request.user.id).exclude(username=request.POST['user_name']):
                 messages.info(request, "Username already exists.",
                               extra_tags='warning')
             elif check_password(request.POST['password'], request.user.password):
@@ -1899,6 +1958,8 @@ def user_profile_update(request):
                 file_url = fs.url(file)
                 user.profile_photo = file_url
                 user.save()
+                messages.info(request, "Profile picture updated.",
+                              extra_tags='success')
 
             if new_password != '':
                 if new_password == c_password:
