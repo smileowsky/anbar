@@ -168,31 +168,27 @@ def loader(request):
                 else:
                     messages.info(request, "Empty field.", extra_tags='error')
                 
-                #Expens search without refresh
-                if 'search' in request.GET:
-                    data = Expenses.objects.filter(
-                        Q(assignment__contains=request.GET['question'])).order_by('-id')
-                elif 'search' in request.GET:
-                    data = Expenses.objects.filter(
-                        Q(amount__contains=request.GET['question'])).order_by('-id')
-                else:
-                    if 'order' in request.GET:
-                        if request.GET['order'] == 'a':
-                            data = Expenses.objects.all().order_by('assignment')
-                        elif request.GET['order'] == 'b':
-                            data = Expenses.objects.all().order_by('-assignment')
-                        elif request.GET['order'] == 'c':
-                            data = Expenses.objects.all().order_by('amount')
-                        elif request.GET['order'] == 'd':
-                            data = Expenses.objects.all().order_by('-amount')
-                        elif request.GET['order'] == 'e':
-                            data = Expenses.objects.all().order_by('add_date')
-                        elif request.GET['order'] == 'f':
-                            data = Expenses.objects.all().order_by('-add_date')
-                    else:
-                        data = Expenses.objects.all().order_by('-id')
-                #Expens search end
+            data = Expenses.objects.all().order_by('-id')
         #Expens end
+            
+            #Expens edit without refresh
+            if 'edit_id' in request.POST:
+                assignment = request.POST['assignment']
+                amount = request.POST['amount']
+
+                if assignment and amount:
+                    expens = Expenses.objects.get(id=request.POST['edit_id'])
+                    expens.assignment = assignment
+                    expens.amount = amount
+
+                    expens.save()
+                    messages.info(request, "Update was successful.", extra_tags='success')
+
+                else:
+                    messages.info(request, "Empty field.", extra_tags='error')
+
+            data = Expenses.objects.all().order_by('-id')
+        #Expens edit done
 
             #Expens single deletion without refresh
             if 'del_id' in request.POST:
@@ -217,26 +213,6 @@ def loader(request):
                     messages.info(
                         request, "Expens data has been deleted successfully.", extra_tags='success')
                 
-            # Expens edit without refresh
-            if 'edit' in request.POST:
-                edit = Expenses.objects.get(id=request.POST['expens_id'])
-
-                if 'update' in request.POST:
-                    assignment = request.POST['assignment']
-                    amount = request.POST['amount']
-
-                    if assignment and amount:
-                        expens = Expenses.objects.get(id=request.POST['expens_id'])
-                        expens.assignment = request.POST['assignment']
-                        expens.amount = request.POST['amount']
-
-                        expens.save()
-                        messages.info(request, "Update was successful.", extra_tags='success')
-
-                    else:
-                        messages.info(request, "Empty field.", extra_tags='error')
-
-            data = Expenses.objects.all().order_by('-id')
         # Product add without refresh.
         elif request.POST['x'] == 'products':
 
@@ -602,7 +578,7 @@ def loader(request):
                 messages.info(
                     request, "Assignment has been deleted successfully.", extra_tags='success')
             #Assignment delete end
-                
+   
     return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client' : client, 'product' : product, 'departments' : departments, 'staffs' : staffs, 'positions' : positions})
 
 

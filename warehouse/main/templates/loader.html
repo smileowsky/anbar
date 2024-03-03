@@ -469,7 +469,7 @@
           Edit the information in the cells
         </p>
         <form method="post" class="forms-sample" id="edit_expenses">
-          <input type="hidden" name="edit" value="expenses">
+          <input type="hidden" name="x" value="expenses">
           <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
@@ -611,7 +611,7 @@
                   <td>
                     <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="{% url 'expens_edit' info.id %}" title="Edit"><i
+                    <a class="btn btn-warning btn-round btn-md edit" id="{{info.id}}" href="#table"  title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                   <td>

@@ -5,19 +5,6 @@
 <div id="data"></div>
 
 <script>
-  // Edit expenses
-  $(document).on('click', '.edit', function () {
-    let id = $(this).attr('id');
-    $.ajax({
-      method: 'POST',
-      url: '{% url "loader" %}',
-      data: {'edit': 'expenses', 'expens_id': id, csrfmiddlewaretoken: '{{csrf_token}}'},
-      success: function (response) {
-        $('#data').html(response);
-      }
-    });
-  });
-
   // Insert expenses
   $(document).on('click', '.insert', function () {
     let form = $('#insert_expens')[0]
@@ -34,6 +21,38 @@
         $('#data').html(response)
       }
     })
+  })
+
+  // Edit expenses
+  $(document).on('click', '.edit', function () {
+    let form = $('#edit_expenses')[0]
+    let data = new FormData(form)
+    $.ajax({
+      type: 'POST',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.edit', function () {
+    let id = $(this).attr('id')
+    if (confirm("Do you want to edit?")) {
+      $.ajax({
+        method: 'POST',
+        url: '{% url "loader" %}',
+        data: { 'x': 'expenses', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
   })
 
   // Delete expenses
