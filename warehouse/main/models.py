@@ -16,6 +16,18 @@ from django.utils import timezone
 from datetime import timedelta
 
 
+class Images(models.Model):
+    image = models.ImageField(upload_to='images/')
+    date = models.DateTimeField(auto_now=True)
+    dropzone = models.IntegerField()
+    
+    class Meta:
+        ordering = ['-date']
+
+    def __str__(self) -> str:
+        return super().__str__()
+
+
 class Brand(models.Model):
     brand_name = models.CharField(max_length=20)
     brand_pic = models.ImageField(upload_to='media/', blank=False, null=False)
@@ -57,7 +69,7 @@ class Products(models.Model):
     sell = models.FloatField(max_length=100)
     quantity = models.IntegerField(100)
     add_date = models.DateField(auto_now=True)
-    dropzone = models.IntegerField()
+    images = models.ManyToManyField('Images', related_name='product')
 
     @property
     def profit(self):
@@ -104,9 +116,9 @@ class Staff(models.Model):
 class Documents(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
-    doc_num = models.IntegerField(20)
+    doc_num = models.IntegerField(max_length=20)
     about = models.TextField()
-    scan_photo = models.ImageField(upload_to='media/', blank=False, null=False)
+    images = models.ManyToManyField('Images', related_name='document')
 
 
 class myUser(AbstractUser):
@@ -148,15 +160,3 @@ class Assignments(models.Model):
 class UplodedFile(models.Model):
     file = models.FileField(upload_to='uploads/')
     upload_at = models.DateTimeField(auto_now=True)
-
-
-class Images(models.Model):
-    image = models.ImageField(upload_to='images/')
-    date = models.DateTimeField(auto_now=True)
-    dropzone = models.IntegerField()
-    
-    class Meta:
-        ordering = ['-date']
-
-    def __str__(self) -> str:
-        return super().__str__()

@@ -245,9 +245,11 @@ def loader(request):
                         buy=request.POST['buy'],
                         sell=request.POST['sell'],
                         quantity=request.POST['quantity'],
-                        dropzone=request.POST['code']
                     )
                     save_date.save()
+
+                    images = Images.objects(image=request.POST['image'])
+                    save_date.images.set([images])
                     messages.info(request, "Product saved successfully.",
                                     extra_tags='success')
                 else:
