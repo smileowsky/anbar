@@ -1,6 +1,6 @@
 # Create your views here.
 
-from . models import Brand, Clients, Expenses, Products, Orders, Departments, Positions, Staff, Documents, myUser, Assignments, Supplier
+from . models import Brand, Clients, Expenses, Products, Orders, Departments, Positions, Staff, Documents, myUser, Assignments, Supplier, Images
 from django.db.models import F, ExpressionWrapper, FloatField
 from django.contrib.auth import update_session_auth_hash
 from django.core.files.storage import FileSystemStorage
@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import User, auth
 from django.contrib.auth import get_user_model
 from django.shortcuts import render, redirect
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.conf import settings
 from django.db.models import Q
@@ -41,6 +41,22 @@ def main(request):
 def basic(request):
     return render(request, 'basic.html')
 
+
+def upload(request):
+    if request.method == 'POST' and request.FILES.get('photo'):
+        upload = request.FILES['photo']
+        uploaded_photo = request.FILES['photo']
+        file_storage = FileSystemStorage()
+        saved_file = file_storage.save(uploaded_photo.name, uploaded_photo)
+        file_url = file_storage.url(saved_file)
+
+        product = Products(product_photo=file_url)
+        product.save()
+
+        return HttpResponse('File uploaded successfully.')
+    else:
+        return JsonResponse({'success': False})
+        
 
 def loader(request):
     data = ''
@@ -217,32 +233,23 @@ def loader(request):
         elif request.POST['x'] == 'products':
 
             if 'save' in request.POST:
-                if request.POST['brand_id'] != '' and request.POST['product'] != '' and request.POST['buy'] != '' and request.POST['sell'] != '' and request.POST['quantity'] != '' and 'photo' in request.FILES:
+                if request.POST['brand_id'] != '' and request.POST['product'] != '' and request.POST['buy'] != '' and request.POST['sell'] != '' and request.POST['quantity'] != '':
                     # instance
                     brand = Brand.objects.get(id=request.POST['brand_id'])
                     supplier = Supplier.objects.get(id=request.POST['supp_id'])
 
-                    if 'photo' in request.FILES:
-                        upload = request.FILES['photo']
-                        file_ss = FileSystemStorage()
-                        file = file_ss.save(upload.name, upload)
-                        file_url = file_ss.url(file)
-
-                        save_date = Products(
-                            brand=brand,
-                            supplier_id=supplier,
-                            product=request.POST['product'],
-                            buy=request.POST['buy'],
-                            sell=request.POST['sell'],
-                            quantity=request.POST['quantity'],
-                            product_photo=file_url
-                        )
-                        save_date.save()
-                        messages.info(request, "Product saved successfully.",
-                                      extra_tags='success')
-                    else:
-                        messages.info(
-                            request, "Please fill in all required fields and provide a photo.", extra_tags='error')
+                    save_date = Products(
+                        brand=brand,
+                        supplier_id=supplier,
+                        product=request.POST['product'],
+                        buy=request.POST['buy'],
+                        sell=request.POST['sell'],
+                        quantity=request.POST['quantity'],
+                        dropzone=request.POST['code']
+                    )
+                    save_date.save()
+                    messages.info(request, "Product saved successfully.",
+                                    extra_tags='success')
                 else:
                     messages.info(request, "Empty field", extra_tags='error')
 

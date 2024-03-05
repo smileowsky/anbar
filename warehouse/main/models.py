@@ -53,12 +53,11 @@ class Products(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE)
     supplier_id = models.ForeignKey(Supplier, on_delete=models.CASCADE)
     product = models.CharField(max_length=15)
-    product_photo = models.ImageField(
-        upload_to='media/', blank=False, null=False)
     buy = models.FloatField(max_length=100)
     sell = models.FloatField(max_length=100)
     quantity = models.IntegerField(100)
     add_date = models.DateField(auto_now=True)
+    dropzone = models.IntegerField()
 
     @property
     def profit(self):
@@ -144,3 +143,20 @@ class Assignments(models.Model):
             completed = f"{days} days, {hours} hours"
 
         return completed
+
+
+class UplodedFile(models.Model):
+    file = models.FileField(upload_to='uploads/')
+    upload_at = models.DateTimeField(auto_now=True)
+
+
+class Images(models.Model):
+    image = models.ImageField(upload_to='images/')
+    date = models.DateTimeField(auto_now=True)
+    dropzone = models.IntegerField()
+    
+    class Meta:
+        ordering = ['-date']
+
+    def __str__(self) -> str:
+        return super().__str__()

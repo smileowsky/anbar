@@ -69,8 +69,7 @@
         <p class="card-description">
           Fill in the blanks
         </p>
-        <form method="post" class="forms-sample" id="insert_brands"
-          enctype="multipart/form-data">
+        <form method="post" class="forms-sample" id="insert_brands" enctype="multipart/form-data">
           <input type="hidden" name="x" value="brands">
           <input type="hidden" name="save">
           {% csrf_token %}
@@ -177,7 +176,8 @@
                   <td>
                     <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="#"><i class="mdi mdi-grease-pencil" title="Edit"></i></a>
+                    <a class="btn btn-warning btn-round btn-md" href="#"><i class="mdi mdi-grease-pencil"
+                        title="Edit"></i></a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -542,9 +542,9 @@
 {% endif %}
 
 <div class="alert alert-primary" role="alert">
- <center>
-   <b>Expenses: </b> {{expens_num}} |
- </center>
+  <center>
+    <b>Expenses: </b> {{expens_num}} |
+  </center>
 </div>
 
 <div class="row">
@@ -611,7 +611,7 @@
                   <td>
                     <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md edit" id="{{info.id}}" href="#table"  title="Edit"><i
+                    <a class="btn btn-warning btn-round btn-md edit" id="{{info.id}}" href="#table" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                   <td>
@@ -666,7 +666,7 @@
         <form method="post" action="{% url 'products_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
-            <label for="exampleInputName1">Edit supplier</label>
+            <label>Edit supplier</label>
             <select name="supp_id" class="form-control">
               <option value="">Choose the supplier</option>
               {% for supplier_option in suppliers %}
@@ -677,7 +677,7 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="exampleInputName1">Edit brand</label>
+            <label>Edit brand</label>
             <select name="brand_id" class="form-control">
               <option value="">Choose the brand</option>
               {% for brand_option in brands %}
@@ -687,8 +687,8 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="exampleInputName1">Edit product name</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Brand name" name="product"
+            <label>Edit product name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="product"
               value="{{edit.product}}">
           </div>
           <div class="input-group col-xs-12">
@@ -699,19 +699,19 @@
             </span>
           </div>
           <div class="form-group">
-            <label for="exampleInputName1">Edit product "buy" price</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Product buy price" name="buy"
+            <label>Edit product "buy" price</label>
+            <input type="text" class="form-control" placeholder="Product buy price" name="buy"
               value="{{edit.buy}}">
           </div>
           <div class="form-group">
             <div class="form-group">
-              <label for="exampleInputName1">Edit product "sell" price</label>
-              <input type="text" class="form-control" id="exampleInputName1" placeholder="Edit product sell price"
+              <label>Edit product "sell" price</label>
+              <input type="text" class="form-control" placeholder="Edit product sell price"
                 name="sell" value="{{edit.sell}}">
             </div>
             <div class="form-group">
-              <label for="exampleInputName1">Edit product "amount"</label>
-              <input type="text" class="form-control" id="exampleInputName1" placeholder="Edit product amount"
+              <label>Edit product "amount"</label>
+              <input type="text" class="form-control" placeholder="Edit product amount"
                 name="quantity" value="{{edit.quantity}}">
             </div>S
             <button name="update" class="btn btn-primary text-white">Update</button>
@@ -723,6 +723,29 @@
 </div>
 
 {% else %}
+
+<style>
+  .dz-remove {
+    color: red;
+  }
+
+  .dz-remove:hover {
+    color: inherit;
+  }
+
+  .dz {
+    border: dashed !important;
+    background-color: #fffefeeb !important;
+    border-radius: 10px !important;
+    color: black;
+
+  }
+
+  .dz:hover {
+    background-color: aliceblue !important;
+  }
+</style>
+
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -731,10 +754,35 @@
         <p class="card-description">
           Fill in the blanks
         </p>
-        <form method="post" class="forms-sample" id="insert_products" 
-          enctype="multipart/form-data">
+        <div class="form-group">
+          <label>File upload</label>
+          <form enctype='multipart/form-data' action="upload/" method='POST' class="dropzone dz" id="my-dropzone">
+            {% csrf_token %}
+            <div class="fallback">
+              <input name="file" type="file" multiple />
+            </div>
+            <input type="hidden" name="code" value="{% now 'U' %}">
+          </form>
+        </div>
+        <script>
+          Dropzone.autoDiscover = false;
+          const myDropzone = new Dropzone('#my-dropzone', {
+            url: 'upload/', // Update this to the correct upload URL in your Django app
+            maxFiles: 10,
+            maxFilesize: 2,
+            acceptedFiles: '.jpg, .jpeg, .png, .webp',
+            dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
+            addRemoveLinks: true,
+            dictRemoveFile: "<strong>Delete</strong>", // Replace with your custom text
+          });
+          myDropzone.on("maxfilesexceeded", function (file) {
+            alert("Max file you can upload is 10.");
+          });
+        </script>
+        <form method="post" class="forms-sample" id="insert_products" enctype="multipart/form-data">
           <input type="hidden" name="x" value="products">
           <input type="hidden" name="save">
+          <input type="hidden" name="code" value="{% now 'U' %}">
           {% csrf_token %}
           <div class="form-group">
             <label>Supplier</label>
@@ -755,26 +803,23 @@
             </select>
           </div>
           <div class="form-group">
-            <label for="exampleInputName1">Product name</label>
-            <input class="form-control" id="exampleInputName1" placeholder="Product name" name="product">
+            <label>Product name</label>
+            <input class="form-control" placeholder="Product name" name="product">
+          </div>
+          
+
+          
+          <div class="form-group">
+            <label>Product "buy" price</label>
+            <input type="text" class="form-control" placeholder="Buy price" name="buy">
           </div>
           <div class="form-group">
-            <label>File upload</label>
-            <div class="input-group col-xs-12">
-              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="photo">
-            </div>
+            <label>Product "sell" price</label>
+            <input type="text" class="form-control" placeholder="Sell price" name="sell">
           </div>
           <div class="form-group">
-            <label for="exampleInputName1">Product "buy" price</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Buy price" name="buy">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Product "sell" price</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Sell price" name="sell">
-          </div>
-          <div class="form-group">
-            <label for="exampleInputName1">Product "amount"</label>
-            <input type="text" class="form-control" id="exampleInputName1" placeholder="Product amount" name="quantity">
+            <label>Product "amount"</label>
+            <input type="text" class="form-control" placeholder="Product amount" name="quantity">
           </div>
           <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
         </form>
@@ -782,6 +827,18 @@
     </div>
   </div>
 </div>
+
+
+<style>
+  .subtext {
+    opacity: 0.7;
+  }
+</style>
+<!--=====================================
+          ADPOST PART END
+=======================================-->
+
+
 {% endif %}
 
 <!--
@@ -1353,8 +1410,7 @@
         <p class="card-description">
           Fill in the blanks
         </p>
-        <form method="post" class="forms-sample" id="insert_suppliers" 
-          enctype="multipart/form-data">
+        <form method="post" class="forms-sample" id="insert_suppliers" enctype="multipart/form-data">
           <input type="hidden" name="x" value="suppliers">
           <input type="hidden" name="save">
           {% csrf_token %}
@@ -1887,8 +1943,8 @@
                   <td>
                     <div class="form-check form-check-info">
                       <label class="form-check-label">
-                        <input type="checkbox" class="form-check-info" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
-                          name="x[]" value="{{info.id}}">{{forloop.counter}}
+                        <input type="checkbox" class="form-check-info" {% if info.id|floatformat:'0' in del_all %}
+                          checked {% endif %} name="x[]" value="{{info.id}}">{{forloop.counter}}
                       </label>
                     </div>
                   </td>
@@ -2022,8 +2078,7 @@
         <p class="card-description">
           Fill in the blanks
         </p>
-        <form method="post" class="forms-sample" id="insert_staffs" 
-          enctype="multipart/form-data">
+        <form method="post" class="forms-sample" id="insert_staffs" enctype="multipart/form-data">
           <input type="hidden" name="x" value="staffs">
           <input type="hidden" name="save">
           {%csrf_token%}
@@ -2521,7 +2576,7 @@
         <form method="post" class="forms-sample" action="{% url 'assignment_update' edit.id %}">
           {% csrf_token %}
           <div class="form-group">
-            <label for="exampleInputName1">Edit performer</label>
+            <label>Edit performer</label>
             <select name="staff_id" class="form-control">
               <option value="">Choose staff member...</option>
               {% for staff_obj in staffs %}
