@@ -56,7 +56,7 @@ def upload(request):
         return HttpResponse('File uploaded successfully.')
     else:
         return JsonResponse({'success': False})
-        
+
 
 def loader(request):
     data = ''
@@ -69,7 +69,7 @@ def loader(request):
     positions = ''
 
     if 'x' in request.POST:
-        #Brand add without refresh.
+        # Brand add without refresh.
         if request.POST['x'] == 'brands':
 
             if 'save' in request.POST:
@@ -116,9 +116,9 @@ def loader(request):
                     brand.delete()
                     messages.info(
                         request, "The brand has been successfully deleted.", extra_tags='success')
-            #Brand delete end
+            # Brand delete end
 
-        #Clients add without refresh
+        # Clients add without refresh
         elif request.POST['x'] == 'clients':
 
             if 'save' in request.POST:
@@ -166,9 +166,9 @@ def loader(request):
                     clients.delete()
                     messages.info(
                         request, "Customer's data has been deleted successfully.", extra_tags='success')
-            #Client delete end
+            # Client delete end
 
-        #Expens add without refresh
+        # Expens add without refresh
         elif request.POST['x'] == 'expenses':
 
             if 'save' in request.POST:
@@ -183,11 +183,11 @@ def loader(request):
                                   extra_tags='success')
                 else:
                     messages.info(request, "Empty field.", extra_tags='error')
-                
+
             data = Expenses.objects.all().order_by('-id')
-        #Expens end
-            
-            #Expens edit without refresh
+        # Expens end
+
+            # Expens edit without refresh
             if 'edit_id' in request.POST:
                 assignment = request.POST['assignment']
                 amount = request.POST['amount']
@@ -198,27 +198,28 @@ def loader(request):
                     expens.amount = amount
 
                     expens.save()
-                    messages.info(request, "Update was successful.", extra_tags='success')
+                    messages.info(request, "Update was successful.",
+                                  extra_tags='success')
 
                 else:
                     messages.info(request, "Empty field.", extra_tags='error')
 
             data = Expenses.objects.all().order_by('-id')
-        #Expens edit done
+        # Expens edit done
 
-            #Expens single deletion without refresh
+            # Expens single deletion without refresh
             if 'del_id' in request.POST:
                 Expenses.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
                     request, "Expens data has been deleted successfully.", extra_tags='success')
             # Expens delete end
-                
-            #Expens multi deletion without refresh
+
+            # Expens multi deletion without refresh
             if 'delete_all' in request.GET:
                 del_all = request.GET.getlist('x[]')
                 if not del_all:
                     messages.info(request, "Please select to delete.",
-                                extra_tags='error')
+                                  extra_tags='error')
             elif 'confirm_delete_all' in request.GET:
                 choosen = request.GET.getlist('x[]')
                 if choosen:
@@ -228,10 +229,9 @@ def loader(request):
                             picked.delete()
                     messages.info(
                         request, "Expens data has been deleted successfully.", extra_tags='success')
-                
+
         # Product add without refresh.
         elif request.POST['x'] == 'products':
-
             if 'save' in request.POST:
                 if request.POST['brand_id'] != '' and request.POST['product'] != '' and request.POST['buy'] != '' and request.POST['sell'] != '' and request.POST['quantity'] != '':
                     # instance
@@ -246,12 +246,14 @@ def loader(request):
                         sell=request.POST['sell'],
                         quantity=request.POST['quantity'],
                     )
-                    save_date.save()
 
-                    images = Images.objects(image=request.POST['image'])
-                    save_date.images.set([images])
-                    messages.info(request, "Product saved successfully.",
-                                    extra_tags='success')
+                    if 'image' in request.POST:
+                        images = Images.objects(image=request.POST['image'])
+                        save_date.images.set([images])
+
+                    save_date.save()
+                    messages.info(
+                        request, "Product saved successfully.", extra_tags='success')
                 else:
                     messages.info(request, "Empty field", extra_tags='error')
 
@@ -302,16 +304,16 @@ def loader(request):
             data = Orders.objects.all().order_by('-id')
             client = Clients.objects.all().order_by('-id')
             product = Products.objects.all().order_by('-id')
-        #Order add end
+        # Order add end
 
-            #Order single deletion without refresh
+            # Order single deletion without refresh
             if 'del_id' in request.POST:
                 Orders.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
                     request, "Order data has been deleted successfully.", extra_tags='success')
-            #Product delete end
+            # Product delete end
 
-        #Supplier add without refresh.
+        # Supplier add without refresh.
         if request.POST['x'] == 'suppliers':
 
             if 'save' in request.POST:
@@ -366,9 +368,9 @@ def loader(request):
                     supplier.delete()
                     messages.info(
                         request, "Supplier has been deleted successfully.", extra_tags='success')
-            #Product delete end
-        
-        #Department add without refresh.
+            # Product delete end
+
+        # Department add without refresh.
         if request.POST['x'] == 'departments':
 
             if 'save' in request.POST:
@@ -387,14 +389,16 @@ def loader(request):
                             request, "Departments added successfully.", extra_tags='success')
                 else:
                     messages.info(request, "Departments name is required.",
-                                extra_tags='error')
+                                  extra_tags='error')
             data = Departments.objects.all().order_by('-id')
-        #Department add end
-            
-            #Departmen single deletion without refresh
+        # Department add end
+
+            # Departmen single deletion without refresh
             if 'del_id' in request.POST:
-                departments = Departments.objects.get(id=request.POST['del_id'])
-                position = Positions.objects.filter(dep_id_id=request.POST['del_id']).count()
+                departments = Departments.objects.get(
+                    id=request.POST['del_id'])
+                position = Positions.objects.filter(
+                    dep_id_id=request.POST['del_id']).count()
 
                 if position > 0:
                     messages.info(
@@ -403,9 +407,9 @@ def loader(request):
                     departments.delete()
                     messages.info(
                         request, "Department  has been deleted successfully.", extra_tags='success')
-            #Department delete end
-        
-        #Position add without refresh.
+            # Department delete end
+
+        # Position add without refresh.
         if request.POST['x'] == 'positions':
 
             if 'save' in request.POST:
@@ -421,23 +425,24 @@ def loader(request):
                     )
 
                     save_data.save()
-                    messages.info(request, "Position saved.", extra_tags='success')
+                    messages.info(request, "Position saved.",
+                                  extra_tags='success')
 
                 else:
                     messages.info(request, "Position name is required.",
-                                extra_tags='error')
-                    
+                                  extra_tags='error')
+
             data = Positions.objects.all().order_by('-id')
             departments = Departments.objects.all().order_by('-id')
-        #Position add end
-            
-            #Position single deletion without refresh
+        # Position add end
+
+            # Position single deletion without refresh
             if 'del_id' in request.POST:
                 positions = Positions.objects.get(
                     id=request.POST['del_id'])
                 staffs = Staff.objects.filter(
                     pos_id=request.POST['del_id']).count()
-                
+
                 if staffs > 0:
                     messages.info(
                         request, f"Position '{positions.positions}' cannot be deleted. There are {staffs} active staff in it.", extra_tags='error')
@@ -445,22 +450,23 @@ def loader(request):
                     positions.delete()
                     messages.info(
                         request, "Positions has been deleted successfully.", extra_tags='success')
-            #Position delete end
-        
-        #Staff add without refresh.
+            # Position delete end
+
+        # Staff add without refresh.
         if request.POST['x'] == 'staffs':
 
             if 'save' in request.POST:
-                
+
                 if request.POST['s_name'] != '' and request.POST['s_surname'] != '' and request.POST['s_birth_d'] != '' and request.POST['s_email'] != '' and request.POST['s_phone'] != '' and request.POST['s_sallary'] != '' and request.POST['s_start_d'] != '':
-                    positions = Positions.objects.get(id=request.POST['position_id'])
+                    positions = Positions.objects.get(
+                        id=request.POST['position_id'])
 
                     if Staff.objects.filter(email=request.POST['s_email']).exists():
                         messages.info(request, 'Email already exists.',
-                                    extra_tags='warning')
+                                      extra_tags='warning')
                     elif Staff.objects.filter(phone=request.POST['s_phone']).exists():
                         messages.info(request, 'Phone already exists.',
-                                    extra_tags='warning')
+                                      extra_tags='warning')
                     elif 'photo' in request.FILES:
                         # FOTO START
                         upload = request.FILES['photo']
@@ -488,15 +494,16 @@ def loader(request):
                         return redirect('documents')
                 else:
                     messages.info(request, "Empty fields.", extra_tags='error')
-            
+
             data = Staff.objects.all().order_by('-id')
             positions = Positions.objects.all().order_by('-id')
-        #Staff add end
-            
-            #Staff single deletion without refresh
+        # Staff add end
+
+            # Staff single deletion without refresh
             if 'del_id' in request.POST:
                 staffs = Staff.objects.get(id=request.POST['del_id'])
-                documents = Documents.objects.filter(staff_id_id=request.POST['del_id']).count()
+                documents = Documents.objects.filter(
+                    staff_id_id=request.POST['del_id']).count()
                 if documents > 0:
                     messages.info(
                         request, f"Staff '{staffs.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
@@ -504,9 +511,9 @@ def loader(request):
                     staffs.delete()
                     messages.info(
                         request, "Employee has been deleted successfully.", extra_tags='success')
-            #Staff delete end
-        
-        #Document add without refresh.
+            # Staff delete end
+
+        # Document add without refresh.
         if request.POST['x'] == 'documents':
 
             if 'save' in request.POST:
@@ -520,7 +527,7 @@ def loader(request):
 
                     if Documents.objects.filter(doc_num=request.GET['doc_num']).exists():
                         messages.info(request, "Document already exists.",
-                                    extra_tags='error')
+                                      extra_tags='error')
                     else:
                         upload = request.FILES['doc_photo']
                         fs = FileSystemStorage()
@@ -539,13 +546,14 @@ def loader(request):
                         messages.info(
                             request, "Document  saved successfully.", extra_tags='success')
                 else:
-                    messages.info(request, "Empty fields", extra_tags='warning')
+                    messages.info(request, "Empty fields",
+                                  extra_tags='warning')
 
             data = Documents.objects.all().order_by('-id')
             staffs = Staff.objects.get(id=request.POST['staff_id'])
-        #Document add end
-            
-            #Document single deletion without refresh
+        # Document add end
+
+            # Document single deletion without refresh
             if 'del_id' in request.POST:
                 doc = Documents.objects.get(id=request.POST['staff_id'])
                 staff = Staff.objects.get(id=doc.request.POST['del_id'].id)
@@ -553,9 +561,9 @@ def loader(request):
                 messages.info(
                     request, "Document has been deleted successfully.", extra_tags='success')
                 return HttpResponseRedirect('/documents/'+str(request.POST['staff_id'].id))
-            #Document delete end
+            # Document delete end
 
-        #Assignment add without refresh.
+        # Assignment add without refresh.
         if request.POST['x'] == 'assignments':
 
             if 'save' in request.POST:
@@ -573,22 +581,22 @@ def loader(request):
                     )
                     assignment.save()
                     messages.info(request, "Assignment successfully aded.",
-                                extra_tags='success')
+                                  extra_tags='success')
                 else:
                     messages.info(request, "Empty fields.", extra_tags='error')
 
             data = Assignments.objects.all().order_by('-id')
             staffs = Staff.objects.all().order_by('-id')
-        #Assignment add end
-            
-            #Assignment single deletion without refresh
+        # Assignment add end
+
+            # Assignment single deletion without refresh
             if 'del_id' in request.POST:
                 Assignments.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
                     request, "Assignment has been deleted successfully.", extra_tags='success')
-            #Assignment delete end
-   
-    return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client' : client, 'product' : product, 'departments' : departments, 'staffs' : staffs, 'positions' : positions})
+            # Assignment delete end
+
+    return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client': client, 'product': product, 'departments': departments, 'staffs': staffs, 'positions': positions})
 
 
 def brand(request):
@@ -966,37 +974,6 @@ def products(request):
         else:
             messages.info(
                 request, "Product(s) data has been deleted successfully.", extra_tags='success')
-
-    if 'save' in request.GET:
-
-        if request.GET['brand_id'] != '' and request.GET['product'] != '' and request.GET['buy'] != '' and request.GET['sell'] != '' and request.GET['quantity'] != '' and 'photo' in request.FILES:
-            # instance
-            brand = Brand.objects.get(id=request.GET['brand_id'])
-            supplier = Supplier.objects.get(id=request.GET['supp_id'])
-
-            if 'photo' in request.FILES:
-                upload = request.FILES['photo']
-                file_ss = FileSystemStorage()
-                file = file_ss.save(upload.name, upload)
-                file_url = file_ss.url(file)
-
-                save_date = Products(
-                    brand=brand,
-                    supplier_id=supplier,
-                    product=request.GET['product'],
-                    buy=request.GET['buy'],
-                    sell=request.GET['sell'],
-                    quantity=request.GET['quantity'],
-                    product_photo=file_url
-                )
-                save_date.save()
-                messages.info(request, "Product saved successfully.",
-                              extra_tags='success')
-            else:
-                messages.info(
-                    request, "Please fill in all required fields and provide a photo.", extra_tags='error')
-        else:
-            messages.info(request, "Empty field", extra_tags='error')
 
     if 'search' in request.GET:
         data = Products.objects.filter(
