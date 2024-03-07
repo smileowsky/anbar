@@ -1,87 +1,363 @@
-{% extends 'main_layout.html' %}
-
-{% block 'content' %}
+{% load static %}
 
 {% if request.user.is_authenticated %}
 
 <meta http-equiv="refresh" content="0; URL={%url 'user_profile'%}">
 
 {% else %}
+<!DOCTYPE html>
+<html lang="en">
 
-<div class="row">
-  {% if messages %}
-  <div class="alert alert-dismissible fade show" role="alert">
-    {% for message in messages %}
-    {% if 'success' in message.tags %}
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-      {{message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% elif 'error' in message.tags %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      {{message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% elif 'warning' in message.tags %}
-    <div class="alert alert-warning alert-dismissible fade show" role="alert">
-      {{message}}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-    {% endif %}
-    {% endfor %}
-  </div>
-</div>
-{% endif %}
+<head>
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Warehouse</title>
+  <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'vendors/feather/feather.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/mdi/css/materialdesignicons.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/ti-icons/css/themify-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/typicons/typicons.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/simple-line-icons/css/simple-line-icons.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+  <!-- endinject -->
+  <!-- Plugin css for this page -->
+  <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
+  <link rel="stylesheet" href="{% static 'js/select.dataTables.min.css' %}">
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}">
+  <!-- endinject -->
+  <link rel="shortcut icon" href="{% static 'favicon.png' %}" />
+  <!--JQUERY CDN-->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!--JQUERY end-->
+  <!--Dropzone js css-->
+  <script src="https://rawgit.com/enyo/dropzone/master/dist/dropzone.js"></script>
+  <link rel="stylesheet" href="https://rawgit.com/enyo/dropzone/master/dist/dropzone.css">
+  <!--Dropzone end-->
+</head>
 
-<div class="row">
-  <div class="col-12 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Registration</h4>
-        <p class="card-description">
-          Fill in the blanks
-        </p>
-        <form method="post" action="{%url 'user_register'%}">
-          {% csrf_token %}
-          <div class="form-group">
-            <label>Name</label>
-            <input class="form-control" placeholder="Name" name="name">
+
+<body>
+  <div class="container-scroller">
+    <!-- partial:partials/_navbar.html -->
+    <nav class="navbar default-layout col-lg-12 col-12 p-0 fixed-top d-flex align-items-top flex-row">
+      <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <div class="me-3">
+          <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-bs-toggle="minimize">
+            <span class="icon-menu"></span>
+          </button>
+        </div>
+        <div>
+          <a class="navbar-brand brand-logo" href="{% url 'home' %}">
+            <img src="/uploads/warehouse_as_a_service_logo.png" alt="logo">
+          </a>
+          <a class="navbar-brand brand-logo-mini" href="{% url 'home' %}">
+            <img src="/uploads/warehouse_as_a_service_logo.png" alt="logo">
+          </a>
+        </div>
+      </div>
+      <div class="navbar-menu-wrapper d-flex align-items-top">
+        <ul class="navbar-nav">
+          <li class="nav-item font-weight-semibold d-none d-lg-block ms-0">
+            {% if request.user.is_authenticated %}
+            <h1 class="welcome-text">Good Day, <span class="text-black fw-bold">{{request.user.first_name}}
+                {{request.user.last_name}}</span></h1>
+            {% else %}
+            <h1 class="welcome-text">Welcome to "WarehouzZ"<span class="text-black fw-bold"></span></h1>
+            <h3 class="welcome-sub-text">To use the "WarehouzZ" please register or log in to your account</h3>
+            {% endif %}
+          </li>
+        </ul>
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <form method="post" class="search-form" action="#table">
+              {% csrf_token %}
+              <i class="icon-search"></i>
+              <input type="search" name="question" class="form-control" placeholder="Search Here" title="Search here">
+            </form>
+          </li>
+          <li class="nav-item dropdown d-none d-lg-block user-dropdown">
+            <a class="nav-link" id="UserDropdown" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+              {% if request.user.is_authenticated %}
+              <img class="img-xs rounded-circle"
+                src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png {% else %} {{ request.user.profile_photo }} {% endif %}"
+                alt="Profile image" style="width: 40px; height: 40px;"> </a>
+            {% else %}
+            <img class="img-xs rounded-circle" src="/uploads/default_profile_pic.png" alt="Profile image"
+              style="width: 40px; height: 40px;"> </a>
+            {% endif %}
+            <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="UserDropdown">
+              <div class="dropdown-header text-center">
+                {% if request.user.is_authenticated %}
+                <img class="img-md rounded-circle"
+                  src="{% if request.user.profile_photo == '' %}/uploads/default_profile_pic.png{% else %} {{ request.user.profile_photo }} {% endif %}"
+                  alt="Profile image" style="width: 40px; height: 40px;">
+                <p class="mb-1 mt-3 font-weight-semibold">{{request.user.first_name}} {{request.user.last_name}}</p>
+                <p class="fw-light text-muted mb-0">{{request.user.email}}</p>
+              </div>
+              <form method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                  <a class="dropdown-item" href="{% url 'user_profile' %}"><i
+                      class="dropdown-item-icon mdi mdi-account-outline text-primary me-2"></i>
+                    My Profile <span class="badge badge-pill badge-danger"></span></a>
+                  <a class="dropdown-item" href="{% url 'logout_user' %}" type="button" class="btn btn-primary"><i
+                      class="mdi mdi-power text-primary me-2"></i>Sign Out</a>
+                </div>
+              </form>
+              {% else %}
+              <form method="post" action="{% url 'login_user' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                  <label for="exampleInputName1">Username</label>
+                  <input class="form-control" placeholder="username" name="username">
+                  <label for="exampleInputName1">Password</label>
+                  <input class="form-control" placeholder="password" type="password" name="password">
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm"><i class="mdi mdi-power text-white me-2"></i>Log
+                  In</button>
+              </form>
+              {% endif %}
+            </div>
+          </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+          data-bs-toggle="offcanvas">
+          <span class="mdi mdi-menu"></span>
+        </button>
+      </div>
+    </nav>
+    <!-- partial -->
+    <div class="container-fluid page-body-wrapper">
+      <!-- partial:partials/_settings-panel.html -->
+      <div class="theme-setting-wrapper">
+        <div id="settings-trigger"><i class="ti-settings"></i></div>
+        <div id="theme-settings" class="settings-panel">
+          <i class="settings-close ti-close"></i>
+          <p class="settings-heading">SIDEBAR SKINS</p>
+          <div class="sidebar-bg-options selected" id="sidebar-light-theme">
+            <div class="img-ss rounded-circle bg-light border me-3"></div>Light
           </div>
-          <div class="form-group">
-            <label>Surname</label>
-            <input class="form-control" placeholder="Surname" name="surname">
+          <div class="sidebar-bg-options" id="sidebar-dark-theme">
+            <div class="img-ss rounded-circle bg-dark border me-3"></div>Dark
           </div>
-          <div class="form-group">
-            <label>Username</label>
-            <input class="form-control" placeholder="Username" name="username">
+          <p class="settings-heading mt-2">HEADER SKINS</p>
+          <div class="color-tiles mx-0 px-4">
+            <div class="tiles success"></div>
+            <div class="tiles warning"></div>
+            <div class="tiles danger"></div>
+            <div class="tiles info"></div>
+            <div class="tiles dark"></div>
+            <div class="tiles default"></div>
           </div>
-          <div class="form-group">
-            <label>Date of birth</label>
-            <input class="form-control" type="date" name="u_birth">
+        </div>
+      </div>
+      <!-- partial -->
+      <!-- partial:partials/_sidebar.html -->
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'home' %}">
+              <i class="mdi mdi-home menu-icon"></i>
+              <span class="menu-title">Home</span>
+            </a>
+          </li>
+          {% if request.user.is_authenticated %}
+          <li class="nav-item nav-category">HR Related</li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false"
+              aria-controls="ui-basic">
+              <i class="mdi mdi-file-document menu-icon"></i>
+              <span class="menu-title">HR related</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="ui-basic">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{% url 'departments' %}">Departments</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'positions' %}">Positions</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'staff' %}">Staff</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'assignments' %}">Assignments</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item nav-category">Warehouse Releted</li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#form-elements" aria-expanded="false"
+              aria-controls="form-elements">
+              <i class="mdi mdi-store menu-icon"></i>
+              <span class="menu-title">Warehouse Releted</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="form-elements">
+              <ul class="nav flex-column sub-menu">
+                <li class="nav-item"> <a class="nav-link" href="{% url 'brand' %}">Brands</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'client' %}">Clients</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'expens' %}">Expenses</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'products' %}">Products</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'orders' %}">Orders</a></li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'supplier' %}">Suppliers</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="nav-item nav-category">pages</li>
+          <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="collapse" href="#auth" aria-expanded="false" aria-controls="auth">
+              <i class="menu-icon mdi mdi-account-circle-outline"></i>
+              <span class="menu-title">User Pages</span>
+              <i class="menu-arrow"></i>
+            </a>
+            <div class="collapse" id="auth">
+              <ul class="nav flex-column sub-menu">
+                {% if request.user.is_authenticated %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'user_profile' %}">User Profile</a> </li>
+                <li class="nav-item"> <a class="nav-link" href="{% url 'logout_user' %}">Logout</a></li>
+                {% else %}
+                <li class="nav-item"> <a class="nav-link" href="{% url 'login_user' %}">Login</a></li>
+                {% endif %}
+              </ul>
+            </div>
+          </li>
+          {% else %}
+          {% endif %}
+        </ul>
+      </nav>
+      <!-- partial -->
+      <div class="main-panel">
+        <div class="content-wrapper">
+          <div class="row">
+            <div class="col-sm-12">
+              <div class="home-tab">
+                <div class="tab-content tab-content-basic">
+                  <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
+                    <div class="row">
+                      {% if messages %}
+                      <div class="alert alert-dismissible fade show" role="alert">
+                        {% for message in messages %}
+                        {% if 'success' in message.tags %}
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                          {{message}}
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% elif 'error' in message.tags %}
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                          {{message}}
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% elif 'warning' in message.tags %}
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                          {{message}}
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                      </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="row">
+                      <div class="col-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <h4 class="card-title">Registration</h4>
+                            <p class="card-description">
+                              Fill in the blanks
+                            </p>
+                            <form method="post" action="{%url 'user_register'%}">
+                              {% csrf_token %}
+                              <div class="form-group">
+                                <label>Name</label>
+                                <input class="form-control" placeholder="Name" name="name">
+                              </div>
+                              <div class="form-group">
+                                <label>Surname</label>
+                                <input class="form-control" placeholder="Surname" name="surname">
+                              </div>
+                              <div class="form-group">
+                                <label>Username</label>
+                                <input class="form-control" placeholder="Username" name="username">
+                              </div>
+                              <div class="form-group">
+                                <label>Date of birth</label>
+                                <input class="form-control" type="date" name="u_birth">
+                              </div>
+                              <div class="form-group">
+                                <label>E-mail</label>
+                                <input class="form-control" placeholder="E-mail" name="email">
+                              </div>
+                              <div class="form-group">
+                                <label>Phone</label>
+                                <input class="form-control" placeholder="+9941234567" type="tel" name="phone">
+                              </div>
+                              <div class="form-group">
+                                <label>Password</label>
+                                <input class="form-control" placeholder="Password" type="password" name="password">
+                              </div>
+                              <div class="form-group">
+                                <label>Re-enter password</label>
+                                <input class="form-control" placeholder="Re-enter password" type="password"
+                                  name="r_password">
+                              </div>
+                              <button type="submit" name="signup"
+                                class="btn btn-success btn-rounded btn-fw text-white">Sign Up</button>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label>E-mail</label>
-            <input class="form-control" placeholder="E-mail" name="email">
-          </div>
-          <div class="form-group">
-            <label>Phone</label>
-            <input class="form-control" placeholder="+9941234567" type="tel" name="phone">
-          </div>
-          <div class="form-group">
-            <label>Password</label>
-            <input class="form-control" placeholder="Password" type="password" name="password">
-          </div>
-          <div class="form-group">
-            <label>Re-enter password</label>
-            <input class="form-control" placeholder="Re-enter password" type="password" name="r_password">
-          </div>
-          <button type="submit" name="signup" class="btn btn-success btn-rounded btn-fw text-white">Sign Up</button>
-        </form>
+        </div>
       </div>
     </div>
   </div>
-</div>
+  <!-- content-wrapper ends -->
+  <!-- partial:partials/_footer.html -->
+  <footer class="footer">
+    <div class="d-sm-flex justify-content-center justify-content-sm-between">
+      <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">by SmileOwsky. Copyright © 2024. All
+        rights
+        reserved.</span>
+    </div>
+  </footer>
+  <!-- partial -->
+  </div>
+  <!-- main-panel ends -->
+  </div>
+  <!-- page-body-wrapper ends -->
+  </div>
+  <!-- container-scroller -->
+
+  <!-- plugins:js -->
+  <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+  <!-- endinject -->
+  <!-- Plugin js for this page -->
+  <script src="{% static 'vendors/chart.js/Chart.min.js' %}"></script>
+  <script src="{% static 'vendors/bootstrap-datepicker/bootstrap-datepicker.min.js' %}"></script>
+  <script src="{% static 'vendors/progressbar.js/progressbar.min.js' %}"></script>
+
+  <!-- End plugin js for this page -->
+  <!-- inject:js -->
+  <script src="{% static 'js/off-canvas.js' %}"></script>
+  <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+  <script src="{% static 'js/template.js' %}"></script>
+  <script src="{% static 'js/settings.js' %}"></script>
+  <script src="{% static 'js/todolist.js' %}"></script>
+  <script src="{% static 'js/file-upload.js' %}"></script>
+  <script src="{% static 'js/typeahead.js' %}"></script>
+  <script src="{% static 'js/select2.js' %}"></script>
+
+  <!-- endinject -->
+  <!-- Custom js for this page-->
+  <script src="{% static 'js/dashboard.js' %}"></script>
+  <script src="{% static 'js/Chart.roundedBarCharts.js' %}"></script>
+  <!-- End custom js for this page-->
+</body>
+
+</html>
 
 {% endif %}
-
-{% endblock %}

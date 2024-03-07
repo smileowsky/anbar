@@ -761,6 +761,7 @@
           </form>
         </div>
         <script>
+       
           Dropzone.autoDiscover = false;
           const myDropzone1 = new Dropzone('#my-dropzone', {
             url: 'upload/', // Update this to the correct upload URL in your Django app
@@ -771,7 +772,7 @@
             addRemoveLinks: true,
             dictRemoveFile: "<strong>Delete</strong>", // Replace with your custom text
           });
-          myDropzone.on("maxfilesexceeded", function (file) {
+          myDropzone1.on("maxfilesexceeded", function (file) {
             alert("Max file you can upload is 3.");
           });
         </script>
@@ -969,7 +970,7 @@
                       </label>
                     </div>
                   </td>
-                  <td><img style="width: 50px; height: 60px;" src="{{info.product_photo}}"></td>
+                  <td>{% for f in info.img %}<img style="width: 50px; height: 60px;" src="{{f}}">{% endfor %}</td>
                   <td>{{info.supplier_id.supplier_name}} {{info.supplier_id.supplier_surname}}</td>
                   <td>{{info.brand.brand_name}}</td>
                   <td>{{info.product}}</td>

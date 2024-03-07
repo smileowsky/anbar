@@ -20,7 +20,7 @@ class Images(models.Model):
     image = models.ImageField(upload_to='images/')
     date = models.DateTimeField(auto_now=True)
     dropzone = models.IntegerField()
-    
+
     class Meta:
         ordering = ['-date']
 
@@ -69,12 +69,22 @@ class Products(models.Model):
     sell = models.FloatField(max_length=100)
     quantity = models.IntegerField(100)
     add_date = models.DateField(auto_now=True)
-    images = models.ManyToManyField('Images', related_name='product')
+    dropzone = models.IntegerField()
 
     @property
     def profit(self):
         x = (self.sell - self.buy) * self.quantity
         return round(x, 3)
+    
+    @property
+    def img(self):
+        foto = Images.objects.all().filter(dropzone=self.dropzone)
+        photos = []
+
+        for f in foto:
+            photos.append(f.image)
+        
+        return photos
 
 
 class Orders(models.Model):
@@ -118,7 +128,7 @@ class Documents(models.Model):
     title = models.CharField(max_length=30)
     doc_num = models.IntegerField(max_length=20)
     about = models.TextField()
-    images = models.ManyToManyField('Images', related_name='document')
+    images = models.ImageField(upload_to='media/', blank=True, null=True)
 
 
 class myUser(AbstractUser):

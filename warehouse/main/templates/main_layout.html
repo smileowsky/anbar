@@ -1,5 +1,7 @@
 {% load static %}
 
+{% if request.user.is_authenticated %}
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,14 +18,11 @@
   <link rel="stylesheet" href="{% static 'vendors/simple-line-icons/css/simple-line-icons.css' %}">
   <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
   <!-- endinject -->
-  <!-- Plugin css for this page -->
-  <link rel="stylesheet" href="{% static 'vendors/datatables.net-bs4/dataTables.bootstrap4.css' %}">
-  <link rel="stylesheet" href="{% static 'js/select.dataTables.min.css' %}">
   <!-- End plugin css for this page -->
   <!-- inject:css -->
   <link rel="stylesheet" href="{% static 'css/vertical-layout-light/style.css' %}">
   <!-- endinject -->
-  <link rel="shortcut icon" href="{% static 'favicon.png' %}"/>
+  <link rel="shortcut icon" href="{% static 'images/favicon.png' %}"/>
   <!--JQUERY CDN-->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <!--JQUERY end-->
@@ -225,7 +224,7 @@
               <div class="home-tab">
                 <div class="tab-content tab-content-basic">
                   <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview">
-                    {% block 'content' %}
+                    {% block 'content' %} {% endblock %}
                   </div>
                 </div>
               </div>
@@ -234,7 +233,6 @@
         </div>
       </div>
     </div>
-    {% endblock %}
     <!-- content-wrapper ends -->
     <!-- partial:partials/_footer.html -->
     <footer class="footer">
@@ -279,3 +277,7 @@
 </body>
 
 </html>
+
+{%else%}
+<meta http-equiv="refresh" content="0; URL={%url 'home'%}">
+{%endif%}

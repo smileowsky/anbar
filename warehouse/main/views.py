@@ -43,15 +43,15 @@ def basic(request):
 
 
 def upload(request):
-    if request.method == 'POST' and request.FILES.get('photo'):
-        upload = request.FILES['photo']
-        uploaded_photo = request.FILES['photo']
+    if request.method == 'POST' and request.FILES.get('file'):
+        upload = request.FILES['file']
+        uploaded_photo = request.FILES['file']
         file_storage = FileSystemStorage()
         saved_file = file_storage.save(uploaded_photo.name, uploaded_photo)
         file_url = file_storage.url(saved_file)
 
-        product = Products(product_photo=file_url)
-        product.save()
+        daxilet = Images(image = file_url,dropzone = request.POST['code'])
+        daxilet.save()
 
         return HttpResponse('File uploaded successfully.')
     else:
@@ -245,12 +245,8 @@ def loader(request):
                         buy=request.POST['buy'],
                         sell=request.POST['sell'],
                         quantity=request.POST['quantity'],
+                        dropzone=request.POST['code']
                     )
-
-                    if 'image' in request.POST:
-                        images = Images.objects(image=request.POST['image'])
-                        save_date.images.set([images])
-
                     save_date.save()
                     messages.info(
                         request, "Product saved successfully.", extra_tags='success')
