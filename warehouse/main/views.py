@@ -145,7 +145,7 @@ def loader(request):
                         request, "The brand has been successfully deleted.", extra_tags='success')
             # Brand delete end
 
-        # Clients add without refresh
+        #Clients add without refresh
         elif request.POST['x'] == 'clients':
 
             if 'save' in request.POST:
@@ -178,9 +178,9 @@ def loader(request):
                     messages.info(request, "Empty fields.", extra_tags='error')
 
             data = Clients.objects.all().order_by('-id')
-            # Client add end
+            #Client add end
 
-            # Client single deletion without refresh
+            #Client single deletion without refresh
             if 'del_id' in request.POST:
                 clients = Clients.objects.get(id=request.POST['del_id'])
                 active_orders = Orders.objects.filter(
@@ -193,9 +193,9 @@ def loader(request):
                     clients.delete()
                     messages.info(
                         request, "Customer's data has been deleted successfully.", extra_tags='success')
-            # Client delete end
+            #Client delete end
 
-        # Expens add without refresh
+        #Expens add without refresh
         elif request.POST['x'] == 'expenses':
 
             if 'save' in request.POST:
