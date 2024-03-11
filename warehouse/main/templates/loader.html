@@ -24,7 +24,7 @@
 </div>
 {% endif %}
 
-{% if edit %}
+{% if edit_data %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -33,26 +33,23 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" class="forms-sample" enctype="multipart/form-data" action="{% url 'update' edit.id %}">
+        <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_brands">
+          <input type="hidden" name="x" value="brands">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
+          <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit brand name</label>
             <input type="text" class="form-control" placeholder="Brand name" name="brand_name"
-              value="{{edit.brand_name}}">
+              value="{{edit_data.brand_name}}">
           </div>
           <div class="form-group">
             <label>File upload</label>
-            <input type="file" name="brand_photo" class="file-upload-default">
             <div class="input-group col-xs-12">
-              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.brand_pic}}">
-              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image"
-                name="brand_photo">
-              <span class="input-group-append">
-                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
-              </span>
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="brand_photo">
             </div>
           </div>
-          <button type="submit" name="save1" class="btn btn-primary me-2 text-white">Update</button>
+          <button type="button" name="update" class="btn btn-primary me-2 text-white update">Update</button>
           <a href="{% url 'brand' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
         </form>
       </div>
@@ -176,8 +173,8 @@
                   <td>
                     <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="#"><i class="mdi mdi-grease-pencil"
-                        title="Edit"></i></a>
+                    <a class="btn btn-warning btn-round btn-md edit" id="{{info.id}}" href="#table" title="Edit"><i 
+                        class="mdi mdi-grease-pencil"></i></a>
                   </td>
                 </tr>
                 {% endfor %}
@@ -459,7 +456,7 @@
 </div>
 {% endif %}
 
-{% if edit %}
+{% if edit_data %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -470,17 +467,18 @@
         </p>
         <form method="post" class="forms-sample" id="edit_expenses">
           <input type="hidden" name="x" value="expenses">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
           <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit expens title</label>
-            <input type="text" name="assignment" value="{{edit.assignment}}" class="form-control">
+            <input type="text" name="assignment" value="{{edit_data.assignment}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit amount</label>
-            <input type="text" name="amount" value="{{edit.amount}}" class="form-control"><br>
+            <input type="text" name="amount" value="{{edit_data.amount}}" class="form-control"><br>
           </div>
-          <button type="button" name="update" class="btn btn-primary text-white edit">Update</button>
+          <button type="button" name="update" class="btn btn-primary text-white update">Update</button>
           <a href="{% url 'expens' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
         </form>
       </div>
@@ -654,7 +652,26 @@
 </div>
 {% endif %}
 
-{% if edit %}
+{% if edit_data %}
+<style>
+  .dz-remove {
+    color: red;
+  }
+  .dz-remove:hover {
+    color: inherit;
+  }
+  .dz {
+    border: dashed !important;
+    background-color: #fffefeeb !important;
+    border-radius: 10px !important;
+    color: black;
+
+  }
+  .dz:hover {
+    background-color: aliceblue !important;
+  }
+</style>
+
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -663,14 +680,54 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" action="{% url 'products_update' edit.id %}">
+        <div class="form-group">
+          <label>File upload</label>
+          <form enctype='multipart/form-data' action="upload/" method='POST' class="dropzone dz" id="my-dropzone">
+            {% csrf_token %}
+            <div class="fallback">
+              <input name="file" type="file" multiple />
+            </div>
+            <input type="hidden" name="code" value="{% now 'U' %}">
+          </form>
+        </div>
+
+        <script>
+          Dropzone.autoDiscover = false;
+          const myDropzone2 = new Dropzone('#my-dropzone', {
+            url: 'upload/', // Update this to the correct upload URL in your Django app
+            maxFiles: 3,
+            maxFilesize: 2,
+            acceptedFiles: '.jpg, .jpeg, .png, .webp',
+            dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
+            addRemoveLinks: true,
+            dictRemoveFile: "<strong>Delete</strong>", // Replace with your custom text
+          });
+          myDropzone1.on("maxfilesexceeded", function (file) {
+            alert("Max file you can upload is 3.");
+          });
+        </script>
+        {% if edit_data.img %}
+
+        <input type="hidden" id="edit_id" value="{{edit_data.id}}">
+            {% for f in edit_data.img %}
+              <img style="width: 50px; height: 60px;" src="{{ f }}">
+              <a class="btn btn-danger btn-md delimg" id="{{f}}">
+                <i class="mdi mdi-delete"></i>
+              </a>
+            {% endfor %}
+        {% endif %} 
+      
+        <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_products">
+          <input type="hidden" name="x" value="products">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
+          <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit supplier</label>
             <select name="supp_id" class="form-control">
               <option value="">Choose the supplier</option>
               {% for supplier_option in suppliers %}
-              <option {% if edit.supplier_id.id == supplier_option.id %} selected {% endif %}
+              <option {% if edit_data.supplier_id.id == supplier_option.id %} selected {% endif %}
                 value="{{ supplier_option.id }}">
                 {{supplier_option.supplier_name}} {{supplier_option.supplier_surname}}</option>
               {% endfor %}
@@ -681,7 +738,7 @@
             <select name="brand_id" class="form-control">
               <option value="">Choose the brand</option>
               {% for brand_option in brands %}
-              <option {% if edit.brand.id == brand_option.id %} selected {% endif %} value="{{ brand_option.id }}">
+              <option {% if edit_data.brand.id == brand_option.id %} selected {% endif %} value="{{ brand_option.id }}">
                 {{brand_option.brand_name }}</option>
               {% endfor %}
             </select>
@@ -689,38 +746,37 @@
           <div class="form-group">
             <label>Edit product name</label>
             <input type="text" class="form-control" placeholder="Brand name" name="product"
-              value="{{edit.product}}">
-          </div>
-          <div class="input-group col-xs-12">
-            <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.product_photo}}">
-            <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
-            <span class="input-group-append">
-              <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
-            </span>
+              value="{{edit_data.product}}">
           </div>
           <div class="form-group">
             <label>Edit product "buy" price</label>
             <input type="text" class="form-control" placeholder="Product buy price" name="buy"
-              value="{{edit.buy}}">
+              value="{{edit_data.buy}}">
           </div>
           <div class="form-group">
             <div class="form-group">
               <label>Edit product "sell" price</label>
               <input type="text" class="form-control" placeholder="Edit product sell price"
-                name="sell" value="{{edit.sell}}">
+                name="sell" value="{{edit_data.sell}}">
             </div>
             <div class="form-group">
               <label>Edit product "amount"</label>
               <input type="text" class="form-control" placeholder="Edit product amount"
-                name="quantity" value="{{edit.quantity}}">
-            </div>S
-            <button name="update" class="btn btn-primary text-white">Update</button>
+                name="quantity" value="{{edit_data.quantity}}">
+            </div>
+            <button type="button" name="update" class="btn btn-primary text-white update">Update</button>
             <a href="{% url 'products' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
         </form>
       </div>
     </div>
   </div>
 </div>
+
+<style>
+  .subtext {
+    opacity: 0.7;
+  }
+</style>
 
 {% else %}
 <style>
@@ -760,8 +816,8 @@
             <input type="hidden" name="code" value="{% now 'U' %}">
           </form>
         </div>
+
         <script>
-       
           Dropzone.autoDiscover = false;
           const myDropzone1 = new Dropzone('#my-dropzone', {
             url: 'upload/', // Update this to the correct upload URL in your Django app
@@ -776,6 +832,7 @@
             alert("Max file you can upload is 3.");
           });
         </script>
+
         <form method="post" class="forms-sample" id="insert_products" enctype="multipart/form-data">
           <input type="hidden" name="x" value="products">
           <input type="hidden" name="save">
@@ -821,14 +878,13 @@
     </div>
   </div>
 </div>
+
 <style>
   .subtext {
     opacity: 0.7;
   }
 </style>
-<!--=====================================
-          ADPOST PART END
-=======================================-->
+
 {% endif %}
 
 <!--
@@ -982,7 +1038,7 @@
                   <td>
                     <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-md" href="{% url 'products_edit' info.id %}"><i
+                    <a class="btn btn-warning btn-md edit" id="{{info.id}}" href="#table"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                 </tr>

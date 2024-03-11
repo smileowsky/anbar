@@ -3,11 +3,12 @@
 {% block 'content' %}
 
 <div id="data"></div>
+
 <script>
-  $(document).on('click', '.insert', function(){
+  //Insert brands
+  $(document).on('click', '.insert', function () {
     let form = $('#insert_brands')[0]
     let data = new FormData(form)
-
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
@@ -16,12 +17,43 @@
       contentType: false,
       cache: false,
       timeout: 600000,
-      success: function(response){
+      success: function (response) {
         $('#data').html(response)
       }
     })
   })
 
+  //Edit brands
+  $(document).on('click', '.update', function () {
+    let form = $('#edit_brands')[0]
+    let data = new FormData(form)
+    $.ajax({
+      type: 'POST',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.edit', function () {
+    let id = $(this).attr('id')
+    $.ajax({
+      method: 'POST',
+      url: '{% url "loader" %}',
+      data: { 'x': 'brands', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  //Delete brands
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
 
@@ -29,7 +61,7 @@
       $.ajax({
         method: 'POST',
         url: '{% url "loader" %}',
-        data: {'x':'brands','del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+        data: { 'x': 'brands', 'del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -37,13 +69,13 @@
     }
   })
 
+  // Load brands on page load
   $(document).ready(function () {
-    
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
       dataType: 'html',
-      data:{'x':'brands', csrfmiddlewaretoken: '{{csrf_token}}'},
+      data: { 'x': 'brands', csrfmiddlewaretoken: '{{csrf_token}}' },
       success: function (response) {
         $('#data').html(response)
       }

@@ -24,7 +24,7 @@
   })
 
   // Edit expenses
-  $(document).on('click', '.edit', function () {
+  $(document).on('click', '.update', function () {
     let form = $('#edit_expenses')[0]
     let data = new FormData(form)
     $.ajax({
@@ -43,16 +43,14 @@
 
   $(document).on('click', '.edit', function () {
     let id = $(this).attr('id')
-    if (confirm("Do you want to edit?")) {
-      $.ajax({
-        method: 'POST',
-        url: '{% url "loader" %}',
-        data: { 'x': 'expenses', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
-        success: function (response) {
-          $('#data').html(response)
-        }
-      })
-    }
+    $.ajax({
+      method: 'POST',
+      url: '{% url "loader" %}',
+      data: { 'x': 'expenses', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
   })
 
   // Delete expenses

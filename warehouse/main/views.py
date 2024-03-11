@@ -52,11 +52,10 @@ def upload(request):
 
         daxilet = Images(image = file_url,dropzone = request.POST['code'])
         daxilet.save()
-
         return HttpResponse('File uploaded successfully.')
     else:
         return JsonResponse({'success': False})
-
+    
 
 def loader(request):
     data = ''
@@ -67,6 +66,7 @@ def loader(request):
     departments = ''
     staffs = ''
     positions = ''
+    edit_data = ''
 
     if 'x' in request.POST:
         # Brand add without refresh.
@@ -101,9 +101,36 @@ def loader(request):
                                   extra_tags='warning')
 
             data = Brand.objects.all().order_by('-id')
-            # Brand add end
+            #Brand add end
 
-            # Brand single deletion without refresh
+                #Brand edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Brand.objects.get(id=request.POST['edit_id'])
+                #Brand edit done
+
+            #Brand update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    update = Brand.objects.get(id=request.POST['id'])
+                    if Brand.objects.filter(brand_name=request.POST['id']).exclude(id=request.POST['id']).exists():
+                        messages.info(request, "Brand already exists.", extra_tags='error')
+                    else:
+                        if 'brand_photo' in request.FILES:
+                            new_photo = request.FILES['brand_photo']
+                            update.brand_pic = new_photo
+                            fs = FileSystemStorage()
+                            file = fs.save(new_photo.name, new_photo)
+                            file_url = fs.url(file)
+                            update.brand_pic = file_url
+                        update.brand_name = request.POST['brand_name']
+                        update.save()
+                        messages.info(request, "Brand update was successful.",
+                                extra_tags='success')
+                else:
+                    messages.info(request, "Brand name is required", extra_tags='error')
+            #Brand update done
+
+            #Brand single deletion without refresh
             if 'del_id' in request.POST:
                 brand = Brand.objects.get(id=request.POST['del_id'])
                 number = Products.objects.filter(
@@ -185,29 +212,27 @@ def loader(request):
                     messages.info(request, "Empty field.", extra_tags='error')
 
             data = Expenses.objects.all().order_by('-id')
-        # Expens end
+        #Expens end
 
-            # Expens edit without refresh
+            #Expens edit without refresh
             if 'edit_id' in request.POST:
-                assignment = request.POST['assignment']
-                amount = request.POST['amount']
-
-                if assignment and amount:
-                    expens = Expenses.objects.get(id=request.POST['edit_id'])
-                    expens.assignment = assignment
-                    expens.amount = amount
+                edit_data = Expenses.objects.get(id=request.POST['edit_id'])
+            #Expens edit done
+            
+            #Expens update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    expens = Expenses.objects.get(id=request.POST['id'])
+                    expens.assignment = request.POST['assignment']
+                    expens.amount = request.POST['amount']
 
                     expens.save()
-                    messages.info(request, "Update was successful.",
-                                  extra_tags='success')
+                    messages.info(request, "Update was successful.", extra_tags='success')
 
                 else:
                     messages.info(request, "Empty field.", extra_tags='error')
 
-            data = Expenses.objects.all().order_by('-id')
-        # Expens edit done
-
-            # Expens single deletion without refresh
+            #Expens single deletion without refresh
             if 'del_id' in request.POST:
                 Expenses.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
@@ -256,7 +281,40 @@ def loader(request):
             data = Products.objects.all().order_by('-id')
             brands = Brand.objects.all().order_by('-id')
             suppliers = Supplier.objects.all().order_by('-id')
-        # Product add end
+        #Product add end
+            
+            #Products edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Products.objects.get(id=request.POST['edit_id'])
+                
+            #Products edit done
+            if 'update' in request.POST:
+                if 'update':
+                    product = Products.objects.get(id=request.POST['id'])
+                    product.product = request.POST['product']
+                    product.buy = request.POST['buy']
+                    product.sell = request.POST['sell']
+                    product.quantity = request.POST['quantity']
+                    product.brand = Brand.objects.get(id=request.POST['brand_id'])
+
+                    product.save()
+                    messages.info(request, "Update was successful.", extra_tags='success')
+                else:
+                    messages.info(request, "Empty field.", extra_tags='error')
+                return redirect('products')
+            
+            #Products update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    expens = Expenses.objects.get(id=request.POST['id'])
+                    expens.assignment = request.POST['assignment']
+                    expens.amount = request.POST['amount']
+
+                    expens.save()
+                    messages.info(request, "Update was successful.", extra_tags='success')
+                else:
+                    messages.info(request, "Empty field.", extra_tags='error')
+            #Product edit end
 
             # Product single deletion without refresh
             if 'del_id' in request.POST:
@@ -273,6 +331,10 @@ def loader(request):
                     messages.info(
                         request, "Products data has been deleted successfully.", extra_tags='success')
             # Product delete end
+                    
+            if 'del_img' in request.POST:
+                images = Images.objects.get(image=request.POST['del_img'])
+                images.delete()
 
         # Order add without refresh.
         if request.POST['x'] == 'orders':
@@ -592,7 +654,7 @@ def loader(request):
                     request, "Assignment has been deleted successfully.", extra_tags='success')
             # Assignment delete end
 
-    return render(request, 'loader.html', {'data': data, 'brands': brands, 'suppliers': suppliers, 'client': client, 'product': product, 'departments': departments, 'staffs': staffs, 'positions': positions})
+    return render(request, 'loader.html', {'edit_data': edit_data, 'data': data, 'brands': brands, 'suppliers': suppliers, 'client': client, 'product': product, 'departments': departments, 'staffs': staffs, 'positions': positions})
 
 
 def brand(request):

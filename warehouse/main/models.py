@@ -1,12 +1,4 @@
 from django.db import models
-
-# Create your models here.
-
-from django.db import models
-
-# Create your models here.
-
-from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 import datetime as d
@@ -14,6 +6,8 @@ from math import ceil
 from django.utils import timezone
 from django.utils import timezone
 from datetime import timedelta
+
+# Create your models here.
 
 
 class Images(models.Model):
@@ -85,6 +79,7 @@ class Products(models.Model):
             photos.append(f.image)
         
         return photos
+    
 
 
 class Orders(models.Model):
