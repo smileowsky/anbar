@@ -255,7 +255,7 @@ def loader(request):
                     messages.info(
                         request, "Expens data has been deleted successfully.", extra_tags='success')
 
-        # Product add without refresh.
+        #Product add without refresh.
         elif request.POST['x'] == 'products':
             if 'save' in request.POST:
                 if request.POST['brand_id'] != '' and request.POST['product'] != '' and request.POST['buy'] != '' and request.POST['sell'] != '' and request.POST['quantity'] != '':

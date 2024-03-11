@@ -687,7 +687,7 @@
             <div class="fallback">
               <input name="file" type="file" multiple />
             </div>
-            <input type="hidden" name="code" value="{% now 'U' %}">
+            <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           </form>
         </div>
 
@@ -707,13 +707,10 @@
           });
         </script>
         {% if edit_data.img %}
-
         <input type="hidden" id="edit_id" value="{{edit_data.id}}">
             {% for f in edit_data.img %}
               <img style="width: 50px; height: 60px;" src="{{ f }}">
-              <a class="btn btn-danger btn-md delimg" id="{{f}}">
-                <i class="mdi mdi-delete"></i>
-              </a>
+              <a class="btn btn-danger btn-md delimg" id="{{f}}"><i class="mdi mdi-delete"></i></a>
             {% endfor %}
         {% endif %} 
       
@@ -721,6 +718,7 @@
           <input type="hidden" name="x" value="products">
           <input type="hidden" name="id" value="{{edit_data.id}}">
           <input type="hidden" name="update">
+          <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit supplier</label>
@@ -819,7 +817,7 @@
 
         <script>
           Dropzone.autoDiscover = false;
-          const myDropzone1 = new Dropzone('#my-dropzone', {
+            myDropzone1 = new Dropzone('#my-dropzone', {
             url: 'upload/',
             maxFiles: 3,
             maxFilesize: 2,
