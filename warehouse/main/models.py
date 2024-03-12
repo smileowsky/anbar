@@ -81,7 +81,6 @@ class Products(models.Model):
         return photos
     
 
-
 class Orders(models.Model):
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -121,10 +120,19 @@ class Staff(models.Model):
 class Documents(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
-    doc_num = models.IntegerField(max_length=20)
+    doc_num = models.IntegerField()
     about = models.TextField()
-    images = models.ImageField(upload_to='media/', blank=True, null=True)
+    dropzone = models.IntegerField()
+    
+    @property
+    def img(self):
+        foto = Images.objects.all().filter(dropzone=self.dropzone)
+        photos = []
 
+        for f in foto:
+            photos.append(f.image)
+
+        return photos
 
 class myUser(AbstractUser):
     profile_photo = models.ImageField(

@@ -597,7 +597,7 @@
                 <tr>
                   <td>
                     <div class="form-check form-check-info">
-                      <label class="form-check-label">
+                      <label class="form-check-label delete_all">
                         <input type="checkbox" {% if info.id|floatformat:'0' in del_all %} checked {% endif %}
                           name="x[]" value="{{info.id}}"> {{forloop.counter}}
                       </label>
@@ -694,13 +694,13 @@
         <script>
           Dropzone.autoDiscover = false;
           const myDropzone2 = new Dropzone('#my-dropzone', {
-            url: 'upload/', // Update this to the correct upload URL in your Django app
+            url: 'upload/',
             maxFiles: 3,
             maxFilesize: 2,
             acceptedFiles: '.jpg, .jpeg, .png, .webp',
             dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
             addRemoveLinks: true,
-            dictRemoveFile: "<strong>Delete</strong>", // Replace with your custom text
+            dictRemoveFile: "<strong>Delete</strong>",
           });
           myDropzone1.on("maxfilesexceeded", function (file) {
             alert("Max file you can upload is 3.");
@@ -1471,7 +1471,7 @@
             <input type="text" class="form-control" placeholder="Company" name="sup_comp_name">
           </div>
           <div class="form-group">
-            <label>Company</label>
+            <label>Email</label>
             <input type="email" class="form-control" placeholder="e-mail" name="supp_email">
           </div>
           <div class="form-group">
@@ -2143,33 +2143,34 @@
           <div class="form-group">
             <label>Employee surname</label>
             <input type="text" class="form-control" placeholder="Employee surname" name="s_surname">
-            <div class="form-group">
-              <label>Employee birth date</label>
-              <input type="date" class="form-control" name="s_birth_d">
+          </div>
+          <div class="form-group">
+            <label>Employee birth date</label>
+            <input type="date" class="form-control" name="s_birth_d">
+          </div>
+          <div class="form-group">
+            <label>Employee e-mail</label>
+            <input type="email" class="form-control" placeholder="test@gmail.com" name="s_email">
+          </div>
+          <div class="form-group">
+            <label>Employee phone</label>
+            <input type="tel" class="form-control" placeholder="+9941234567" name="s_phone">
+          </div>
+          <div class="form-group">
+            <label>Employee sallary</label>
+            <input type="number" class="form-control" placeholder="1000" name="s_sallary">
+          </div>
+          <div class="form-group">
+            <label>Employee job start date</label>
+            <input type="date" class="form-control" name="s_start_d">
+          </div>
+          <div class="form-group">
+            <label>File upload</label>
+            <div class="input-group col-xs-12">
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="photo">
             </div>
-            <div class="form-group">
-              <label>Employee e-mail</label>
-              <input type="email" class="form-control" placeholder="test@gmail.com" name="s_email">
-            </div>
-            <div class="form-group">
-              <label>Employee phone</label>
-              <input type="tel" class="form-control" placeholder="+9941234567" name="s_phone">
-            </div>
-            <div class="form-group">
-              <label>Employee sallary</label>
-              <input type="number" class="form-control" placeholder="1000" name="s_sallary">
-            </div>
-            <div class="form-group">
-              <label>Employee job start date</label>
-              <input type="date" class="form-control" name="s_start_d">
-            </div>
-            <div class="form-group">
-              <label>File upload</label>
-              <div class="input-group col-xs-12">
-                <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="photo">
-              </div>
-            </div>
-            <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+          </div>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
         </form>
       </div>
     </div>
@@ -2413,27 +2414,26 @@
             <div class="fallback">
               <input name="file" type="file" multiple />
             </div>
-            <input type="hidden" name="code" value="{% now 'U' %}">
+            <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           </form>
         </div>
 
         <script>
           Dropzone.autoDiscover = false;
           const myDropzone3 = new Dropzone('#my-dropzone', {
-            url: 'upload/', // Update this to the correct upload URL in your Django app
+            url: 'upload/',
             maxFiles: 3,
             maxFilesize: 2,
             acceptedFiles: '.jpg, .jpeg, .png, .webp',
             dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
             addRemoveLinks: true,
-            dictRemoveFile: "<strong>Delete</strong>", // Replace with your custom text
+            dictRemoveFile: "<strong>Delete</strong>",
           });
           myDropzone1.on("maxfilesexceeded", function (file) {
             alert("Max file you can upload is 3.");
           });
         </script>
         {% if edit_data.img %}
-
         <input type="hidden" id="edit_id" value="{{edit_data.id}}">
             {% for f in edit_data.img %}
               <img style="width: 50px; height: 60px;" src="{{ f }}">
@@ -2445,8 +2445,9 @@
 
         <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_documents">
           <input type="hidden" name="x" value="documents">
-          <input type="hidden" name="id" value="{eidt_data.id}">
+          <input type="hidden" name="id" value="{edit_data.id}">
           <input type="hidden" name="update">
+          <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           {% csrf_token %}
           Employee name:
           <b>{{edit_data.staff_id.name}} {{edit_data.staff_id.surname}}</b><br>
@@ -2471,8 +2472,13 @@
   </div>
 </div>
 
-{% else %}
+<style>
+  .subtext {
+    opacity: 0.7;
+  }
+</style>
 
+{% else %}
 <style>
   .dz-remove {
     color: red;
@@ -2515,19 +2521,20 @@
         </div>
         <script>
           Dropzone.autoDiscover = false;
-          const myDropzone = new Dropzone('#my-dropzone', {
-            url: 'upload/', // Update this to the correct upload URL in your Django app
+            myDropzone = new Dropzone('#my-dropzone', {
+            url: 'upload/',
             maxFiles: 3,
             maxFilesize: 2,
             acceptedFiles: '.jpg, .jpeg, .png, .webp',
             dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
             addRemoveLinks: true,
-            dictRemoveFile: "<strong>Delete</strong>", // Replace with your custom text
+            dictRemoveFile: "<strong>Delete</strong>",
           });
           myDropzone.on("maxfilesexceeded", function (file) {
             alert("Max file you can upload is 3.");
           });
         </script>
+
         <form method="post" class="forms-sample" id="insert_documents" enctype="multipart/form-data">
           <input type="hidden" name="x" value="documents">
           <input type="hidden" value="save">
@@ -2535,7 +2542,7 @@
           {% csrf_token %}
           Employee name:
           <b>{{staffs.name}} {{staffs.surname}}</b><br>
-          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{staff.photo}}"><br>
+          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{staffs.photo}}"><br>
           <div class="form-group">
             <label>Document name</label>
             <input type="text" class="form-control" placeholder="Document name" name="doc_name">
@@ -2555,7 +2562,6 @@
     </div>
   </div>
 </div>
-{% endif %}
 
 <style>
   .subtext {
@@ -2563,6 +2569,7 @@
   }
 </style>
 
+{% endif %}
 
 <!--
 {% if doc and staff %}

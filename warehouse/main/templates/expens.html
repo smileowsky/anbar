@@ -68,6 +68,21 @@
     }
   })
 
+  //Delete expenses multi
+  $(document).on('clcik', '.delete_all', function () {
+    let id = $(this).attr('id')
+    if (confirm("Do you want delete selected items?")) {
+      $.ajax({
+        method: 'POST',
+        url: '{% url "loader" %}',
+        data: { 'x': 'expenses', 'delete_all': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+        success: function (response) {
+          $('#data').html(response)
+        }
+      })
+    }
+  })
+
   // Load expenses on page load
   $(document).ready(function () {
     $.ajax({
