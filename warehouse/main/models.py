@@ -79,7 +79,6 @@ class Products(models.Model):
         
         return photos
 
-
 class Orders(models.Model):
     client = models.ForeignKey(Clients, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
@@ -119,6 +118,7 @@ class Staff(models.Model):
 class Documents(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
+    doc_num = models.IntegerField()
     doc_num = models.IntegerField()
     about = models.TextField()
     dropzone = models.IntegerField()

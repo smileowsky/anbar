@@ -92,10 +92,10 @@ def loader(request):
             data = Brand.objects.all().order_by('-id')
             #Brand add end
 
-                #Brand edit without refresh
+            #Brand edit without refresh
             if 'edit_id' in request.POST:
                 edit_data = Brand.objects.get(id=request.POST['edit_id'])
-                #Brand edit done
+            #Brand edit done
 
             #Brand update without refresh
             if 'update' in request.POST:
@@ -231,7 +231,7 @@ def loader(request):
                     request, "Expens data has been deleted successfully.", extra_tags='success')
             # Expens delete end
 
-            # Expens multi deletion without refresh
+            #Expens multi deletion without refresh
             if 'delete_all' in request.GET:
                 del_all = request.GET.getlist('x[]')
                 if not del_all:
@@ -246,6 +246,7 @@ def loader(request):
                             picked.delete()
                     messages.info(
                         request, "Expens data has been deleted successfully.", extra_tags='success')
+            #Expens multi deletion end
 
         #Product add without refresh.
         elif request.POST['x'] == 'products':
@@ -273,7 +274,6 @@ def loader(request):
             data = Products.objects.all().order_by('-id')
             brands = Brand.objects.all().order_by('-id')
             suppliers = Supplier.objects.all().order_by('-id')
-            product_num = Products.objects.all().count()
         #Product add end
             
             #Products edit without refresh
@@ -309,7 +309,7 @@ def loader(request):
                     messages.info(request, "Empty field.", extra_tags='error')
             #Product edit end
 
-            # Product single deletion without refresh
+            #Product single deletion without refresh
             if 'del_id' in request.POST:
                 products = Products.objects.get(
                     id=request.POST['del_id'])
@@ -418,6 +418,7 @@ def loader(request):
                     messages.info(
                         request, f"Supplier '{supplier.supplier_name}' cannot be deleted. There are {number} active products in it.", extra_tags='error')
                 else:
+                    os.remove('media/'+str(supplier.supplier_photo))
                     supplier.delete()
                     messages.info(
                         request, "Supplier has been deleted successfully.", extra_tags='success')
@@ -444,7 +445,6 @@ def loader(request):
                     messages.info(request, "Departments name is required.",
                                   extra_tags='error')
             data = Departments.objects.all().order_by('-id')
-            department_num = Departments.objects.all().count()
         #Department add end
 
             #Departmen single deletion without refresh
@@ -488,7 +488,6 @@ def loader(request):
 
             data = Positions.objects.all().order_by('-id')
             departments = Departments.objects.all().order_by('-id')
-            position_num = Positions.objects.all().count()
         #Position add end
 
             #Position single deletion without refresh
@@ -505,7 +504,7 @@ def loader(request):
                     positions.delete()
                     messages.info(
                         request, "Positions has been deleted successfully.", extra_tags='success')
-            # Position delete end
+            #Position delete end
 
         #Staff add without refresh.
         if request.POST['x'] == 'staffs':
@@ -552,7 +551,6 @@ def loader(request):
 
             data = Staff.objects.all().order_by('-id')
             positions = Positions.objects.all().order_by('-id')
-            sraff_num = Staff.objects.all().count()
         #Staff add end
 
             #Staff single deletion without refresh
@@ -564,6 +562,7 @@ def loader(request):
                     messages.info(
                         request, f"Staff '{staffs.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
                 else:
+                    os.remove('media/'+str(staffs.photo))
                     staffs.delete()
                     messages.info(
                         request, "Employee has been deleted successfully.", extra_tags='success')
@@ -577,7 +576,8 @@ def loader(request):
                 about = request.POST['about']
                 if title and doc_num:
                     name = Staff.objects.get(id=request.POST['staff_id'])
-                    if Documents.objects.filter(doc_num=request.POST['doc_num']).exists():
+
+                    if Documents.objects.filter(doc_num=request.GET['doc_num']).exists():
                         messages.info(request, "Document already exists.",
                                       extra_tags='error')
                     else:
