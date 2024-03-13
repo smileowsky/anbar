@@ -2413,7 +2413,7 @@
             <div class="fallback">
               <input name="file" type="file" multiple />
             </div>
-            <input type="hidden" name="code" value="{% now 'U' %}">
+            <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           </form>
         </div>
 
@@ -2433,20 +2433,18 @@
           });
         </script>
         {% if edit_data.img %}
-
         <input type="hidden" id="edit_id" value="{{edit_data.id}}">
             {% for f in edit_data.img %}
               <img style="width: 50px; height: 60px;" src="{{ f }}">
-              <a class="btn btn-danger btn-md delimg" id="{{f}}">
-                <i class="mdi mdi-delete"></i>
-              </a>
+              <a class="btn btn-danger btn-md delimg" id="{{f}}"><i class="mdi mdi-delete"></i></a>
             {% endfor %}
         {% endif %} 
 
         <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_documents">
           <input type="hidden" name="x" value="documents">
-          <input type="hidden" name="id" value="{eidt_data.id}">
+          <input type="hidden" name="id" value="{edit_data.id}">
           <input type="hidden" name="update">
+          <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           {% csrf_token %}
           Employee name:
           <b>{{edit_data.staff_id.name}} {{edit_data.staff_id.surname}}</b><br>
@@ -2463,7 +2461,7 @@
             <label>Edit note</label>
             <textarea name="about" rows="4" cols="10" class="form-control">{{edit_data.about}}</textarea>
           </div>
-          <button type="button" name="update" class="btn btn-primary text-white update">Update</button>
+          <button type="button" name="update" class="btn btn-primary text-white update_doc">Update</button>
           <a href="{% url 'documents' staf_id=staff.id %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
         </form>
       </div>
@@ -2471,8 +2469,13 @@
   </div>
 </div>
 
-{% else %}
+<style>
+  .subtext {
+    opacity: 0.7;
+  }
+</style>
 
+{% else %}
 <style>
   .dz-remove {
     color: red;
@@ -2513,9 +2516,10 @@
             <input type="hidden" name="code" value="{% now 'U' %}">
           </form>
         </div>
+
         <script>
           Dropzone.autoDiscover = false;
-          const myDropzone = new Dropzone('#my-dropzone', {
+            myDropzone = new Dropzone('#my-dropzone', {
             url: 'upload/', // Update this to the correct upload URL in your Django app
             maxFiles: 3,
             maxFilesize: 2,
@@ -2528,14 +2532,16 @@
             alert("Max file you can upload is 3.");
           });
         </script>
-        <form method="post" class="forms-sample" id="insert_documents" enctype="multipart/form-data">
+
+        <form method="post" class="forms-sample" id="insert_docs" enctype="multipart/form-data">
           <input type="hidden" name="x" value="documents">
-          <input type="hidden" value="save">
+          <input type="hidden" name="save">
           <input type="hidden" name="code" value="{% now 'U' %}">
+          <input type="hidden" name="staff_id" value="{{staffs.id}}">
           {% csrf_token %}
           Employee name:
           <b>{{staffs.name}} {{staffs.surname}}</b><br>
-          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{staff.photo}}"><br>
+          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{staffs.photo}}"><br>
           <div class="form-group">
             <label>Document name</label>
             <input type="text" class="form-control" placeholder="Document name" name="doc_name">
@@ -2549,7 +2555,7 @@
             <textarea name="about" rows="4" cols="10" class="form-control"
               placeholder="If there is information that can be added, check it, otherwise leave it blank."></textarea>
           </div>
-          <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
+          <button type="button" name="save" class="btn btn-primary me-2 text-white insert_doc">Add</button>
         </form>
       </div>
     </div>
@@ -2656,15 +2662,15 @@
                       </label>
                     </div>
                   </td>
-                  <td><img style="width: 50px; height: 60;" src="{{info.scan_photo}}"></td>
+                  <td>{% for f in info.img %}<img style="width: 50px; height: 60px;" src="{{f}}">{% endfor %}</td>
                   <td>{{info.staff_id.name}} {{info.staff_id.surname}}</td>
                   <td>{{info.title}}</td>
                   <td>{{info.doc_num}}</td>
                   <td>{{info.about}}</td>
                   <td>
-                    <a class="btn btn-danger btn-sm delete" id="{{info.id}}" href="#table" title="Delete"><i
+                    <a class="btn btn-danger btn-sm delete_doc" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-sm" href="{% url 'doc_edit' info.id %}" title="Edit"><i
+                    <a class="btn btn-warning btn-sm edit_doc" href="{% url 'doc_edit' info.id %}" title="Edit"><i
                         class="mdi mdi-account-card-details"></i></a>
                   </td>
                 </tr>

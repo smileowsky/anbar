@@ -9,7 +9,6 @@ from datetime import timedelta
 
 # Create your models here.
 
-
 class Images(models.Model):
     image = models.ImageField(upload_to='images/')
     date = models.DateTimeField(auto_now=True)
@@ -79,7 +78,6 @@ class Products(models.Model):
             photos.append(f.image)
         
         return photos
-    
 
 
 class Orders(models.Model):
@@ -121,9 +119,19 @@ class Staff(models.Model):
 class Documents(models.Model):
     staff_id = models.ForeignKey(Staff, on_delete=models.CASCADE)
     title = models.CharField(max_length=30)
-    doc_num = models.IntegerField(max_length=20)
+    doc_num = models.IntegerField()
     about = models.TextField()
-    images = models.ImageField(upload_to='media/', blank=True, null=True)
+    dropzone = models.IntegerField()
+
+    @property
+    def img(self):
+        foto = Images.objects.all().filter(dropzone=self.dropzone)
+        photos = []
+
+        for f in foto:
+            photos.append(f.image)
+        
+        return photos
 
 
 class myUser(AbstractUser):

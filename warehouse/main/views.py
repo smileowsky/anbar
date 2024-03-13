@@ -31,7 +31,6 @@ def basic(request):
     return render(request, 'basic.html')
 
 
-
 def upload(request):
     if request.method == 'POST' and request.FILES.get('file'):
         upload = request.FILES['file']
@@ -91,7 +90,6 @@ def loader(request):
                                   extra_tags='warning')
 
             data = Brand.objects.all().order_by('-id')
-            brand_num = Brand.objects.all().count()
             #Brand add end
 
                 #Brand edit without refresh
@@ -573,34 +571,24 @@ def loader(request):
 
         #Document add without refresh.
         if request.POST['x'] == 'documents':
-
             if 'save' in request.POST:
                 title = request.POST['doc_name']
                 doc_num = request.POST['doc_num']
                 about = request.POST['about']
-
-                if title and doc_num and 'doc_photo' in request.FILES:
-
+                if title and doc_num:
                     name = Staff.objects.get(id=request.POST['staff_id'])
-
-                    if Documents.objects.filter(doc_num=request.GET['doc_num']).exists():
+                    if Documents.objects.filter(doc_num=request.POST['doc_num']).exists():
                         messages.info(request, "Document already exists.",
                                       extra_tags='error')
                     else:
-                        upload = request.FILES['doc_photo']
-                        fs = FileSystemStorage()
-                        file = fs.save(upload.name, upload)
-                        file_url = fs.url(file)
-
                         save_info = Documents(
                             title=request.POST['doc_name'],
                             doc_num=request.POST['doc_num'],
                             about=request.POST['about'],
-                            scan_photo=file_url,
                             staff_id=name,
+                            dropzone=request.POST['code']
                         )
                         save_info.save()
-
                         messages.info(
                             request, "Document  saved successfully.", extra_tags='success')
                 else:
@@ -609,17 +597,18 @@ def loader(request):
 
             data = Documents.objects.all().order_by('-id')
             staffs = Staff.objects.get(id=request.POST['staff_id'])
-            document_num = Documents.objects.all().count()
         #Document add end
 
             #Document single deletion without refresh
             if 'del_id' in request.POST:
-                doc = Documents.objects.get(id=request.POST['staff_id'])
-                staff = Staff.objects.get(id=doc.request.POST['del_id'].id)
+                doc = Documents.objects.get(id=request.POST['del_id'])
+                images = Images.objects.all().filter(dropzone=doc.dropzone)
+                for img in images:
+                    os.remove('media/'+str(img.image))
                 doc.delete()
                 messages.info(
                     request, "Document has been deleted successfully.", extra_tags='success')
-                return HttpResponseRedirect('/documents/'+str(request.POST['staff_id'].id))
+                return HttpResponseRedirect('/documents/'+str(doc.staff_id))
             #Document delete end
 
         # Assignment add without refresh.
