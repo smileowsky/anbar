@@ -3,11 +3,12 @@
 {% block 'content' %}
 
 <div id="data"></div>
+
 <script>
+  //Insert clients
   $(document).on('click', '.insert', function(){
     let form = $('#insert_clients')[0]
     let data = new FormData(form)
-
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
@@ -22,9 +23,39 @@
     })
   })
 
+  //Edit clients
+  $(document).on('click', '.update', function () {
+    let form = $('#edit_clients')[0]
+    let data = new FormData(form)
+    $.ajax({
+      type: 'POST',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.edit', function () {
+    let id = $(this).attr('id')
+    $.ajax({
+      method: 'POST',
+      url: '{% url "loader" %}',
+      data: { 'x': 'clients', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  //Delete clients
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-
     if (confirm("Do you want to delete?")) {
       $.ajax({
         method: 'POST',
@@ -37,8 +68,8 @@
     }
   })
 
+  //Load clients on page load
   $(document).ready(function () {
-    
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',

@@ -38,7 +38,6 @@ def upload(request):
         file_storage = FileSystemStorage()
         saved_file = file_storage.save(uploaded_photo.name, uploaded_photo)
         file_url = file_storage.url(saved_file)
-
         daxilet = Images(image = file_url,dropzone = request.POST['code'])
         daxilet.save()
         return HttpResponse('File uploaded successfully.')
@@ -168,8 +167,33 @@ def loader(request):
                     messages.info(request, "Empty fields.", extra_tags='error')
 
             data = Clients.objects.all().order_by('-id')
-            client_num = Clients.objects.all().count()
             #Client add end
+
+            #Client edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Clients.objects.get(id=request.POST['edit_id'])
+            #Client edit done
+
+            #Client update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    update = Clients.objects.get(id=request.POST['id'])
+                    if Clients.objects.filter(email=request.POST['id']).exclude(id=request.POST['id']).exists():
+                        messages.info(request, "E-mail already exists.")
+                    elif Clients.objects.filter(phone=request.POST['id']).exclude(id=request.POST['id']).exists():
+                        messages.info(request, "Phone number already exists.")
+                    else:
+                        update.name = request.POST['name']
+                        update.surname = request.POST['surname']
+                        update.email = request.POST['email']
+                        update.phone = request.POST['phone']
+                        update.company = request.POST['company']
+                        update.save()
+                        messages.info(request, "Client update was successful.",
+                                    extra_tags='success')
+                else:
+                    messages.info(request, "Empety fields.", extra_tags='error')
+            #Client update done
 
             #Client single deletion without refresh
             if 'del_id' in request.POST:
@@ -203,7 +227,6 @@ def loader(request):
                     messages.info(request, "Empty field.", extra_tags='error')
 
             data = Expenses.objects.all().order_by('-id')
-            expens_num = Expenses.objects.all().count()
         #Expens end
 
             #Expens edit without refresh
@@ -311,29 +334,32 @@ def loader(request):
 
             #Product single deletion without refresh
             if 'del_id' in request.POST:
-                products = Products.objects.get(
-                    id=request.POST['del_id'])
-                active_order = Orders.objects.filter(
-                    product_id=request.POST['del_id']).count()
+                products = Products.objects.get(id=request.POST['del_id'])
+                active_order = Orders.objects.filter(product_id=request.POST['del_id']).count()
+                images = Images.objects.all().filter(dropzone=products.dropzone)
 
                 if active_order > 0:
                     messages.info(
                         request, f"Product '{products.product}' cannot be deleted. There are {active_order} active products in it.", extra_tags='error')
                 else:
+                    for img in images:
+                        os.remove('media/'+str(img.image))
                     products.delete()
                     messages.info(
                         request, "Products data has been deleted successfully.", extra_tags='success')
             #Product delete end
                     
+            #Product image delete
             if 'del_img' in request.POST:
                 images = Images.objects.get(image=request.POST['del_img'])
+                for img in images:
+                    os.remove('media/'+str(img.image))
                 images.delete()
-
+            #Product image delete done
+                
         #Order add without refresh.
         if request.POST['x'] == 'orders':
-
             if 'save' in request.POST:
-
                 if request.POST['client_id'] != '' and request.POST['product_id'] != '' and request.POST['amount'] != '':
 
                     client = Clients.objects.get(
@@ -558,6 +584,7 @@ def loader(request):
                 staffs = Staff.objects.get(id=request.POST['del_id'])
                 documents = Documents.objects.filter(
                     staff_id_id=request.POST['del_id']).count()
+                
                 if documents > 0:
                     messages.info(
                         request, f"Staff '{staffs.name}' cannot be deleted. There are {documents} active staff in it.", extra_tags='error')
@@ -573,7 +600,6 @@ def loader(request):
             if 'save' in request.POST:
                 title = request.POST['doc_name']
                 doc_num = request.POST['doc_num']
-                about = request.POST['about']
                 if title and doc_num:
                     name = Staff.objects.get(id=request.POST['staff_id'])
 

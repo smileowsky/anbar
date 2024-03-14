@@ -56,7 +56,6 @@
   //Delete brands
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
-
     if (confirm("Do you want to delete?")) {
       $.ajax({
         method: 'POST',
@@ -69,7 +68,7 @@
     }
   })
 
-  // Load brands on page load
+  //Load brands on page load
   $(document).ready(function () {
     $.ajax({
       type: 'POST',

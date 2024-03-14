@@ -214,7 +214,7 @@
 </div>
 {% endif %}
 
-{% if edit %}
+{% if edit_data %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -223,29 +223,32 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" class="forms-sample" action="{% url 'client_update' edit.id %}">
+        <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_clients">
+          <input type="hidden" name="x" value="clients">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
+          <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit client name</label>
-            <input type="text" name="name" value="{{edit.name}}" class="form-control">
+            <input type="text" name="name" value="{{edit_data.name}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit client surname</label>
-            <input type="text" name="surname" value="{{edit.surname}}" class="form-control">
+            <input type="text" name="surname" value="{{edit_data.surname}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit client e-mail</label>
-            <input type="text" name="email" value="{{edit.email}}" class="form-control">
+            <input type="text" name="email" value="{{edit_data.email}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit client phone number</label>
-            <input type="text" name="phone" value="{{edit.phone}}" class="form-control">
+            <input type="text" name="phone" value="{{edit_data.phone}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit client company name</label>
-            <input type="text" name="company" value="{{edit.company}}" class="form-control"><br>
+            <input type="text" name="company" value="{{edit_data.company}}" class="form-control"><br>
           </div>
-          <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+          <button type="button" name="update" class="btn btn-primary text-white update">Update</button>
           <a href="{% url 'client' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
         </form>
       </div>
@@ -420,7 +423,7 @@
                   <td>
                     <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="{% url 'client_edit' info.id %}"><i
+                    <a class="btn btn-warning btn-round btn-md edit" id="{{info.id}}" href="#table"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                 </tr>
@@ -693,7 +696,7 @@
 
         <script>
           Dropzone.autoDiscover = false;
-          const myDropzone2 = new Dropzone('#my-dropzone', {
+            myDropzone2 = new Dropzone('#my-dropzone', {
             url: 'upload/',
             maxFiles: 3,
             maxFilesize: 2,
