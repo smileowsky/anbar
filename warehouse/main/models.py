@@ -10,7 +10,7 @@ from datetime import timedelta
 # Create your models here.
 
 class Images(models.Model):
-    image = models.ImageField(upload_to='images/')
+    image = models.ImageField(upload_to='media/')
     date = models.DateTimeField(auto_now=True)
     dropzone = models.IntegerField()
 

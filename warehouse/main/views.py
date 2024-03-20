@@ -32,6 +32,19 @@ def basic(request):
 
 
 def upload(request):
+    #Image dropzone and sql delete
+    
+    if 'del_img' in request.POST:
+         # Get the filename from the POST data
+        filename = request.POST['del_img']
+        
+        # Construct the full path to the file
+        img = Images.objects.get(image='/uploads/'+filename)
+        for img in img:
+            os.remove('media/'+str(img.image))
+        img.delete()
+    #Image dropzone and sql delete done
+        
     if request.method == 'POST' and request.FILES.get('file'):
         upload = request.FILES['file']
         uploaded_photo = request.FILES['file']
@@ -348,14 +361,6 @@ def loader(request):
                     messages.info(
                         request, "Products data has been deleted successfully.", extra_tags='success')
             #Product delete end
-                    
-            #Product image delete
-            if 'del_img' in request.POST:
-                images = Images.objects.get(image=request.POST['del_img'])
-                for img in images:
-                    os.remove('media/'+str(img.image))
-                images.delete()
-            #Product image delete done
                 
         #Order add without refresh.
         if request.POST['x'] == 'orders':
