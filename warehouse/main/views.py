@@ -63,12 +63,10 @@ def loader(request):
     edit_data = ''
 
     if 'x' in request.POST:
-        # Brand add without refresh.
+        #Brand add without refresh.
         if request.POST['x'] == 'brands':
-
             if 'save' in request.POST:
                 brand_name = request.POST['brand_name']
-
                 if brand_name:
                     if Brand.objects.filter(brand_name=request.POST['brand_name']).exists():
                         messages.info(request, "Brand already exists.",
@@ -95,14 +93,14 @@ def loader(request):
                                   extra_tags='warning')
 
             data = Brand.objects.all().order_by('-id')
-            # Brand add end
+            #Brand add end
 
-            # Brand edit without refresh
+            #Brand edit without refresh
             if 'edit_id' in request.POST:
                 edit_data = Brand.objects.get(id=request.POST['edit_id'])
-            # Brand edit done
+            #Brand edit done
 
-            # Brand update without refresh
+            #Brand update without refresh
             if 'update' in request.POST:
                 if 'update':
                     update = Brand.objects.get(id=request.POST['id'])
@@ -124,7 +122,7 @@ def loader(request):
                 else:
                     messages.info(
                         request, "Brand name is required", extra_tags='error')
-            # Brand update done
+            #Brand update done
 
             # Brand single deletion without refresh
             if 'del_id' in request.POST:
@@ -389,18 +387,17 @@ def loader(request):
             client = Clients.objects.all().order_by('-id')
             product = Products.objects.all().order_by('-id')
             orders_num = Orders.objects.all().count()
-        # Order add end
+        #Order add end
 
-            # Order single deletion without refresh
+            #Order single deletion without refresh
             if 'del_id' in request.POST:
                 Orders.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
                     request, "Order data has been deleted successfully.", extra_tags='success')
-            # Order delete end
+            #Order delete end
 
-        # Supplier add without refresh.
+        #Supplier add without refresh.
         if request.POST['x'] == 'suppliers':
-
             if 'save' in request.POST:
                 supp_name = request.POST['sup_name']
                 supp_surname = request.POST['sup_surname']
@@ -438,10 +435,45 @@ def loader(request):
                     messages.info(request, "Empty fields.", extra_tags='error')
 
             data = Supplier.objects.all().order_by('-id')
-            supplier_num = Supplier.objects.all().count()
-        # Suplplier add end
-
-            # Supplier single deletion without refresh
+        #Suplplier add end
+            
+            #Suplplier edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Supplier.objects.get(id=request.POST['edit_id'])
+            #Suplplier edit done
+                
+            #Suplplier update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    update = Supplier.objects.get(id=request.POST['id'])
+                    if Supplier.objects.filter(supplier_email=request.POST['supp_email']).exclude(id=update.id).exclude(supplier_email=request.POST['supp_email']):
+                        messages.info(request, "Email already exists.",
+                                    extra_tags='warning')
+                    elif Supplier.objects.filter(supplier_phone=request.POST['supp_phone']).exclude(id=update.id).exclude(supplier_phone=request.POST['supp_phone']):
+                        messages.info(request, "Phone already exists.",
+                                    extra_tags='warning')
+                    else:
+                        if 'sup_photo' in request.FILES:
+                            new_photo = request.FILES['sup_photo']
+                            update.supplier_photo = new_photo
+                            filesystem = FileSystemStorage()
+                            file = filesystem.save(new_photo.name, new_photo)
+                            file_url = filesystem.url(file)
+                            update.supplier_photo = file_url
+                        update.supplier_name = request.POST['sup_name']
+                        update.supplier_surname = request.POST['sup_surname']
+                        update.supplier_company_name = request.POST['sup_comp_name']
+                        update.supplier_email = request.POST['supp_email']
+                        update.supplier_phone = request.POST['supp_phone']
+                        update.supplier_address = request.POST['supp_address']
+                        update.save()
+                        messages.info(request, "Profile updated.", extra_tags='success')
+                else:
+                    messages.info(
+                        request, "Empty fields", extra_tags='error')
+            #Supplier update done
+            
+            #Supplier single deletion without refresh
             if 'del_id' in request.POST:
                 supplier = Supplier.objects.get(id=request.POST['del_id'])
                 number = Products.objects.filter(
@@ -455,7 +487,7 @@ def loader(request):
                     supplier.delete()
                     messages.info(
                         request, "Supplier has been deleted successfully.", extra_tags='success')
-            # Supplier delete end
+            #Supplier delete end
 
         # Department add without refresh.
         if request.POST['x'] == 'departments':
@@ -494,9 +526,9 @@ def loader(request):
                     departments.delete()
                     messages.info(
                         request, "Department  has been deleted successfully.", extra_tags='success')
-            # Department delete end
+            #Department delete end
 
-        # Position add without refresh.
+        #Position add without refresh.
         if request.POST['x'] == 'positions':
 
             if 'save' in request.POST:
@@ -521,9 +553,9 @@ def loader(request):
 
             data = Positions.objects.all().order_by('-id')
             departments = Departments.objects.all().order_by('-id')
-        # Position add end
+        #Position add end
 
-            # Position single deletion without refresh
+            #Position single deletion without refresh
             if 'del_id' in request.POST:
                 positions = Positions.objects.get(
                     id=request.POST['del_id'])
@@ -537,13 +569,11 @@ def loader(request):
                     positions.delete()
                     messages.info(
                         request, "Positions has been deleted successfully.", extra_tags='success')
-            # Position delete end
+            #Position delete end
 
-        # Staff add without refresh.
+        #Staff add without refresh.
         if request.POST['x'] == 'staffs':
-
             if 'save' in request.POST:
-
                 if request.POST['s_name'] != '' and request.POST['s_surname'] != '' and request.POST['s_birth_d'] != '' and request.POST['s_email'] != '' and request.POST['s_phone'] != '' and request.POST['s_sallary'] != '' and request.POST['s_start_d'] != '':
                     positions = Positions.objects.get(
                         id=request.POST['position_id'])
@@ -584,9 +614,9 @@ def loader(request):
 
             data = Staff.objects.all().order_by('-id')
             positions = Positions.objects.all().order_by('-id')
-        # Staff add end
+        #Staff add end
 
-            # Staff single deletion without refresh
+            #Staff single deletion without refresh
             if 'del_id' in request.POST:
                 staffs = Staff.objects.get(id=request.POST['del_id'])
                 documents = Documents.objects.filter(
@@ -600,9 +630,9 @@ def loader(request):
                     staffs.delete()
                     messages.info(
                         request, "Employee has been deleted successfully.", extra_tags='success')
-            # Staff delete end
+            #Staff delete end
 
-        # Document add without refresh.
+        #Document add without refresh.
         if request.POST['x'] == 'documents':
             if 'save' in request.POST:
                 title = request.POST['doc_name']
@@ -630,9 +660,9 @@ def loader(request):
 
             data = Documents.objects.all().order_by('-id')
             staffs = Staff.objects.get(id=request.POST['staff_id'])
-        # Document add end
+        #Document add end
 
-            # Document single deletion without refresh
+            #Document single deletion without refresh
             if 'del_id' in request.POST:
                 doc = Documents.objects.get(id=request.POST['del_id'])
                 images = Images.objects.all().filter(dropzone=doc.dropzone)
@@ -642,11 +672,10 @@ def loader(request):
                 messages.info(
                     request, "Document has been deleted successfully.", extra_tags='success')
                 return HttpResponseRedirect('/documents/'+str(doc.staff_id))
-            # Document delete end
+            #Document delete end
 
-        # Assignment add without refresh.
+        #Assignment add without refresh.
         if request.POST['x'] == 'assignments':
-
             if 'save' in request.POST:
                 assignment_name = request.POST['assign_n']
                 sontarix = request.POST['deadline'].replace('T', ' ')
@@ -668,15 +697,14 @@ def loader(request):
 
             data = Assignments.objects.all().order_by('-id')
             staffs = Staff.objects.all().order_by('-id')
-            assignment_num = Assignments.objects.all().count()
-        # Assignment add end
+        #Assignment add end
 
-            # Assignment single deletion without refresh
+            #Assignment single deletion without refresh
             if 'del_id' in request.POST:
                 Assignments.objects.get(id=request.POST['del_id']).delete()
                 messages.info(
                     request, "Assignment has been deleted successfully.", extra_tags='success')
-            # Assignment delete end
+            #Assignment delete end
     return render(request, 'loader.html', {'edit_data': edit_data, 'data': data, 'brands': brands, 'suppliers': suppliers, 'client': client, 'product': product, 'departments': departments, 'staffs': staffs, 'positions': positions})
 
 
