@@ -4,7 +4,7 @@
 
 <div id="data"></div>
 <script>
-  $(document).on('click', '.insert', function(){
+  $(document).on('click', '.insert', function () {
     let form = $('#insert_assignments')[0]
     let data = new FormData(form)
 
@@ -16,7 +16,7 @@
       contentType: false,
       cache: false,
       timeout: 600000,
-      success: function(response){
+      success: function (response) {
         $('#data').html(response)
       }
     })
@@ -29,7 +29,7 @@
       $.ajax({
         method: 'POST',
         url: '{% url "loader" %}',
-        data: {'x':'assignments','del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+        data: { 'x': 'assignments', 'del_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
         success: function (response) {
           $('#data').html(response)
         }
@@ -38,12 +38,12 @@
   })
 
   $(document).ready(function () {
-    
+
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
       dataType: 'html',
-      data:{'x':'assignments', csrfmiddlewaretoken: '{{csrf_token}}'},
+      data: { 'x': 'assignments', csrfmiddlewaretoken: '{{csrf_token}}' },
       success: function (response) {
         $('#data').html(response)
       }
