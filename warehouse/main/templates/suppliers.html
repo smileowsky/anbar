@@ -45,7 +45,7 @@
     $.ajax({
       method: 'POST',
       url: '{% url "loader" %}',
-      data: { 'x': 'suppliers', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+      data: { 'x': 'edit_id', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
       success: function (response) {
         $('#data').html(response)
       }

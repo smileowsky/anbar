@@ -71,14 +71,14 @@
           <input type="hidden" name="save">
           {% csrf_token %}
           <div class="form-group">
-            <label>Brand name</label>
-            <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
-          </div>
-          <div class="form-group">
             <label>File upload</label>
             <div class="input-group col-xs-12">
               <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="brand_photo">
             </div>
+          </div>
+          <div class="form-group">
+            <label>Brand name</label>
+            <input type="text" class="form-control" placeholder="Brand name" name="brand_name">
           </div>
           <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
         </form>
@@ -728,19 +728,6 @@
             }
           });
         </script>
-        
-        {% if edit_data.img %}
-        <input type="hidden" id="edit_id" value="{{edit_data.id}}">
-        <div>
-        {% for f in edit_data.img %}
-        <div style="display: inline-block; margin-right: 10px;">
-          <input type="checkbox" class="image-checkbox" id="{{loop.index}}" name="image-checkbox" value="{{f}}">
-          <img style="width: 50px; height: 60px;" src="{{f}}">
-        </div>
-        {% endfor %}
-        <button class="btn btn-inverse-danger btn-sm" name="delete_all">Delete selected</button>
-        </div>
-        {% endif %}
 
         <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_products">
           <input type="hidden" name="x" value="products">
@@ -748,6 +735,19 @@
           <input type="hidden" name="update">
           <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           {% csrf_token %}
+
+          {% if edit_data.img %}
+          <input type="hidden" id="edit_id" value="{{edit_data.id}}">
+          <div>
+          {% for f in edit_data.img %}
+          <div style="display: inline-block; margin-right: 10px;">
+            <input type="checkbox" name="images[]" value="{{f}}">{{forloop.counter}}
+            <img style="width: 50px; height: 60px;" src="{{f}}">
+          </div>
+          {% endfor %}
+          </div>
+          {% endif %}
+
           <div class="form-group">
             <label>Edit supplier</label>
             <select name="supp_id" class="form-control">
@@ -1509,6 +1509,12 @@
           <input type="hidden" name="save">
           {% csrf_token %}
           <div class="form-group">
+            <label>File upload</label>
+            <div class="input-group col-xs-12">
+              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="sup_photo">
+            </div>
+          </div>
+          <div class="form-group">
             <label>Supplier name</label>
             <input type="text" class="form-control" placeholder="Name" name="sup_name">
           </div>
@@ -1531,12 +1537,6 @@
           <div class="form-group">
             <label>Address</label>
             <input type="text" class="form-control" placeholder="Address" name="supp_address">
-          </div>
-          <div class="form-group">
-            <label>File upload</label>
-            <div class="input-group col-xs-12">
-              <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="sup_photo">
-            </div>
           </div>
           <button type="button" name="save" class="btn btn-primary me-2 text-white insert">Add</button>
         </form>
