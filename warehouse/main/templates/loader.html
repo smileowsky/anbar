@@ -1888,7 +1888,7 @@
 </div>
 {% endif %}
 
-{%if edit%}
+{%if edit_data%}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -1897,22 +1897,25 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" action="{%url 'position_update' edit.id%}">
+        <form method="post" class="forms-sample" id="edit_positions">
+          <input type="hidden" name="x" value="positions">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
+          <input type="hidden" name="update">
           {%csrf_token%}
           <div class="form-group">
             <label>Edit Department</label>
             <select name="department_id" class="form-control">
               <option value="">Choose the departament</option>
               {%for department_obj in departments%}
-              <option {% if edit.dep_id.id == department_obj.id %} selected {%endif%} value="{{department_obj.id}}">
+              <option {% if edit_data.dep_id.id == department_obj.id %} selected {%endif%} value="{{department_obj.id}}">
                 {{department_obj.department_name}}</option>
               {%endfor%}
             </select>
           </div>
           <div class="form-group">
             <label>Edit position name</label>
-            <input type="text" name="position_name" value="{{edit.positions}}" class="form-control"><br>
-            <button type="submit" name="update" class="btn btn-primary text-white">Update</button>
+            <input type="text" name="position_name" value="{{edit_data.positions}}" class="form-control"><br>
+            <button type="button" name="update" class="btn btn-primary text-white update">Update</button>
             <a href="{%url 'positions'%}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
           </div>
         </form>
@@ -2041,7 +2044,7 @@
                   <td>
                     <a class="btn btn-danger btn-round btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-round btn-md" href="{% url 'position_edit' info.id %}" title="Edit"><i
+                    <a class="btn btn-warning btn-round btn-md edit" id="{{info.id}}" href="#table" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                 </tr>
@@ -2082,7 +2085,7 @@
 </div>
 {% endif %}
 
-{% if edit %}
+{% if edit_data %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -2091,14 +2094,17 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" enctype="multipart/form-data" action="{% url 'staff_update' edit.id %}">
+        <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_staffs">
+          <input type="hidden" name="x" value="staffs">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
+          <input type="hidden" name="update">
           {%csrf_token%}
           <div class="form-group">
             <label>Edit positions</label>
             <select name="position_id" class="form-control">
               <option value="">Choose position...</option>
               {% for position_obj in positions %}
-              {% if position_obj.id == edit.pos_id_id %}
+              {% if position_obj.id == edit_data.pos_id_id %}
               <option selected value="{{position_obj.id}}">{{position_obj.dep_id.department_name}} /
                 {{position_obj.positions}}
               </option>
@@ -2111,42 +2117,35 @@
           </div>
           <div class="form-group">
             <label>Edit name</label>
-            <input type="text" name="s_name" value="{{edit.name}}" class="form-control">
+            <input type="text" name="s_name" value="{{edit_data.name}}" class="form-control">
           </div>
           <div class="form-group">
-            <label>Edit surnme</label>
-            <input type="text" name="s_surname" value="{{edit.surname}}" class="form-control">
+            <label>Edit surname</label>
+            <input type="text" name="s_surname" value="{{edit_data.surname}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit birth date</label>
-            <input type="date" name="s_birth_d" value="{{edit.birth_date | date:'Y-m-d'}}" class="form-control">
+            <input type="date" name="s_birth_d" value="{{edit_data.birth_date | date:'Y-m-d'}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit e-mail</label>
-            <input type="email" name="s_email" value="{{edit.email}}" class="form-control">
+            <input type="email" name="s_email" value="{{edit_data.email}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit phone</label>
-            <input type="text" name="s_phone" value="{{edit.phone}}" class="form-control">
+            <input type="text" name="s_phone" value="{{edit_data.phone}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit sallary</label>
-            <input type="number" name="s_sallary" value="{{edit.sallary}}" class="form-control">
+            <input type="number" name="s_sallary" value="{{edit_data.sallary}}" class="form-control">
           </div>
           <div class="form-group">
             <label>Edit job start date</label>
-            <input type="date" name="s_start_d" value="{{edit.j_start_d | date:'Y-m-d'}}" class="form-control">
+            <input type="date" name="s_start_d" value="{{edit_data.j_start_d | date:'Y-m-d'}}" class="form-control">
           </div>
           <div class="form-group">
             <label>File upload</label>
-            <input type="file" name="photo" class="file-upload-default">
-            <div class="input-group col-xs-12">
-              <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit.photo}}">
-              <input type="text" class="form-control file-upload-info" disabled placeholder="Upload Image" name="photo">
-              <span class="input-group-append">
-                <button class="file-upload-browse btn btn-primary text-white" type="button">Upload</button>
-              </span>
-            </div>
+            <input type="file" class="form-control file-upload-info" placeholder="Upload Image" name="photo">
           </div>
           <button type="submit" name="update" class="btn btn-primary me-2 text-white">Update</button>
           <a href="{%url 'staff'%}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
@@ -2379,7 +2378,7 @@
                   <td>
                     <a class="btn btn-danger btn-sm delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-sm" href="{%url 'staff_edit' info.id%}" title="Edit"><i
+                    <a class="btn btn-warning btn-sm edit" id="{{info.id}}" href="#table" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                     <a class="btn btn-primary btn-sm document" id="{{info.id}}" href="#" title="documents"><i
                         class="mdi mdi-account-card-details"></i></a>
