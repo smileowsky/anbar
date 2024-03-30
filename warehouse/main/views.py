@@ -93,7 +93,7 @@ def loader(request):
                                   extra_tags='warning')
 
             data = Brand.objects.all().order_by('-id')
-            #Brand add end
+        #Brand add end
 
             #Brand edit without refresh
             if 'edit_id' in request.POST:
@@ -124,7 +124,7 @@ def loader(request):
                         request, "Brand name is required", extra_tags='error')
             #Brand update done
 
-            # Brand single deletion without refresh
+            #Brand single deletion without refresh
             if 'del_id' in request.POST:
                 brand = Brand.objects.get(id=request.POST['del_id'])
                 number = Products.objects.filter(
@@ -142,7 +142,6 @@ def loader(request):
 
         #Clients add without refresh
         elif request.POST['x'] == 'clients':
-
             if 'save' in request.POST:
                 name = request.POST['name'],
                 surname = request.POST['surname'],
@@ -481,7 +480,6 @@ def loader(request):
             
             #Supplier single deletion without refresh
             if 'del_id' in request.POST:
-
                 supplier = Supplier.objects.get(id=request.POST['del_id'])
                 number = Products.objects.filter(
                     supplier_id_id=request.POST['del_id']).count()
@@ -526,7 +524,6 @@ def loader(request):
 
         #Department add without refresh.
         if request.POST['x'] == 'departments':
-
             if 'save' in request.POST:
                 department_name = request.POST['department_name']
 
@@ -546,7 +543,28 @@ def loader(request):
                                   extra_tags='error')
             data = Departments.objects.all().order_by('-id')
         #Department add end
+            
+            #Department edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Departments.objects.get(id=request.POST['edit_id'])
+            #Department edit done
 
+            #Department update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    update = Departments.objects.get(id=request.POST['id'])
+                    if Departments.objects.filter(department_name=request.POST['id']).exclude(id=request.POST['id']).exists():
+                        messages.info(
+                            request, "Department already exists.", extra_tags='error')
+                    else:
+                        update.department_name =  request.POST['department_name']
+                        update.save()
+                        messages.info(request, "Update was successful.", extra_tags='success')
+                else:
+                    messages.info(
+                        request, "Department name is required", extra_tags='error')
+            #Department update done
+                        
             #Departmen single deletion without refresh
             if 'del_id' in request.POST:
                 departments = Departments.objects.get(
@@ -565,7 +583,6 @@ def loader(request):
 
         #Position add without refresh.
         if request.POST['x'] == 'positions':
-
             if 'save' in request.POST:
 
                 if request.POST['department_id'] != '' and request.POST['position_name'] != '':
