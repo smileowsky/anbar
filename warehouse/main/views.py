@@ -666,6 +666,7 @@ def loader(request):
             #Staff update without refresh
             if 'update' in request.POST:
                 if 'update':
+                    update = Staff.objects.get(id=request.POST['id'])
                     if 'photo' in request.FILES:
                         new_photo = request.FILES['photo']
                         update.supplier_photo = new_photo
@@ -673,7 +674,6 @@ def loader(request):
                         file = fs.save(new_photo.name, new_photo)
                         file_url = fs.url(file)
                         update.supplier_photo = file_url
-                    update = Staff.objects.get(id=request.POST['id'])
                     update.name = request.POST['name']
                     update.surname = request.POST['surname']
                     update.birth_date = request.POST['s_birth_d']
@@ -742,7 +742,7 @@ def loader(request):
                     request, "Document has been deleted successfully.", extra_tags='success')
                 return HttpResponseRedirect('/documents/'+str(doc.staff_id))
             #Document delete end
-
+        
         #Assignment add without refresh.
         if request.POST['x'] == 'assignments':
             if 'save' in request.POST:
@@ -750,9 +750,7 @@ def loader(request):
                 sontarix = request.POST['deadline'].replace('T', ' ')
 
                 if assignment_name and sontarix:
-
                     staffs = Staff.objects.get(id=request.POST['staff_id'])
-
                     assignment = Assignments(
                         assignment_name=request.POST['assign_n'],
                         deadline=sontarix,
@@ -767,6 +765,30 @@ def loader(request):
             data = Assignments.objects.all().order_by('-id')
             staffs = Staff.objects.all().order_by('-id')
         #Assignment add end
+
+            #Assignment edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Assignments.objects.get(id=request.POST['edit_id'])
+            #Assignment edit done
+
+            #Assignment update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    update = Assignments.objects.get(id=request.POST['id'])
+                    assignment_name = request.POST['assign_n']
+                    deadline_d_str = request.POST['deadline']
+                    staffs = Staff.objects.get(id=request.POST['staff_id'])
+                    if assignment_name and deadline:
+                        deadline = datetime.strptime(deadline_d_str, '%Y-%m-%dT%H:%M')
+                        update.assignment_name = assignment_name
+                        update.deadline = deadline
+                        update.staff_id = staffs
+                        update.save()
+                        messages.info(request, "Assignment updated successfully.",
+                                    extra_tags='success')
+                    else:
+                        messages.info(request, "Empty fields.", extra_tags='error')
+            #Assignment update done
 
             #Assignment single deletion without refresh
             if 'del_id' in request.POST:

@@ -1445,7 +1445,7 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="POST" class="forms-sample" enctype="multipart/form-data" id="edit_suppliers">
+        <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_suppliers">
           <input type="hidden" name="x" value="suppliers">
           <input type="hidden" name="id" value="{{edit_data.id}}">
           <input type="hidden" name="update">
@@ -2759,7 +2759,7 @@
 </div>
 {% endif %}
 
-{% if edit %}
+{% if edit_data %}
 <div class="row">
   <div class="col-12 grid-margin stretch-card">
     <div class="card">
@@ -2768,14 +2768,17 @@
         <p class="card-description">
           Edit the information in the cells
         </p>
-        <form method="post" class="forms-sample" action="{% url 'assignment_update' edit.id %}">
+        <form method="post" class="forms-sample" id="edit_assignments">
+          <input type="hidden" name="x" value="assignments">
+          <input type="hidden" name="id" value="{{edit_data.id}}">
+          <input type="hidden" name="update">
           {% csrf_token %}
           <div class="form-group">
             <label>Edit performer</label>
             <select name="staff_id" class="form-control">
               <option value="">Choose staff member...</option>
               {% for staff_obj in staffs %}
-              {% if staff_obj.id == edit.staff_id_id%}
+              {% if staff_obj.id == edit_data.staff_id_id%}
               <option selected value="{{staff_obj.id}}">{{staff_obj.name}} {{staff_obj.surname}} /
                 {{staff_obj.pos_id.dep_id.department_name}} / {{staff_obj.pos_id.positions}}</option>
               {% else %}
@@ -2789,14 +2792,13 @@
           <div class="form-group">
             <label>Edit assignment</label>
             <textarea type="textarea" class="form-control" placeholder="Edit assignment"
-              name="assign_n">{{edit.assignment_name}}</textarea>
+              name="assign_n">{{edit_data.assignment_name}}</textarea>
           </div>
           <div class="form-group">
             <label>Edit deadline date</label>
-            <input type="datetime-local" class="form-control" name="deadline" value="{{edit.deadline}}"><br>
-            <button name="update" class="btn btn-primary text-white">Update</button>
-            <a href="{% url 'assignments' %}"><button type="button"
-                class="btn btn-danger text-white">Cancel</button></a>
+            <input type="datetime-local" class="form-control" name="deadline" value="{{edit_data.deadline}}"><br>
+            <button type="button" name="update" class="btn btn-primary text-white update">Update</button>
+            <a href="{% url 'assignments' %}"><button type="button" class="btn btn-danger text-white">Cancel</button></a>
           </div>
         </form>
       </div>
@@ -2917,7 +2919,7 @@
                     {% if info.approve == 0 %}
                     <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-sm" href="{% url 'assignment_edit' info.id %}" title="Edit"><i
+                    <a class="btn btn-warning btn-sm edit" id="{{info.id}}" href="#table" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                     {% if info.time_remaining == 'Finished' %}
                     <a class="btn btn-dark btn-sm" href="{% url 'assignment_approve' info.id %}" title="Approve"><i

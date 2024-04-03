@@ -4,6 +4,7 @@
 
 <div id="data"></div>
 <script>
+  //Insert assignments
   $(document).on('click', '.insert', function () {
     let form = $('#insert_assignments')[0]
     let data = new FormData(form)
@@ -21,6 +22,37 @@
     })
   })
 
+  //Edit assignments
+  $(document).on('click', '.update', function () {
+    let form = $('#edit_assignments')[0]
+    let data = new FormData(form)
+    $.ajax({
+      type: 'POST',
+      url: '{% url "loader" %}',
+      data: data,
+      processData: false,
+      contentType: false,
+      cache: false,
+      timeout: 600000,
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  $(document).on('click', '.edit', function () {
+    let id = $(this).attr('id')
+    $.ajax({
+      method: 'POST',
+      url: '{% url "loader" %}',
+      data: { 'x': 'assignments', 'edit_id': id, csrfmiddlewaretoken: '{{csrf_token}}' },
+      success: function (response) {
+        $('#data').html(response)
+      }
+    })
+  })
+
+  //Delete assignments
   $(document).on('click', '.delete', function () {
     let id = $(this).attr('id')
     if (confirm("Do you want to delete?")) {
@@ -35,8 +67,8 @@
     }
   })
 
+  //Load brands on page load
   $(document).ready(function () {
-
     $.ajax({
       type: 'POST',
       url: '{% url "loader" %}',
@@ -47,17 +79,6 @@
       }
     })
   })
-
-  // Automatically close messages after 5 seconds
-  window.setTimeout(function() {
-    var alerts = document.querySelectorAll('.alert');
-    alerts.forEach(function(alert) {
-      alert.classList.remove('show');
-      setTimeout(function() {
-        alert.remove();
-      }, 1000); // Remove the alert from the DOM after fading out
-    });
-  }, 5000); // Delay for 5 seconds before closing the alert
 </script>
 
 {% endblock %}
