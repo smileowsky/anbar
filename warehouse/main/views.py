@@ -11,6 +11,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib import messages
 from django.conf import settings
+from django.utils import timezone
 from django.db.models import Q
 from datetime import datetime
 from django.http import JsonResponse
@@ -775,19 +776,16 @@ def loader(request):
             if 'update' in request.POST:
                 if 'update':
                     update = Assignments.objects.get(id=request.POST['id'])
-                    assignment_name = request.POST['assign_n']
-                    deadline_d_str = request.POST['deadline']
-                    staffs = Staff.objects.get(id=request.POST['staff_id'])
-                    if assignment_name and deadline:
-                        deadline = datetime.strptime(deadline_d_str, '%Y-%m-%dT%H:%M')
-                        update.assignment_name = assignment_name
-                        update.deadline = deadline
-                        update.staff_id = staffs
-                        update.save()
-                        messages.info(request, "Assignment updated successfully.",
-                                    extra_tags='success')
-                    else:
-                        messages.info(request, "Empty fields.", extra_tags='error')
+                    update.assignment_name = request.POST['assign_n']
+                    deadline_str = request.POST['deadline']
+                    deadline = timezone.datetime.strptime(deadline_str, '%Y-%m-%d %H:%M')  # Assuming deadline format is 'YYYY-MM-DD HH:MM'
+                    update.deadline = deadline
+                    update.staff_id = Staff.objects.get(id=request.POST['staff_id'])
+                    update.save()
+                    messages.info(request, "Assignment updated successfully.",
+                                extra_tags='success')
+                else:
+                    messages.info(request, "Empty fields.", extra_tags='error')
             #Assignment update done
 
             #Assignment single deletion without refresh
