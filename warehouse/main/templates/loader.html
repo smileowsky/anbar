@@ -1085,9 +1085,9 @@
                   <td>{{info.profit}}</td>
                   <td>{{info.add_date | date:'d-m-Y'}}</td>
                   <td>
-                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table"><i
+                    <a class="btn btn-danger btn-md delete" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-md edit" id="{{info.id}}" href="#table"><i
+                    <a class="btn btn-warning btn-md edit" id="{{info.id}}" href="#table" title="Edit"><i
                         class="mdi mdi-grease-pencil"></i></a>
                   </td>
                 </tr>
@@ -2460,7 +2460,6 @@
               <input name="file" type="file" multiple />
             </div>
             <input type="hidden" name="code" value="{{edit_data.dropzone}}">
-            <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           </form>
         </div>
 
@@ -2468,24 +2467,33 @@
           Dropzone.autoDiscover = false;
           const myDropzone3 = new Dropzone('#my-dropzone', {
             url: 'upload/',
-            maxFiles: 3,
+            maxFiles: 5,
             maxFilesize: 2,
             acceptedFiles: '.jpg, .jpeg, .png, .webp',
             dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
             addRemoveLinks: true,
+            renameFile: function(file) {
+        var timestamp = new Date().getTime(); // Get current timestamp
+        var randomString = Math.random().toString(36).substr(2, 9); // Generate a random string
+        var fname = file.name.replace(/\s/g, '');
+        var renamedName = timestamp + '-' + randomString + '-' + encodeURIComponent(fname); // Combine timestamp, random string, and original filename
+        file.renamedName = renamedName; // Store the renamed filename in the file object
+        return renamedName;
+      },
             dictRemoveFile: "<strong>Delete</strong>",
-          });
-          myDropzone1.on("maxfilesexceeded", function (file) {
-            alert("Max file you can upload is 3.");
+            init: function () {
+              this.on("removedfile", function (file) {
+                let code = $('#code').val()
+                alert("Delete this file?");
+                $.ajax({
+                  url: 'upload/',
+                  type: "POST",
+                  data: { 'filetodelete': '/uploads/'+file.renamedName, csrfmiddlewaretoken: '{{csrf_token}}' }
+                });
+              });
+            }
           });
         </script>
-        {% if edit_data.img %}
-        <input type="hidden" id="edit_id" value="{{edit_data.id}}">
-        {% for f in edit_data.img %}
-        <img style="width: 50px; height: 60px;" src="{{ f }}">
-        <a class="btn btn-danger btn-md delimg" id="{{f}}"><i class="mdi mdi-delete"></i></a>
-        {% endfor %}
-        {% endif %}
 
         <form method="post" class="forms-sample" enctype="multipart/form-data" id="edit_documents">
           <input type="hidden" name="x" value="documents">
@@ -2493,25 +2501,41 @@
           <input type="hidden" name="update">
           <input type="hidden" name="code" value="{{edit_data.dropzone}}">
           {% csrf_token %}
-          Employee name:
-          <b>{{edit_data.staff_id.name}} {{edit_data.staff_id.surname}}</b><br>
-          <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit_data.staff_id.photo}}"><br>
-          <div class="form-group">
-            <label>Edit document name</label>
-            <input type="text" name="doc_name" value="{{edit_data.title}}" class="form-control">
+
+          {% if edit_data.img %}
+          <input type="hidden" id="edit_id" value="{{edit_data.id}}">
+          <div>
+          {% for f in edit_data.img %}
+          <div style="display: inline-block; margin-right: 10px;">
+            <input type="checkbox" name="images[]" value="{{f}}">{{forloop.counter}}
+            <img style="width: 50px; height: 60px;" src="{{f}}">
           </div>
-          <div class="form-group">
-            <label>Edit document number</label>
-            <input type="number" name="doc_num" value="{{edit_data.doc_num}}" class="form-control">
+          {% endfor %}
           </div>
+          {% endif %}
+
           <div class="form-group">
-            <label>Edit note</label>
-            <textarea name="about" rows="4" cols="10" class="form-control">{{edit_data.about}}</textarea>
-          </div>
-          <button type="button" name="update" class="btn btn-primary text-white update_doc">Update</button>
-          <a href="{% url 'documents' staf_id=staff.id %}"><button type="button"
-              class="btn btn-danger text-white">Cancel</button></a>
-        </form>
+            <label>Edit document</label>
+            Employee name:
+            <b>{{edit_data.staff_id.name}} {{edit_data.staff_id.surname}}</b><br>
+            <img class="img-md rounded-circle" style="width: 70px; height: 60px;" src="{{edit_data.staff_id.photo}}"><br>
+            <div class="form-group">
+              <label>Edit document name</label>
+              <input type="text" name="doc_name" value="{{edit_data.title}}" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Edit document number</label>
+              <input type="number" name="doc_num" value="{{edit_data.doc_num}}" class="form-control">
+            </div>
+            <div class="form-group">
+              <label>Edit note</label>
+              <textarea name="about" rows="4" cols="10" class="form-control">{{edit_data.about}}</textarea>
+            </div>
+            <button type="button" name="update" class="btn btn-primary text-white update_doc">Update</button>
+            <a href="{% url 'documents' staf_id=staff.id %}"><button type="button"
+                class="btn btn-danger text-white">Cancel</button></a>
+          </form>
+        </div>
       </div>
     </div>
   </div>
@@ -2561,7 +2585,7 @@
             <div class="fallback">
               <input name="file" type="file" multiple />
             </div>
-            <input type="hidden" name="code" value="{% now 'U' %}">
+            <input type="hidden" name="code" id="code" value="{% now 'U' %}">
           </form>
         </div>
 
@@ -2569,17 +2593,34 @@
           Dropzone.autoDiscover = false;
           const myDropzone = new Dropzone('#my-dropzone', {
             url: 'upload/', // Update this to the correct upload URL in your Django app
-            maxFiles: 3,
+            maxFiles: 5,
             maxFilesize: 2,
             acceptedFiles: '.jpg, .jpeg, .png, .webp',
             dictDefaultMessage: "<svg xmlns='http://www.w3.org/2000/svg' width='50' height='50' fill='currentColor' class='bi bi-camera' viewBox='0 0 16 16'><path d='M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z'/><path d='M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0'/></svg>",
             addRemoveLinks: true,
+            renameFile: function(file) {
+        var timestamp = new Date().getTime(); // Get current timestamp
+        var randomString = Math.random().toString(36).substr(2, 9); // Generate a random string
+        var fname = file.name.replace(/\s/g, '');
+        var renamedName = timestamp + '-' + randomString + '-' + encodeURIComponent(fname); // Combine timestamp, random string, and original filename
+        file.renamedName = renamedName; // Store the renamed filename in the file object
+        return renamedName;
+      },
             dictRemoveFile: "<strong>Delete</strong>",
-          });
-          myDropzone.on("maxfilesexceeded", function (file) {
-            alert("Max file you can upload is 3.");
+            init: function () {
+              this.on("removedfile", function (file) {
+                let code = $('#code').val()
+                alert("Delete this file?");
+                $.ajax({
+                  url: 'upload/',
+                  type: "POST",
+                  data: { 'filetodelete': '/uploads/'+file.renamedName, csrfmiddlewaretoken: '{{csrf_token}}' }
+                });
+              });
+            }
           });
         </script>
+
         <form method="post" class="forms-sample" id="insert_documents" enctype="multipart/form-data">
           <input type="hidden" name="x" value="documents">
           <input type="hidden" name="save">
@@ -2646,7 +2687,6 @@
     <div class="card">
       <div class="card-body">
         <h4 class="card-title">Document Table</h4>
-
         <div class="table-responsive">
           <form method="post" action="#table">
             {% csrf_token %}
@@ -2717,7 +2757,7 @@
                   <td>
                     <a class="btn btn-danger btn-sm delete_doc" id="{{info.id}}" href="#table" title="Delete"><i
                         class="mdi mdi-delete"></i></a>
-                    <a class="btn btn-warning btn-sm edit_doc" href="{% url 'doc_edit' info.id %}" title="Edit"><i
+                    <a class="btn btn-warning btn-sm edit_doc" id="{{info.id}}" href="#table" title="Edit"><i
                         class="mdi mdi-account-card-details"></i></a>
                   </td>
                 </tr>

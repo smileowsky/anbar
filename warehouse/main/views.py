@@ -670,18 +670,19 @@ def loader(request):
                     update = Staff.objects.get(id=request.POST['id'])
                     if 'photo' in request.FILES:
                         new_photo = request.FILES['photo']
-                        update.supplier_photo = new_photo
+                        update.photo = new_photo
                         fs = FileSystemStorage()
                         file = fs.save(new_photo.name, new_photo)
                         file_url = fs.url(file)
-                        update.supplier_photo = file_url
-                    update.name = request.POST['name']
-                    update.surname = request.POST['surname']
+                        update.photo = file_url
+
+                    update.name = request.POST['s_name']
+                    update.surname = request.POST['s_surname']
                     update.birth_date = request.POST['s_birth_d']
-                    update.email = request.POST['email']
-                    update.phone = request.POST['phone']
+                    update.email = request.POST['s_email']
+                    update.phone = request.POST['s_phone']
                     update.sallary = request.POST['s_sallary']
-                    update.j_start_d = request.POST['j_start_d']
+                    update.j_start_d = request.POST['s_start_d']
                     update.pos_id = Positions.objects.get(id=request.POST['position_id'])
                     update.save()
                     messages.success(request, "Update was successful.",
@@ -729,8 +730,32 @@ def loader(request):
                     messages.info(request, "Empty fields",
                                   extra_tags='warning')
             data = Documents.objects.all().order_by('-id')
-            #staffs = Staff.objects.get(id=request.POST['staff_id'])
+            staffs = Staff.objects.get(id=request.POST['staff_id'])
         #Document add end
+
+            #Document edit without refresh
+            if 'edit_id' in request.POST:
+                edit_data = Documents.objects.get(id=request.POST['edit_id'])
+            #Document edit done
+                
+            #Document update without refresh
+            if 'update' in request.POST:
+                if 'update':
+                    del_all = request.POST.getlist['images[]']
+                    for foto in del_all:
+                        Images.objects.get(image=foto).delete()
+                    update = Documents.objects.get(id=request.POST['id'])
+                    if Documents.objects.filter(doc_num=request.POST['doc_num']).exclude(id=request.POST['id']).exists():
+                            messages.info(request, 'Document already exists.',
+                                        extra_tags='error')
+                    else:
+                        update.title = request.POST['doc_name']
+                        update.doc_num = request.POST['doc_num']
+                        update.about = request.POST['about']
+                        update.save()
+                        messages.success(request, "Update was successful.",
+                                        extra_tags='success')
+            #Document update done
 
             #Document single deletion without refresh
             if 'del_id' in request.POST:
@@ -1970,7 +1995,6 @@ def doc_edit(request, doc_id):
 
 def doc_update(request, doc_id):
     update = Documents.objects.get(id=doc_id)
-
     title = request.GET['doc_name']
     doc_num = request.GET['doc_num']
     about = request.GET['about']
