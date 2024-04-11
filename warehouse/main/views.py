@@ -712,7 +712,7 @@ def loader(request):
                 doc_num = request.POST['doc_num']
                 if title and doc_num:
                     name = Staff.objects.get(id=request.POST['staff_id'])
-                    if Documents.objects.filter(doc_num=request.GET['doc_num']).exists():
+                    if Documents.objects.filter(doc_num=request.POST['doc_num']).exists():
                         messages.info(request, "Document already exists.",
                                       extra_tags='error')
                     else:
